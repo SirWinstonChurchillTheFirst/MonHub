@@ -21,7 +21,7 @@ MonHub speaks **English** and **German** (switch under *Options*).
   and controller mapping, a 60 FPS switch for 3DS games.
 - **Continue:** your latest save with trainer, play time, badges and team – read straight from the save files of every
   generation (Gen 1–7).
-- **Dex:** the Pokédex of each individual save.
+- **Dex:** the Dex of every single save.
 - **Nuzlocke tracker**, **fangames**, **import** of ROMs and saves from other emulators.
 - Seven looks and a short tour with Porygon to get started.
 
@@ -48,15 +48,15 @@ The installer isn't signed, so Windows may show “Windows protected your PC” 
 Requirements: Windows, .NET 10 SDK, JDK 17 (`javac`, `jar`, `jlink`), Python 3 with Pillow, Inno Setup 6, 7-Zip.
 
 1. Download [Universal Pokemon Randomizer ZX 4.6.1](https://github.com/Ajarmar/universal-pokemon-randomizer-zx/releases)
-   and put `PokeRandoZX.jar` into the repository's root folder.
-2. Have melonDS and DeSmuME 0.9.13 ready (paths at the top of `PokeHub-Quellcode/installer/build-pokehub.ps1`).
-3. Run `PokeHub-Quellcode/installer/build-pokehub.ps1`. The first time it downloads the pictures from PMD Sprite Collab
-   and the fonts, then mGBA and Azahar (checked against fixed SHA-256 sums), and builds `Installer/MonHub-Setup.exe`.
+   and put its `.jar` into the repository's root folder (it is found by its checksum, the file name doesn't matter).
+2. Run `MonHub/installer/build.ps1`. The first time it downloads the pictures from PMD Sprite Collab and the fonts,
+   then melonDS, DeSmuME, mGBA and Azahar from their official releases (each checked against a fixed SHA-256 sum),
+   and builds `Installer/MonHub-Setup.exe`.
 
-Tests: `dotnet test PokeHub-Tests` (among others the save reader for every generation, checked against PKHeX, and both
+Tests: `dotnet test MonHub.Tests` (among others the save reader for every generation, checked against PKHeX, and both
 languages).
 
-The Pokémon pictures are deliberately **not** in the repository; `PokeHub-Quellcode/tools/` downloads them from their
+The Pokémon pictures are deliberately **not** in the repository; `MonHub/tools/` downloads them from their
 source. The menu icons are MonHub's own (`tools/build_icons.py`).
 
 ## License
@@ -78,7 +78,7 @@ Bundled programs (in the installer, each with its license):
 **Pictures:** the menu icons are drawn by MonHub itself (`tools/build_icons.py`); every Pokémon picture comes from
 [PMD Sprite Collab](https://sprites.pmdcollab.org), released by its artists under
 [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) – attribution, non-commercial. Who made which picture is
-listed in [CREDITS.md](PokeHub-Quellcode/CREDITS.md). Pictures marked “CHUNSOFT” are original graphics from
+listed in [CREDITS.md](MonHub/CREDITS.md). Pictures marked “CHUNSOFT” are original graphics from
 *Pokémon Mystery Dungeon* © Nintendo / Creatures / GAME FREAK / Spike Chunsoft. The screenshots above show such
 pictures too.
 

@@ -1,0 +1,192 @@
+<!--
+    Dex: the launcher is the device. Red body with the lens and status LEDs where the menu is, the pages on a dark
+    display behind a light bezel (with the red power LED and the speaker slits), scanlines on the display. Pixel type,
+    ▶ cursor in the menu, d-pad and buttons at the bottom of the body.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:local="clr-namespace:MonHub">
+
+    <!-- body -->
+    <SolidColorBrush x:Key="Hub.Bg" Color="#C8202A"/>
+    <SolidColorBrush x:Key="Hub.Rail" Color="Transparent"/>
+    <SolidColorBrush x:Key="Hub.RailLine" Color="Transparent"/>
+    <SolidColorBrush x:Key="Hub.RailInk" Color="#FFF4F4"/>
+    <SolidColorBrush x:Key="Hub.RailInkMuted" Color="#F4B9BC"/>
+    <SolidColorBrush x:Key="Hub.RailHover" Color="#24000000"/>
+    <SolidColorBrush x:Key="Hub.RailSelected" Color="#7C0F17"/>
+    <SolidColorBrush x:Key="Hub.RailSelectedInk" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.RailCursor" Color="#FFD23F"/>
+    <Thickness x:Key="Hub.RailBorder">0</Thickness>
+    <sys:Double x:Key="Hub.RailWidth">226</sys:Double>
+
+    <!-- display -->
+    <SolidColorBrush x:Key="Hub.Screen" Color="#121922"/>
+    <DrawingBrush x:Key="Hub.ScreenOverlay" TileMode="Tile" Viewport="0,0,4,4" ViewportUnits="Absolute" RenderOptions.CachingHint="Cache">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00000000" Geometry="M0,0 H4 V4 H0 Z"/>
+                <GeometryDrawing Brush="#12000000" Geometry="M0,3 H4 V4 H0 Z"/>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <SolidColorBrush x:Key="Hub.Surface" Color="#1A232E"/>
+    <SolidColorBrush x:Key="Hub.SurfaceAlt" Color="#131B24"/>
+    <SolidColorBrush x:Key="Hub.SurfaceHover" Color="#1F2A37"/>
+    <SolidColorBrush x:Key="Hub.SurfaceSelected" Color="#1E3142"/>
+    <SolidColorBrush x:Key="Hub.Ink" Color="#D6E2EC"/>
+    <SolidColorBrush x:Key="Hub.InkStrong" Color="#F3F8FB"/>
+    <SolidColorBrush x:Key="Hub.InkMuted" Color="#7F94A7"/>
+    <SolidColorBrush x:Key="Hub.Line" Color="#2A3A4B"/>
+    <SolidColorBrush x:Key="Hub.LineStrong" Color="#3A5064"/>
+    <SolidColorBrush x:Key="Hub.InsetLine" Color="#223140"/>
+    <SolidColorBrush x:Key="Hub.Selection" Color="#46C3F0"/>
+
+    <SolidColorBrush x:Key="Hub.Accent" Color="#46C3F0"/>
+    <SolidColorBrush x:Key="Hub.AccentEdge" Color="#1D7FA8"/>
+    <SolidColorBrush x:Key="Hub.AccentInk" Color="#06222E"/>
+    <SolidColorBrush x:Key="Hub.KeyFace" Color="#243140"/>
+    <SolidColorBrush x:Key="Hub.KeyEdge" Color="#0A0F15"/>
+    <SolidColorBrush x:Key="Hub.KeyInk" Color="#DCE7F0"/>
+    <SolidColorBrush x:Key="Hub.KeyLine" Color="#34485B"/>
+    <SolidColorBrush x:Key="Hub.HoverOverlay" Color="#14FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.PressOverlay" Color="#26000000"/>
+    <SolidColorBrush x:Key="Hub.Good" Color="#5BD68F"/>
+    <SolidColorBrush x:Key="Hub.Danger" Color="#FF6B5E"/>
+    <SolidColorBrush x:Key="Hub.DangerSoft" Color="#26FF6B5E"/>
+    <SolidColorBrush x:Key="Hub.DangerFace" Color="#E0483A"/>
+    <SolidColorBrush x:Key="Hub.DangerEdge" Color="#8E1F16"/>
+    <SolidColorBrush x:Key="Hub.DangerInk" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.Dialog" Color="#121922"/>
+    <SolidColorBrush x:Key="Hub.SlotFill" Color="#101720"/>
+    <SolidColorBrush x:Key="Hub.SlotLine" Color="#2A3A4B"/>
+    <SolidColorBrush x:Key="Hub.BadgeOn" Color="#F6D02F"/>
+    <SolidColorBrush x:Key="Hub.BadgeOff" Color="#2A3A4B"/>
+    <SolidColorBrush x:Key="Hub.ChipOn" Color="#46C3F0"/>
+    <SolidColorBrush x:Key="Hub.ChipOnInk" Color="#06222E"/>
+
+    <CornerRadius x:Key="Hub.RadiusPanel">4</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusInner">3</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusControl">4</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusChip">3</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusCard">4</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusSlot">3</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusNav">4</CornerRadius>
+    <Visibility x:Key="Hub.ShadowVisibility">Collapsed</Visibility>
+    <Thickness x:Key="Hub.KeyDepth">0,0,0,3</Thickness>
+    <Thickness x:Key="Hub.NavMargin">12,2</Thickness>
+    <Visibility x:Key="Hub.CursorVisibility">Visible</Visibility>
+    <Visibility x:Key="Hub.CursorHoverVisibility">Visible</Visibility>
+    <Visibility x:Key="Hub.IndicatorVisibility">Collapsed</Visibility>
+
+    <FontFamily x:Key="Hub.FontDisplay">pack://application:,,,/Assets/Fonts/#Pixelify Sans, Segoe UI Symbol</FontFamily>
+    <FontFamily x:Key="Hub.FontLabel">pack://application:,,,/Assets/Fonts/#Silkscreen, Segoe UI Symbol</FontFamily>
+    <FontFamily x:Key="Hub.FontNav">pack://application:,,,/Assets/Fonts/#Pixelify Sans, Segoe UI Symbol</FontFamily>
+    <FontFamily x:Key="Hub.FontValue">pack://application:,,,/Assets/Fonts/#Pixelify Sans, Segoe UI Symbol</FontFamily>
+    <sys:Double x:Key="Hub.SizeTitle">28</sys:Double>
+    <sys:Double x:Key="Hub.SizeLabel">10</sys:Double>
+    <sys:Double x:Key="Hub.SizeNav">16</sys:Double>
+    <sys:Double x:Key="Hub.SizeValue">16</sys:Double>
+    <FontWeight x:Key="Hub.WeightTitle">Normal</FontWeight>
+    <FontWeight x:Key="Hub.WeightLabel">Normal</FontWeight>
+
+    <!-- the display: light bezel on the body, cut corner bottom left, power LED and speaker -->
+    <Style x:Key="Hub.ScreenFrame" TargetType="ContentControl">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid Margin="2,0,16,16">
+                        <Border Background="#7A0E15" CornerRadius="10,10,10,44" Margin="3,4,-3,-4"/>
+                        <Border Background="#E4E2DF" BorderBrush="#7A0E15" BorderThickness="2" CornerRadius="10,10,10,44" Padding="14,14,14,32">
+                            <Border Background="{DynamicResource Hub.Screen}" BorderBrush="#0A0E13" BorderThickness="2" CornerRadius="3">
+                                <Grid>
+                                    <ContentPresenter/>
+                                    <Border Background="{DynamicResource Hub.ScreenOverlay}" IsHitTestVisible="False"/>
+                                </Grid>
+                            </Border>
+                        </Border>
+                        <Ellipse Width="13" Height="13" Fill="#E3350D" Stroke="#6E0F15" StrokeThickness="1.5"
+                                 HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="52,0,0,10"/>
+                        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,34,11">
+                            <Border Width="46" Height="3" CornerRadius="1.5" Background="#55504C" Margin="0,0,0,3"/>
+                            <Border Width="46" Height="3" CornerRadius="1.5" Background="#55504C" Margin="0,0,0,3"/>
+                            <Border Width="46" Height="3" CornerRadius="1.5" Background="#55504C"/>
+                        </StackPanel>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- lens (breathing), three status LEDs (blinking now and then), name, the seam of the lid -->
+    <DataTemplate x:Key="Hub.RailIdentity">
+        <StackPanel Margin="20,18,14,8">
+            <StackPanel Orientation="Horizontal">
+                <Grid Width="60" Height="60">
+                    <Ellipse Fill="#F4F2EF" Stroke="#6E0F15" StrokeThickness="2"/>
+                    <Ellipse Margin="6" Fill="#2B8FD0" Stroke="#18547E" StrokeThickness="2"/>
+                    <Ellipse Margin="13" Fill="#8ED8FF" Opacity="0.35">
+                        <local:Ambient.Storyboard>
+                            <Storyboard RepeatBehavior="Forever" AutoReverse="True" Timeline.DesiredFrameRate="10">
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.3" To="0.85" Duration="0:0:2.6"/>
+                            </Storyboard>
+                        </local:Ambient.Storyboard>
+                    </Ellipse>
+                    <Ellipse Width="11" Height="11" Fill="White" Opacity="0.9" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16,15,0,0"/>
+                </Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="12,5,0,0">
+                    <Ellipse Width="12" Height="12" Fill="#FF4A3A" Stroke="#6E0F15" StrokeThickness="1.5" Margin="0,0,6,0">
+                        <local:Ambient.Storyboard>
+                            <Storyboard RepeatBehavior="Forever" Timeline.DesiredFrameRate="8">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Duration="0:0:6">
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1"/>
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:4.8" Value="0.35"/>
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:5" Value="1"/>
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:5.2" Value="0.35"/>
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:5.4" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </local:Ambient.Storyboard>
+                    </Ellipse>
+                    <Ellipse Width="12" Height="12" Fill="#F6D02F" Stroke="#6E0F15" StrokeThickness="1.5" Margin="0,0,6,0">
+                        <local:Ambient.Storyboard>
+                            <Storyboard RepeatBehavior="Forever" Timeline.DesiredFrameRate="8">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Duration="0:0:9">
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1"/>
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:2.1" Value="0.4"/>
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:2.5" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </local:Ambient.Storyboard>
+                    </Ellipse>
+                    <Ellipse Width="12" Height="12" Fill="#4CC24C" Stroke="#6E0F15" StrokeThickness="1.5"/>
+                </StackPanel>
+            </StackPanel>
+            <TextBlock Text="MonHub" FontFamily="{DynamicResource Hub.FontDisplay}" FontSize="24" Foreground="#FFFFFF" Margin="0,12,0,0"/>
+            <TextBlock Text="{local:L 'DEIN SPIELZENTRUM', 'YOUR GAME HUB'}" FontFamily="{DynamicResource Hub.FontLabel}" FontSize="10" Foreground="#F4B9BC"/>
+            <Path Data="M0,1 H132 L146,11 H196" Stroke="#6E0F15" StrokeThickness="2" Margin="-20,14,0,0" SnapsToDevicePixels="True"/>
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- the lower half of the device: round button, two pills, small green display, d-pad -->
+    <DataTemplate x:Key="Hub.RailDeco">
+        <Grid Margin="22,4,26,12" Height="60">
+            <Ellipse Width="26" Height="26" Fill="#1D1D1D" Stroke="#0A0A0A" StrokeThickness="1" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="36,3,0,0">
+                <Border Width="26" Height="7" CornerRadius="3.5" Background="#FF4A3A" BorderBrush="#6E0F15" BorderThickness="1" Margin="0,0,6,0"/>
+                <Border Width="26" Height="7" CornerRadius="3.5" Background="#2F6FD8" BorderBrush="#1B3E7A" BorderThickness="1"/>
+            </StackPanel>
+            <Border Width="62" Height="28" CornerRadius="3" Background="#43B05F" BorderBrush="#1E5A2D" BorderThickness="2"
+                    HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="36,0,0,0">
+                <TextBlock Text="HUB" FontFamily="{DynamicResource Hub.FontLabel}" FontSize="10" Foreground="#1E5A2D"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <Path HorizontalAlignment="Right" VerticalAlignment="Center" Width="52" Height="52" Stretch="Fill" Fill="#1D1D1D"
+                  Data="M18,0 H34 V18 H52 V34 H34 V52 H18 V34 H0 V18 H18 Z"/>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

@@ -6,8 +6,8 @@
 !/docs/
 !/LICENSE
 !/README.md
-!/PokeHub-Quellcode/
-!/PokeHub-Tests/
+!/MonHub/
+!/MonHub.Tests/
 
 # build output
 bin/
@@ -15,16 +15,16 @@ obj/
 .vs/
 *.user
 
-# Pictures are NOT in the repository: PokeHub-Quellcode/tools/*.py download them from PMD Sprite Collab (CC BY-NC 4.0,
+# Pictures are NOT in the repository: MonHub/tools/*.py download them from PMD Sprite Collab (CC BY-NC 4.0,
 # credits in CREDITS.md) on the first build. The fonts (SIL OFL) are downloaded the same way.
-/PokeHub-Quellcode/Assets/Species/
-/PokeHub-Quellcode/Assets/Sprites/
-/PokeHub-Quellcode/Assets/Items/
-/PokeHub-Quellcode/Assets/Portraits/
-/PokeHub-Quellcode/Assets/Fonts/*.ttf
-/PokeHub-Quellcode/pokeball.ico
-/PokeHub-Quellcode/installer/art/*.bmp
-/PokeHub-Quellcode/installer/art/*.png
-/PokeHub-Quellcode/java/RandoHelper.jar
-/PokeHub-Quellcode/java/build/
-/PokeHub-Quellcode/tools/.pokeapi/
+/MonHub/Assets/Species/
+/MonHub/Assets/Sprites/
+/MonHub/Assets/Items/
+/MonHub/Assets/Portraits/
+/MonHub/Assets/Fonts/*.ttf
+/MonHub/monhub.ico
+/MonHub/installer/art/*.bmp
+/MonHub/installer/art/*.png
+/MonHub/java/RandoHelper.jar
+/MonHub/java/build/
+/MonHub/tools/.cache/
