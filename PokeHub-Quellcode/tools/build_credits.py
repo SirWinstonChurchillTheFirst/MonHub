@@ -22,7 +22,7 @@ def get(url):
 
 def species_name(dex):
     data = open(os.path.join(ROOT, "SpeciesData.g.cs"), encoding="utf-8").read()
-    names = re.search(r"GermanNames\s*=\s*\[(.*?)\];", data, re.S)
+    names = re.search(r"EnglishNames\s*=\s*\[(.*?)\];", data, re.S)
     if not names:
         return f"#{dex}"
     items = re.findall(r'"([^"]*)"', names.group(1))
@@ -64,22 +64,22 @@ everyone = sorted({n for v in list(sprite_credits.values()) + list(portrait_cred
 lines = [
     "# Credits",
     "",
-    "Alle Pokémon-Bilder in MonHub – Sprites, Porträts und Porygon in der Tour – stammen von",
+    "Every Pokémon picture in MonHub – sprites, portraits and Porygon in the tour – comes from",
     "**PMD Sprite Collab** (https://sprites.pmdcollab.org, https://github.com/PMDCollab/SpriteCollab).",
-    "Die Künstlerinnen und Künstler haben sie unter **CC BY-NC 4.0** freigegeben",
-    "(https://creativecommons.org/licenses/by-nc/4.0/): Weitergabe und Bearbeitung erlaubt, mit Namensnennung,",
-    "nicht kommerziell. MonHub verkleinert die Bilder auf eine Blickrichtung und färbt sie für den Retro-Look um.",
+    "Its artists released them under **CC BY-NC 4.0**",
+    "(https://creativecommons.org/licenses/by-nc/4.0/): sharing and adapting allowed, with attribution,",
+    "non-commercial. MonHub cuts the pictures down to one facing direction and recolours them for the Retro look.",
     "",
-    "Mit **CHUNSOFT** gekennzeichnete Bilder sind Originalgrafiken aus *Pokémon Mystery Dungeon*",
-    "© Nintendo / Creatures / GAME FREAK / Spike Chunsoft – sie sind nicht CC-lizenziert.",
+    "Pictures marked **CHUNSOFT** are original graphics from *Pokémon Mystery Dungeon*",
+    "© Nintendo / Creatures / GAME FREAK / Spike Chunsoft – they are not CC licensed.",
     "",
-    f"## Alle {len(everyone)} Mitwirkenden",
+    f"## All {len(everyone)} contributors",
     "",
     ", ".join(everyone),
     "",
-    "## Pro Pokémon",
+    "## Per Pokémon",
     "",
-    "| # | Pokémon | Sprite | Porträt |",
+    "| # | Pokémon | Sprite | Portrait |",
     "|---|---|---|---|",
 ]
 for dex in sorted(sprites | portraits):
@@ -88,18 +88,18 @@ for dex in sorted(sprites | portraits):
     lines.append(f"| {dex:03} | {species_name(dex)} | {s} | {p} |")
 lines += [
     "",
-    "## Schriften",
+    "## Fonts",
     "",
     "Silkscreen (Jason Kottke), Pixelify Sans (Stefie Justprince), Press Start 2P (CodeMan38) – SIL Open Font License 1.1,",
-    "über Google Fonts (https://fonts.google.com). Die Lizenztexte liegen bei den Schriften.",
+    "via Google Fonts (https://fonts.google.com). The license texts come with the fonts.",
     "",
-    "## Symbole",
+    "## Icons",
     "",
-    "Die Menü-Symbole (Würfel, Modul, Zahnrad …) hat MonHub selbst gezeichnet (tools/build_icons.py), GPL-3.0.",
+    "The menu icons (die, cartridge, gear …) are drawn by MonHub itself (tools/build_icons.py), GPL-3.0.",
     "",
-    "## Daten",
+    "## Data",
     "",
-    "Deutsche Pokémon-Namen: PokeAPI (https://pokeapi.co). Routenlisten für den Nuzlocke-Tracker: PokeAPI.",
+    "Pokémon names (English and German) and the route lists of the Nuzlocke tracker: PokeAPI (https://pokeapi.co).",
     "",
 ]
 open(os.path.join(ROOT, "CREDITS.md"), "w", encoding="utf-8").write("\n".join(lines))

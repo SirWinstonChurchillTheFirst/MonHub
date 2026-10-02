@@ -44,11 +44,11 @@ SO GEHT'S
    60 FPS ist an: flüssiger, aber das Spiel läuft doppelt so schnell
    (R halten = normal). Abschalten unter "Emulatoren".
 8. "Optionen": sieben Looks (Rot, Retro, Rosa, Neon, Savanne, Spuk,
-   Schlicht), wie viel sich bewegen darf und
-   dein Trainername.
+   Schlicht), wie viel sich bewegen darf, die Sprache (Deutsch oder
+   Englisch) und dein Trainername.
 
 ORDNER
-Alles liegt in einem Ordner, normalerweise C:\Users\<Name>\PokeHub:
+Alles liegt in einem Ordner, normalerweise C:\Users\<Name>\MonHub:
   ROMs\                 deine Original-ROMs
   Randomisierte ROMs\   die neu gemischten Spiele
   Spielstände\          Spielstände aller Emulatoren
@@ -96,7 +96,8 @@ ENTHALTENE SOFTWARE
   gemacht hat: System\App\Lizenzen\CREDITS.md. Mit "CHUNSOFT"
   gekennzeichnete Bilder sind Originalgrafiken aus Pokémon Mystery
   Dungeon © Nintendo / Creatures / GAME FREAK / Spike Chunsoft.
-- Pokémon-Namen (deutsch): PokeAPI (https://pokeapi.co).
+- Pokémon- und Ortsnamen (deutsch und englisch): PokeAPI
+  (https://pokeapi.co).
 - Schriften: Silkscreen (Jason Kottke), Pixelify Sans (Stefie
   Justprince), Press Start 2P (CodeMan38) – SIL Open Font License
   1.1, https://fonts.google.com (Lizenzen: System\App\Lizenzen)

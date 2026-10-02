@@ -2,7 +2,7 @@
 ; Everything goes below ONE folder; ROMs, saves, randomized ROMs and fangames survive an uninstall.
 
 #define AppName "MonHub"
-#define AppVersion "2.5.0"
+#define AppVersion "2.6.0"
 #define Root "..\.."
 #define BuildDir Root + "\Hub-Build"
 
@@ -38,22 +38,48 @@ DisableReadyPage=yes
 SetupIconFile=..\pokeball.ico
 UninstallDisplayIcon={app}\System\App\MonHub.exe
 UninstallDisplayName={#AppName}
+; English first and preselected (MonHub's default); the choice also becomes MonHub's language on a new install
+ShowLanguageDialog=yes
+LanguageDetectionMethod=none
 
 [Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "german"; MessagesFile: "compiler:Languages\German.isl"
 
 [Messages]
-WelcomeLabel1=Willkommen bei MonHub!
-WelcomeLabel2=Dein Spielzentrum: Randomizer, Emulatoren für Game Boy, GBA, DS und 3DS und deine Fangames – alles in einem Fenster.%n%nDie Installation dauert nur einen Moment. Deine ROMs bringst du selbst mit – MonHub hilft dir beim ersten Start, sie zu importieren.
-FinishedHeadingLabel=Fertig – viel Spaß!
-FinishedLabel=MonHub ist installiert.%n%nBeim ersten Start zeigt dir Porygon, wo alles ist. Du findest MonHub im Startmenü, auf dem Desktop oder über die Windows-Suche.
-FinishedLabelNoIcons=MonHub ist installiert.%n%nBeim ersten Start zeigt dir Porygon, wo alles ist. Du findest MonHub über die Windows-Suche („MonHub“).
-ClickFinish=Klicke auf „Fertigstellen“.
-WizardSelectTasks=Desktop-Symbol
-SelectTasksDesc=Fast fertig!
-SelectTasksLabel2=Soll MonHub auch ein Symbol auf dem Desktop bekommen? Im Startmenü und in der Windows-Suche findest du es sowieso.
+english.WelcomeLabel1=Welcome to MonHub!
+english.WelcomeLabel2=Your game hub: randomizer, emulators for Game Boy, GBA, DS and 3DS and your fangames – all in one window.%n%nThe installation only takes a moment. You bring your own ROMs – MonHub helps you import them on the first start.
+english.FinishedHeadingLabel=Done – have fun!
+english.FinishedLabel=MonHub is installed.%n%nOn the first start Porygon shows you where everything is. You'll find MonHub in the Start menu, on the desktop or through the Windows search.
+english.FinishedLabelNoIcons=MonHub is installed.%n%nOn the first start Porygon shows you where everything is. You'll find MonHub through the Windows search ("MonHub").
+english.ClickFinish=Click "Finish".
+english.WizardSelectTasks=Desktop icon
+english.SelectTasksDesc=Almost done!
+english.SelectTasksLabel2=Should MonHub get an icon on the desktop too? You'll find it in the Start menu and the Windows search anyway.
 ; ROMs, saves and fangames are kept on purpose – the final uninstall message says so, otherwise the folder looks like a leftover
-UninstalledAll=%1 wurde entfernt.%n%nDeine ROMs, Spielstände und randomisierten Spiele sind noch da – im MonHub-Ordner (den du bei der Installation gewählt hast). Wenn du sie nicht mehr brauchst, kannst du den Ordner selbst löschen.
+english.UninstalledAll=%1 was removed.%n%nYour ROMs, saves and randomized games are still there – in the MonHub folder (the one you chose when installing). If you don't need them anymore, you can delete the folder yourself.
+german.WelcomeLabel1=Willkommen bei MonHub!
+german.WelcomeLabel2=Dein Spielzentrum: Randomizer, Emulatoren für Game Boy, GBA, DS und 3DS und deine Fangames – alles in einem Fenster.%n%nDie Installation dauert nur einen Moment. Deine ROMs bringst du selbst mit – MonHub hilft dir beim ersten Start, sie zu importieren.
+german.FinishedHeadingLabel=Fertig – viel Spaß!
+german.FinishedLabel=MonHub ist installiert.%n%nBeim ersten Start zeigt dir Porygon, wo alles ist. Du findest MonHub im Startmenü, auf dem Desktop oder über die Windows-Suche.
+german.FinishedLabelNoIcons=MonHub ist installiert.%n%nBeim ersten Start zeigt dir Porygon, wo alles ist. Du findest MonHub über die Windows-Suche („MonHub“).
+german.ClickFinish=Klicke auf „Fertigstellen“.
+german.WizardSelectTasks=Desktop-Symbol
+german.SelectTasksDesc=Fast fertig!
+german.SelectTasksLabel2=Soll MonHub auch ein Symbol auf dem Desktop bekommen? Im Startmenü und in der Windows-Suche findest du es sowieso.
+german.UninstalledAll=%1 wurde entfernt.%n%nDeine ROMs, Spielstände und randomisierten Spiele sind noch da – im MonHub-Ordner (den du bei der Installation gewählt hast). Wenn du sie nicht mehr brauchst, kannst du den Ordner selbst löschen.
+
+[CustomMessages]
+english.ShortcutComment=Randomizer, emulators (Game Boy, GBA, DS, 3DS) and fangames
+german.ShortcutComment=Randomizer, Emulatoren (Game Boy, GBA, DS, 3DS) und Fangames
+english.OpenGuide=Open the guide (README)
+german.OpenGuide=Anleitung (LIESMICH) öffnen
+english.GuideFile=README.txt
+german.GuideFile=LIESMICH.txt
+english.StillRunning=MonHub is still running:
+german.StillRunning=MonHub läuft noch:
+english.CloseFirst=Please close it first (save in your games before!) and try again.
+german.CloseFirst=Bitte schließe es zuerst (in Spielen vorher speichern!) und versuch es dann nochmal.
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
@@ -71,15 +97,18 @@ Source: "{#BuildDir}\System\App\Settings\*.rnqs"; DestDir: "{app}\System\App\Set
 ; emulator settings only on first install – later changes by the player are kept on updates
 Source: "{#BuildDir}\System\Emulatoren\melonDS\melonDS.toml"; DestDir: "{app}\System\Emulatoren\melonDS"; Flags: onlyifdoesntexist
 Source: "LIESMICH.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "README.txt"; DestDir: "{app}"; Flags: ignoreversion
 
 [INI]
 ; a new stamp on every install (also the same version again): MonHub's Porygon then offers the tour
 Filename: "{app}\System\App\install.ini"; Section: "Setup"; Key: "Version"; String: "{#AppVersion}"
 Filename: "{app}\System\App\install.ini"; Section: "Setup"; Key: "Stamp"; String: "{code:InstallStamp}"
+; the language chosen in Setup: MonHub starts in it as long as the player hasn't picked one in MonHub
+Filename: "{app}\System\App\install.ini"; Section: "Setup"; Key: "Language"; String: "{language}"
 
 [Icons]
 ; one clean Start menu entry – found by the Windows search like any installed app ("pokehub" works too)
-Name: "{autoprograms}\{#AppName}"; Filename: "{app}\System\App\MonHub.exe"; Comment: "Randomizer, Emulatoren (Game Boy, GBA, DS, 3DS) und Fangames"
+Name: "{autoprograms}\{#AppName}"; Filename: "{app}\System\App\MonHub.exe"; Comment: "{cm:ShortcutComment}"
 Name: "{autodesktop}\{#AppName}"; Filename: "{app}\System\App\MonHub.exe"; Tasks: desktopicon
 
 [InstallDelete]
@@ -98,7 +127,7 @@ Type: files; Name: "{autoprograms}\PokéHub – Liesmich.lnk"
 [Run]
 Filename: "{app}\System\App\MonHub.exe"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags: nowait postinstall skipifsilent
 ; the long guide stays in the folder; here only on request
-Filename: "{app}\LIESMICH.txt"; Description: "Anleitung (LIESMICH) öffnen"; Flags: shellexec nowait postinstall skipifsilent unchecked
+Filename: "{app}\{cm:GuideFile}"; Description: "{cm:OpenGuide}"; Flags: shellexec nowait postinstall skipifsilent unchecked
 
 [UninstallDelete]
 ; runtime files of the programs (configs, emulator data) – NOT the player's folders
@@ -158,8 +187,7 @@ begin
   Running := RunningFromApp();
   while Running <> '' do
   begin
-    if MsgBox('MonHub läuft noch:' + Running + #13#10#13#10 +
-              'Bitte schließe es zuerst (in Spielen vorher speichern!) und versuch es dann nochmal.',
+    if MsgBox(CustomMessage('StillRunning') + Running + #13#10#13#10 + CustomMessage('CloseFirst'),
               mbError, MB_RETRYCANCEL) = IDCANCEL then
     begin
       Result := False;
