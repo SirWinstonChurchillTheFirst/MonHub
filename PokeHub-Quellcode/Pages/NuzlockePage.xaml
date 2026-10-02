@@ -1,0 +1,106 @@
+<UserControl x:Class="PokeHub.NuzlockePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:PokeHub">
+    <Grid Margin="30,8,30,22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel>
+            <local:SpriteView Key="icon/journal" DockPanel.Dock="Right" Width="32" Height="32" VerticalAlignment="Bottom" Margin="16,0,6,6"/>
+            <StackPanel>
+                <TextBlock Text="NUZLOCKE" Style="{DynamicResource Hub.Label}"/>
+                <TextBlock Text="Nuzlocke-Tracker" Style="{DynamicResource Hub.Title}" Margin="0,4,0,2"/>
+                <TextBlock x:Name="TxtSummary" Style="{DynamicResource Hub.Muted}"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- run, filter, players, own routes -->
+        <WrapPanel Grid.Row="1" Margin="0,16,0,10">
+            <ComboBox x:Name="CmbRun" MinWidth="260" MaxWidth="380" Margin="0,0,12,8" SelectionChanged="Run_Changed" ToolTip="Zu welchem Run der Tracker gehört"/>
+            <CheckBox x:Name="ChkSoulLink" Content="Soul Link" Checked="SoulLink_Changed" Unchecked="SoulLink_Changed" Foreground="{DynamicResource Hub.Ink}"
+                      VerticalAlignment="Center" Margin="0,0,16,8" ToolTip="Die Pokémon einer Route sind verbunden: gestrichen wird die ganze Route für alle"/>
+            <CheckBox x:Name="ChkOpen" Content="Nur offene Routen" Checked="Filter_Changed" Unchecked="Filter_Changed" Foreground="{DynamicResource Hub.Ink}"
+                      VerticalAlignment="Center" Margin="0,0,16,8"/>
+            <Button Style="{DynamicResource Hub.Key}" Click="AddPlayer_Click" Margin="0,0,16,8">+ Spieler</Button>
+            <TextBox x:Name="TxtNewRoute" Width="170" Margin="0,0,6,8" VerticalContentAlignment="Center" KeyDown="NewRoute_KeyDown"
+                     ToolTip="Eigener Ort, z. B. bei Hacks"/>
+            <Button Style="{DynamicResource Hub.Ghost}" Click="AddRoute_Click" Margin="0,0,0,8" VerticalAlignment="Center">Route hinzufügen</Button>
+        </WrapPanel>
+
+        <!-- player names -->
+        <ScrollViewer x:Name="HeaderScroll" Grid.Row="2" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                <TextBlock Text="ROUTE" Style="{DynamicResource Hub.Label}" Width="200" VerticalAlignment="Center"/>
+                <ItemsControl x:Name="PlayerList" Focusable="False">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel Width="262" Margin="0,0,8,0">
+                                <Button DockPanel.Dock="Right" Style="{DynamicResource Hub.Ghost}" Padding="6,2" Click="RemovePlayer_Click" Tag="{Binding Index}"
+                                        Visibility="{Binding RemoveVisibility}" ToolTip="Spieler entfernen">✕</Button>
+                                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" FontWeight="SemiBold" VerticalContentAlignment="Center"/>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- routes -->
+        <ListBox x:Name="RouteList" Grid.Row="3" Background="Transparent" BorderThickness="0" Padding="0"
+                 ItemContainerStyle="{DynamicResource Hub.Row}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.ScrollChanged="Routes_ScrollChanged"
+                 VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type local:RouteView}">
+                    <StackPanel Orientation="Horizontal">
+                        <DockPanel Width="200" VerticalAlignment="Center">
+                            <ToggleButton Style="{DynamicResource Hub.Strike}" DockPanel.Dock="Right" IsChecked="{Binding Gone}" Width="34" Padding="0,5" Margin="0,0,8,0"
+                                          Visibility="{Binding RouteToggleVisibility}" ToolTip="Soul Link: die ganze Route streichen">✗</ToggleButton>
+                            <Button DockPanel.Dock="Right" Style="{DynamicResource Hub.Ghost}" Padding="6,2" Click="RemoveRoute_Click"
+                                    Visibility="{Binding RemoveVisibility}" ToolTip="Eigene Route entfernen" Margin="0,0,8,0">✕</Button>
+                            <TextBlock Text="{Binding Name}" Style="{DynamicResource Hub.Body}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap" ToolTip="{Binding Name}" TextDecorations="{Binding Strike}" Opacity="{Binding Fade}"/>
+                        </DockPanel>
+                        <ItemsControl ItemsSource="{Binding Cells}" Focusable="False">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type local:CatchView}">
+                                    <DockPanel Width="262" Margin="0,0,8,0" Opacity="{Binding Fade}">
+                                        <ToggleButton Style="{DynamicResource Hub.Strike}" DockPanel.Dock="Right" IsChecked="{Binding Gone}" Width="34" Margin="6,0,0,0" Padding="0,5"
+                                                      Visibility="{Binding ToggleVisibility}" ToolTip="Streichen: gestorben oder nicht gefangen">✗</ToggleButton>
+                                        <Border DockPanel.Dock="Left" Width="36" Height="32" CornerRadius="{DynamicResource Hub.RadiusSlot}"
+                                                Background="{DynamicResource Hub.SlotFill}" Margin="0,0,6,0">
+                                            <local:SpriteView Key="{Binding Sprite}" Still="True" MaxWidth="32" MaxHeight="30" Stretch="Uniform" StretchDirection="DownOnly"/>
+                                        </Border>
+                                        <ComboBox ItemsSource="{x:Static local:SpeciesChoice.All}" SelectedItem="{Binding Choice}" IsEditable="True"
+                                                  IsTextSearchEnabled="True" TextSearch.TextPath="Name" VerticalContentAlignment="Center"
+                                                  ToolTip="Pokémon tippen oder wählen">
+                                            <ComboBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <VirtualizingStackPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ComboBox.ItemsPanel>
+                                        </ComboBox>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

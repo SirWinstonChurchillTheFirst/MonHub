@@ -1,0 +1,4 @@
+melonDS 1.1 – Nintendo DS emulator
+Copyright (C) melonDS team (Arisotura and contributors)
+License: GNU General Public License v3.0 – https://www.gnu.org/licenses/gpl-3.0.html
+Source code: https://github.com/melonDS-emu/melonDS

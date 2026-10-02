@@ -1,0 +1,29 @@
+# Only MonHub's own sources go into the repository – this folder also holds the player's ROMs, presets, builds and the
+# randomizer download, which stay local.
+/*
+!/.gitignore
+!/.github/
+!/LICENSE
+!/README.md
+!/PokeHub-Quellcode/
+!/PokeHub-Tests/
+
+# build output
+bin/
+obj/
+.vs/
+*.user
+
+# Pictures are NOT in the repository: PokeHub-Quellcode/tools/*.py download them from PMD Sprite Collab (CC BY-NC 4.0,
+# credits in CREDITS.md) on the first build. The fonts (SIL OFL) are downloaded the same way.
+/PokeHub-Quellcode/Assets/Species/
+/PokeHub-Quellcode/Assets/Sprites/
+/PokeHub-Quellcode/Assets/Items/
+/PokeHub-Quellcode/Assets/Portraits/
+/PokeHub-Quellcode/Assets/Fonts/*.ttf
+/PokeHub-Quellcode/pokeball.ico
+/PokeHub-Quellcode/installer/art/*.bmp
+/PokeHub-Quellcode/installer/art/*.png
+/PokeHub-Quellcode/java/RandoHelper.jar
+/PokeHub-Quellcode/java/build/
+/PokeHub-Quellcode/tools/.pokeapi/

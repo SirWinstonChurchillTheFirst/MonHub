@@ -1,0 +1,234 @@
+LastBIOSFolder = ""
+FastForwardFPS = 240.0
+PauseLostFocus = false
+UITheme = ""
+AudioSync = false
+TargetFPS = 60.0
+LimitFPS = true
+SlowmoFPS = 120.0
+
+[DS]
+FirmwarePath = ""
+BIOS7Path = ""
+BIOS9Path = ""
+
+[Mic]
+InputType = 1
+WavPath = ""
+
+[Instance0]
+EnableCheats = false
+SaveFilePath = ""
+JoystickID = 0
+SavestatePath = ""
+CheatFilePath = ""
+
+[Instance0.DS]
+[Instance0.DS.Battery]
+LevelOkay = true
+
+[Instance0.RTC]
+Offset = 0
+
+[Instance0.Window1]
+Enabled = false
+
+[Instance0.Firmware]
+Username = "melonDS"
+Language = 1
+FavouriteColour = 0
+BirthdayMonth = 1
+BirthdayDay = 1
+Message = ""
+MAC = ""
+
+[Instance0.Window2]
+Enabled = false
+
+[Instance0.Keyboard]
+HK_FastForward = 16777217
+HK_Mic = -1
+Down = 16777237
+B = 90
+X = 83
+HK_VolumeDown = -1
+HK_GuitarGripBlue = -1
+A = 88
+HK_SolarSensorIncrease = -1
+Y = 65
+HK_FrameStep = -1
+HK_GuitarGripRed = -1
+L = 81
+R = 87
+Left = 16777234
+HK_SwapScreens = -1
+HK_SwapScreenEmphasis = -1
+HK_PowerButton = -1
+HK_Reset = -1
+HK_Lid = -1
+HK_SolarSensorDecrease = -1
+HK_VolumeUp = -1
+HK_GuitarGripGreen = -1
+HK_SlowMoToggle = 32
+HK_FastForwardToggle = -1
+HK_GuitarGripYellow = -1
+HK_FrameLimitToggle = -1
+Up = 16777235
+HK_FullscreenToggle = 16777274
+HK_SlowMo = -1
+HK_Pause = -1
+Right = 16777236
+Start = 16777220
+Select = 16777219
+
+[Instance0.Joystick]
+HK_FastForward = 86114303
+HK_Mic = -1
+Down = 16908287
+B = 1
+X = 2
+HK_VolumeDown = -1
+HK_GuitarGripBlue = -1
+A = 0
+HK_SolarSensorIncrease = -1
+Y = 3
+HK_FrameStep = -1
+HK_GuitarGripRed = -1
+L = 4
+R = 5
+Left = 1179647
+HK_SwapScreens = -1
+HK_SwapScreenEmphasis = -1
+HK_PowerButton = -1
+HK_Reset = -1
+HK_Lid = -1
+HK_SolarSensorDecrease = -1
+HK_VolumeUp = -1
+HK_GuitarGripGreen = -1
+HK_SlowMoToggle = 69337087
+HK_FastForwardToggle = -1
+HK_GuitarGripYellow = -1
+HK_FrameLimitToggle = -1
+Up = 17956863
+HK_FullscreenToggle = -1
+HK_SlowMo = -1
+HK_Pause = -1
+Right = 131071
+Start = 7
+Select = 6
+
+[Instance0.Window0]
+ShowOSD = true
+ScreenLayout = 2
+ScreenRotation = 0
+ScreenAspectBot = 0
+ScreenGap = 0
+ScreenSwap = false
+ScreenSizing = 0
+IntegerScaling = false
+ScreenAspectTop = 0
+ScreenFilter = false
+Enabled = true
+
+[Instance0.Window3]
+Enabled = false
+
+[Instance0.Audio]
+Volume = 1
+DSiVolumeSync = false
+
+[Instance0.Gdb]
+Enabled = false
+
+[Instance0.Gdb.ARM7]
+Port = 3334
+BreakOnStartup = false
+
+[Instance0.Gdb.ARM9]
+Port = 3333
+BreakOnStartup = false
+
+[LAN]
+DirectMode = false
+
+[MP]
+RecvTimeout = 25
+AudioMode = 1
+
+[Audio]
+BitDepth = 0
+Interpolation = 3
+
+[Savestate]
+RelocSRAM = false
+
+[Emu]
+ConsoleType = 0
+ExternalBIOSEnable = false
+DirectBoot = true
+
+[3D]
+Renderer = 2
+
+[3D.Soft]
+Threaded = true
+
+[3D.GL]
+ScaleFactor = 4
+BetterPolygons = true
+HiresCoordinates = true
+
+[Screen]
+UseGL = true
+VSync = false
+VSyncInterval = 1
+
+[JIT]
+MaxBlockSize = 32
+LiteralOptimisations = true
+BranchOptimisations = true
+FastMemory = true
+Enable = true
+
+[Mouse]
+HideSeconds = 5
+Hide = false
+
+[DSi]
+FullBIOSBoot = false
+FirmwarePath = ""
+BIOS9Path = ""
+BIOS7Path = ""
+NANDPath = ""
+
+[DSi.DSP]
+HLE = true
+
+[DSi.Camera0]
+XFlip = false
+InputType = 0
+ImagePath = ""
+DeviceName = ""
+
+[DSi.Camera1]
+XFlip = false
+InputType = 0
+ImagePath = ""
+DeviceName = ""
+
+[DSi.SD]
+FolderPath = ""
+FolderSync = false
+ReadOnly = false
+ImagePath = "dsisd.bin"
+ImageSize = 0
+Enable = false
+
+[DLDI]
+FolderPath = ""
+FolderSync = false
+ReadOnly = false
+ImagePath = "dldi.bin"
+ImageSize = 0
+Enable = false
+

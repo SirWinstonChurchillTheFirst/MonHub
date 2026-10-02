@@ -1,0 +1,108 @@
+MonHub
+=======
+
+Dein Spielzentrum: Randomizer, Emulatoren für Game Boy, GBA, DS und
+3DS und deine Fangames – alles in einem Fenster.
+
+SO GEHT'S
+0. Beim ersten Start nach der Installation fragt dich Porygon,
+   ob er dir alles zeigen soll – nach einem Update zeigt er nur das
+   Neue. Seine Tour gibt es jederzeit wieder unter "Optionen".
+1. MonHub starten: Desktop-Symbol, Startmenü oder einfach "MonHub"
+   in die Windows-Suche tippen.
+2. Menü "Spiele" -> "Ordner & Import": den ROM-Ordner öffnen und deine
+   eigenen Pokémon-ROMs (.nds, .gba, .gb, .3ds …) hineinkopieren.
+   Oder "Von Emulator importieren": holt ROMs und Spielstände von
+   deinem bisherigen Emulator (DeSmuME, melonDS, VisualBoyAdvance,
+   mGBA). Es wird nur kopiert, deine alten Dateien bleiben unverändert.
+   ROMs sind NICHT dabei – die musst du selbst haben.
+3. Menü "Neuer Run": ein Original auswählen und "Mischen & spielen"
+   drücken – das Spiel wird neu gemischt und startet direkt in melonDS.
+   Alle Optionen des Randomizers: dort unter "Bearbeiten …".
+4. Später geht's unter "Weiter" weiter. Dort steht dein letzter
+   Spielstand wie im Spiel (Trainer, Spielzeit, Orden, Team), und
+   "Weiterspielen" öffnet ihn im selben Emulator.
+   Im Spiel selbst speichern nicht vergessen!
+5. Ein anderes Spiel? Menü "Spiele": alle Spiele und Runs, mit Suche,
+   Filtern und Favoriten (☆). Jedes startet im Emulator mit deinem
+   neuesten Spielstand; nimmst du den anderen Emulator, wird der
+   Spielstand mitgenommen. Dort kannst du auch einen Spielstand oder
+   ein ganzes Spiel löschen: "Spiel löschen" nimmt ROM, Spielstände,
+   Savestates, Cheats und Spoiler mit. Alles kommt in den Papierkorb.
+   Spielstände ohne Spiel räumst du dort mit dem Gengar-Knopf auf.
+6. Game Boy, Game Boy Color und GBA (Gen 1–3: Rot bis Smaragd) laufen in
+   mGBA – genauso über "Weiter", "Spiele" und "Neuer Run". Rare Candy: dort
+   liegen zu Spielbeginn 99 Sonderbonbons im PC deines Zimmers.
+7. 3DS (Gen 6–7: X/Y, Omega Rubin/Alpha Saphir, Sonne/Mond,
+   Ultrasonne/Ultramond) läuft in Azahar – auch über "Weiter",
+   "Spiele" und "Neuer Run". Nur entschlüsselte Spiele (.3ds, .cci,
+   .cxi). Ein neu gemischtes 3DS-Spiel ist eine .cxi-Datei (so groß
+   wie das Original). Jedes Spiel und jeder Run hat seine eigene
+   SD-Karte, also seinen eigenen Spielstand. Rare Candy: 999
+   Sonderbonbons im ersten Platz der Medizin-Tasche. Ist beim Start
+   ein Controller angeschlossen, nimmt Azahar ihn, sonst die Tastatur.
+   60 FPS ist an: flüssiger, aber das Spiel läuft doppelt so schnell
+   (R halten = normal). Abschalten unter "Emulatoren".
+8. "Optionen": sieben Looks (Rot, Retro, Rosa, Neon, Savanne, Spuk,
+   Schlicht), wie viel sich bewegen darf und
+   dein Trainername.
+
+ORDNER
+Alles liegt in einem Ordner, normalerweise C:\Users\<Name>\PokeHub:
+  ROMs\                 deine Original-ROMs
+  Randomisierte ROMs\   die neu gemischten Spiele
+  Spielstände\          Spielstände aller Emulatoren
+  Fangames\             Platz für Fangames (z. B. Gamma Emerald)
+  System\               Programme und Einstellungen – nicht anfassen
+
+STEUERUNG IN MELONDS (steht auch im MonHub unter "Emulatoren")
+  Pfeiltasten = Steuerkreuz, X = A, Z = B, S = X, A = Y,
+  Q = L, W = R, Enter = Start, Rücktaste = Select.
+  Tab halten = 4x schneller, Leertaste = 2x an/aus, F11 = Vollbild.
+  Ein Xbox-Controller ist vorbelegt: L2 = 2x an/aus, R2 halten = 4x.
+  Eigene Tasten: in melonDS unter "Config -> Input and hotkeys".
+
+RARE CANDY CHEAT
+  Im Spiel L + R drücken (Diamant, Perl, Platin, HeartGold,
+  SoulSilver) bzw. Select (Schwarz/Weiß 1+2): 999 Sonderbonbons in
+  der Medizin-Tasche. Geht mit deutschen und englischen Versionen.
+
+DEINSTALLIEREN
+  Über Windows "Apps". Deine ROMs, Spielstände, randomisierten ROMs
+  und Fangames bleiben erhalten.
+
+ENTHALTENE SOFTWARE
+- MonHub selbst – freie Software unter der GPL-3.0
+  (Lizenz: System\App\Lizenzen\GPL-3.0.txt, Quellcode: siehe README)
+- Universal Pokemon Randomizer ZX – GPL-3.0
+  https://github.com/Ajarmar/universal-pokemon-randomizer-zx
+- melonDS 1.1 – GPL-3.0 – https://melonds.kuribo64.net
+  https://github.com/melonDS-emu/melonDS
+- DeSmuME 0.9.13 – GPL-2.0 – https://desmume.org
+  (Lizenz: System\Emulatoren\DeSmuME\COPYING)
+- mGBA 0.10.5 (Game Boy, Game Boy Color, GBA) – MPL-2.0 – https://mgba.io
+  (Lizenz: System\Emulatoren\mGBA\LICENSE.txt)
+- Azahar 2126.1.2 (3DS) – GPL-2.0 – https://azahar-emu.org
+  (Lizenz: System\Emulatoren\Azahar\LICENSE.txt)
+- Rare-Candy-Adressen für 3DS: CTRPF-AR-CHEAT-CODES
+  (https://github.com/iSharingan/CTRPF-AR-CHEAT-CODES)
+- Java-Laufzeit (OpenJDK 17, Microsoft Build) – GPL-2.0 mit
+  Classpath Exception
+- .NET Runtime – MIT
+- Alle Pokémon-Sprites und -Porträts (auch Porygon in der
+  Tour): PMD Sprite Collab (https://sprites.pmdcollab.org), von den
+  Künstlerinnen und Künstlern dort unter CC BY-NC 4.0 freigegeben
+  (https://creativecommons.org/licenses/by-nc/4.0/). Wer welches Bild
+  gemacht hat: System\App\Lizenzen\CREDITS.md. Mit "CHUNSOFT"
+  gekennzeichnete Bilder sind Originalgrafiken aus Pokémon Mystery
+  Dungeon © Nintendo / Creatures / GAME FREAK / Spike Chunsoft.
+- Pokémon-Namen (deutsch): PokeAPI (https://pokeapi.co).
+- Schriften: Silkscreen (Jason Kottke), Pixelify Sans (Stefie
+  Justprince), Press Start 2P (CodeMan38) – SIL Open Font License
+  1.1, https://fonts.google.com (Lizenzen: System\App\Lizenzen)
+
+MonHub ist ein inoffizielles, nicht-kommerzielles Fan-Projekt ohne
+Verbindung zu Nintendo, Creatures, GAME FREAK oder The Pokémon Company.
+Pokémon und alle zugehörigen Namen sind Marken ihrer Inhaber. MonHub
+enthält keine Spiele (ROMs) und kein BIOS – nutze nur Kopien von
+Spielen, die dir gehören.
