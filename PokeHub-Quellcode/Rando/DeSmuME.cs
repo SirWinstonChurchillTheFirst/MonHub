@@ -2,6 +2,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Txt = PokeHub.Txt;
+
 namespace RandoApp;
 
 /// <summary>Built-in Action Replay codes: 999 Rare Candies (item 0x32, qty 0x3E7) into the bag.</summary>
@@ -30,13 +32,13 @@ public static class RareCandyCodes
     static readonly Dictionary<string, Code> BuiltIn = new()
     {
         // Diamant / Perl: the English US (header version 5) and EU (version 13) releases share the game code and the pointer.
-        ["ADAE"] = new("Diamant (EN)", DP, "L + R", true),
-        ["APAE"] = new("Perl (EN)", DP, "L + R", true),
+        ["ADAE"] = new("Diamond (EN)", DP, "L + R", true),
+        ["APAE"] = new("Pearl (EN)", DP, "L + R", true),
         ["ADAD"] = new("Diamant (DE)", DPDE, "L + R", true),
         ["APAD"] = new("Perl (DE)", DPDE, "L + R", true),
         // Platin / HeartGold / SoulSilver: the English Europe releases (header version 10) share code and pointer with the US ones.
         ["CPUD"] = new("Platin (DE)", PtDE, "L + R", true),
-        ["CPUE"] = new("Platin (EN)", PtEN, "L + R", true),
+        ["CPUE"] = new("Platinum (EN)", PtEN, "L + R", true),
         ["IPKD"] = new("HeartGold (DE)", HgssDE, "L + R", true),
         ["IPGD"] = new("SoulSilver (DE)", HgssDE, "L + R", true),
         ["IPKE"] = new("HeartGold (EN)", HgssEN, "L + R", true),
@@ -56,7 +58,7 @@ public static class RareCandyCodes
     public static Code? Get(AppConfig cfg, RomInfo rom)
     {
         if (cfg.CustomCheats.TryGetValue(rom.GameCode, out var custom) && !string.IsNullOrWhiteSpace(custom))
-            return new Code("Eigener Code", custom, ActivationFromCode(custom), true);
+            return new Code(Txt.L("Eigener Code", "Own code"), custom, ActivationFromCode(custom), true);
         if (!BuiltIn.TryGetValue(rom.GameCode, out var code)) return null;
         return code.RomVersion == null || code.RomVersion == rom.RomVersion ? code : null;
     }
@@ -65,26 +67,31 @@ public static class RareCandyCodes
     public static string? VersionMismatch(AppConfig cfg, RomInfo rom)
     {
         if (Get(cfg, rom) != null || !BuiltIn.TryGetValue(rom.GameCode, out var code) || code.RomVersion == null) return null;
-        var region = rom.RomVersion == 13 ? "Europa-Version" : $"eine andere Version (Header-Version {rom.RomVersion})";
-        return $"Der eingebaute Code ist nur für die US-Version – deine ROM ist die {region}, deshalb wird er nicht benutzt. "
-             + "Einen passenden Code kannst du in den Einstellungen eintragen.";
+        return rom.RomVersion == 13
+            ? Txt.L("Der eingebaute Code ist nur für die US-Version – deine ROM ist die Europa-Version, deshalb wird er nicht benutzt. ",
+                    "The built-in code is for the US version only – your ROM is the European version, so it isn't used. ") + OwnCodeHint
+            : Txt.L($"Der eingebaute Code ist nur für die US-Version – deine ROM ist eine andere Version (Header-Version {rom.RomVersion}), deshalb wird er nicht benutzt. ",
+                    $"The built-in code is for the US version only – your ROM is another version (header version {rom.RomVersion}), so it isn't used. ") + OwnCodeHint;
     }
+
+    static string OwnCodeHint => Txt.L("Einen passenden Code kannst du in den Einstellungen eintragen.", "You can enter a matching code in the settings.");
 
     public static string? GetBuiltInText(string gameCode) =>
         BuiltIn.TryGetValue(gameCode, out var c) ? c.Codes : null;
 
     public static string? GetBuiltInNote(string gameCode) =>
         BuiltIn.TryGetValue(gameCode, out var c) && c.RomVersion == 5
-            ? "Gilt nur für die US-Version (nicht für die englische Europa-Version mit demselben Spielcode)."
+            ? Txt.L("Gilt nur für die US-Version (nicht für die englische Europa-Version mit demselben Spielcode).",
+                    "For the US version only (not for the English European version with the same game code).")
             : null;
 
     /// <summary>Reads the button condition (94000130 XXXX0000) so the UI can tell which buttons to press.</summary>
     static string ActivationFromCode(string code)
     {
         var m = Regex.Match(code, @"94000130\s*([0-9A-Fa-f]{4})0000");
-        if (!m.Success) return "immer aktiv";
+        if (!m.Success) return Txt.L("immer aktiv", "always on");
         int mask = Convert.ToInt32(m.Groups[1].Value, 16);
-        string[] names = ["A", "B", "Select", "Start", "Rechts", "Links", "Hoch", "Runter", "R", "L"];
+        string[] names = ["A", "B", "Select", "Start", Txt.L("Rechts", "Right"), Txt.L("Links", "Left"), Txt.L("Hoch", "Up"), Txt.L("Runter", "Down"), "R", "L"];
         var pressed = Enumerable.Range(0, 10).Where(bit => (mask & (1 << bit)) == 0).Select(bit => names[bit]);
         return string.Join(" + ", pressed.Reverse());
     }
@@ -94,7 +101,8 @@ public static class RareCandyCodes
     {
         var hex = Regex.Replace(code, @"[^0-9A-Fa-f]", "").ToUpperInvariant();
         if (hex.Length == 0 || hex.Length % 16 != 0)
-            throw new FormatException("Der Code muss aus Paaren von 8-stelligen Hex-Werten bestehen (z. B. \"94000130 FCFF0000\").");
+            throw new FormatException(Txt.L("Der Code muss aus Paaren von 8-stelligen Hex-Werten bestehen (z. B. \"94000130 FCFF0000\").",
+                "The code must consist of pairs of 8-digit hex values (e.g. \"94000130 FCFF0000\")."));
         return Enumerable.Range(0, hex.Length / 16).Select(i => hex.Substring(i * 16, 16)).ToList();
     }
 }

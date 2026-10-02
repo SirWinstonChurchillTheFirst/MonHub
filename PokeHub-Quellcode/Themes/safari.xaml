@@ -157,7 +157,7 @@
                 <DockPanel>
                     <local:SpriteView Key="icon/paw" Width="32" Height="32" DockPanel.Dock="Right" VerticalAlignment="Top"/>
                     <StackPanel>
-                        <TextBlock Text="SAVANNE" FontFamily="Georgia" FontWeight="Bold" FontSize="10.5" Foreground="#4E9A37"/>
+                        <TextBlock Text="{local:L 'SAVANNE', 'SAVANNA'}" FontFamily="Georgia" FontWeight="Bold" FontSize="10.5" Foreground="#4E9A37"/>
                         <TextBlock Text="MonHub" FontFamily="Georgia" FontWeight="Bold" FontSize="23" Foreground="#2A1C0E"/>
                     </StackPanel>
                 </DockPanel>
@@ -178,7 +178,7 @@
                 <StackPanel Orientation="Horizontal">
                     <local:SpriteView Key="icon/paw" Width="32" Height="32" VerticalAlignment="Center"/>
                     <StackPanel Margin="6,0,0,0">
-                        <TextBlock Text="HERDE" FontFamily="Georgia" FontWeight="Bold" FontSize="9" Foreground="#4E9A37"/>
+                        <TextBlock Text="{local:L 'HERDE', 'HERD'}" FontFamily="Georgia" FontWeight="Bold" FontSize="9" Foreground="#4E9A37"/>
                         <TextBlock Text="× 30" FontFamily="Georgia" FontWeight="Bold" FontSize="15" Foreground="#2A1C0E"/>
                     </StackPanel>
                 </StackPanel>

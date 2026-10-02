@@ -48,11 +48,15 @@ public partial class OptionsPage : UserControl, IHubPage
     {
         InitializeComponent();
         var version = Assembly.GetExecutingAssembly().GetName().Version;
-        TxtCredits.Text =
+        TxtCredits.Text = Txt.L(
             $"MonHub {version?.ToString(3)} · freie Software (GPL-3.0) · Sprites und Porträts: PMD Sprite Collab (sprites.pmdcollab.org, CC BY-NC 4.0 – " +
             "alle Künstler in CREDITS.md) · Schriften: Silkscreen, Pixelify Sans, Press Start 2P (SIL Open Font License) · " +
             "Randomizer: Universal Pokemon Randomizer ZX (GPL-3.0). Ein inoffizielles, nicht-kommerzielles Fanprojekt ohne Verbindung zu " +
-            "Nintendo, Creatures, GAME FREAK oder The Pokémon Company; Pokémon und alle Namen gehören ihren Inhabern.";
+            "Nintendo, Creatures, GAME FREAK oder The Pokémon Company; Pokémon und alle Namen gehören ihren Inhabern.",
+            $"MonHub {version?.ToString(3)} · free software (GPL-3.0) · Sprites and portraits: PMD Sprite Collab (sprites.pmdcollab.org, CC BY-NC 4.0 – " +
+            "all artists in CREDITS.md) · Fonts: Silkscreen, Pixelify Sans, Press Start 2P (SIL Open Font License) · " +
+            "Randomizer: Universal Pokemon Randomizer ZX (GPL-3.0). An unofficial, non-commercial fan project not affiliated with " +
+            "Nintendo, Creatures, GAME FREAK or The Pokémon Company; Pokémon and all names belong to their owners.");
     }
 
     public void Refresh()
@@ -67,6 +71,7 @@ public partial class OptionsPage : UserControl, IHubPage
             MotionLevel.Calm => MotionCalm,
             _ => MotionOff,
         }).IsChecked = true;
+        (Txt.English ? LangEnglish : LangGerman).IsChecked = true;
         if (!TxtTrainer.IsKeyboardFocused) TxtTrainer.Text = config.TrainerName;
         TxtRoot.Text = HubPaths.Root;
         TxtRoot.ToolTip = HubPaths.Root;
@@ -99,11 +104,28 @@ public partial class OptionsPage : UserControl, IHubPage
         var config = HubConfig.Current;
         TxtMotion.Text = config.Motion switch
         {
-            null => $"Folgt der Windows-Einstellung „Animationseffekte“ – die ist gerade {(SystemParameters.ClientAreaAnimation ? "an, also bewegt sich alles" : "aus, also bewegt sich nichts")}.",
-            MotionLevel.All => "Pokémon bewegen sich, und die Details des Themes auch (LEDs, Cursor, Ringe, Gras). Alles pausiert, sobald MonHub im Hintergrund ist.",
-            MotionLevel.Calm => "Nur das große Pokémon des Spiels bewegt sich. Keine Theme-Animationen, das Team steht still.",
-            _ => "Nichts bewegt sich – auch keine Seitenübergänge.",
+            null => SystemParameters.ClientAreaAnimation
+                ? Txt.L("Folgt der Windows-Einstellung „Animationseffekte“ – die ist gerade an, also bewegt sich alles.",
+                        "Follows the Windows setting “Animation effects” – it is on right now, so everything moves.")
+                : Txt.L("Folgt der Windows-Einstellung „Animationseffekte“ – die ist gerade aus, also bewegt sich nichts.",
+                        "Follows the Windows setting “Animation effects” – it is off right now, so nothing moves."),
+            MotionLevel.All => Txt.L("Pokémon bewegen sich, und die Details des Themes auch (LEDs, Cursor, Ringe, Gras). Alles pausiert, sobald MonHub im Hintergrund ist.",
+                "Pokémon move, and so do the theme's details (LEDs, cursor, rings, grass). Everything pauses as soon as MonHub is in the background."),
+            MotionLevel.Calm => Txt.L("Nur das große Pokémon des Spiels bewegt sich. Keine Theme-Animationen, das Team steht still.",
+                "Only the game's big Pokémon moves. No theme animations, the team stands still."),
+            _ => Txt.L("Nichts bewegt sich – auch keine Seitenübergänge.", "Nothing moves – not even page transitions."),
         };
+    }
+
+    /// <summary>The language is fixed for one start (pages and tables are built once) – so MonHub restarts in the new one.</summary>
+    void Language_Checked(object sender, RoutedEventArgs e)
+    {
+        if (_updating) return;
+        var code = sender == LangGerman ? "de" : "en";
+        if (code == Txt.Code) return;
+        HubConfig.Current.Language = code;
+        HubConfig.Current.Save();
+        App.Restart();
     }
 
     void Trainer_TextChanged(object sender, TextChangedEventArgs e)
@@ -116,7 +138,7 @@ public partial class OptionsPage : UserControl, IHubPage
 
     void UpdateTrainerHint()
     {
-        TrainerHint.Text = TxtTrainer.Text.Length == 0 ? "Name aus dem Spielstand" : "";
+        TrainerHint.Text = TxtTrainer.Text.Length == 0 ? Txt.L("Name aus dem Spielstand", "Name from the save") : "";
     }
 
     void OpenRoot_Click(object sender, RoutedEventArgs e) => Shell.OpenFolder(HubPaths.Root);
@@ -133,8 +155,11 @@ public partial class OptionsPage : UserControl, IHubPage
 
     void Readme_Click(object sender, RoutedEventArgs e)
     {
-        var readme = Path.Combine(HubPaths.Root, "LIESMICH.txt");
-        if (File.Exists(readme)) Process.Start(new ProcessStartInfo(readme) { UseShellExecute = true });
-        else MessageBox.Show(Window.GetWindow(this), "Die LIESMICH-Datei fehlt – sie kommt mit dem Setup wieder.", "MonHub", MessageBoxButton.OK, MessageBoxImage.Information);
+        // the guide in the chosen language, the other one if only that is there
+        var readme = new[] { Txt.L("LIESMICH.txt", "README.txt"), Txt.L("README.txt", "LIESMICH.txt") }
+            .Select(name => Path.Combine(HubPaths.Root, name)).FirstOrDefault(File.Exists);
+        if (readme != null) Process.Start(new ProcessStartInfo(readme) { UseShellExecute = true });
+        else MessageBox.Show(Window.GetWindow(this), Txt.L("Die LIESMICH-Datei fehlt – sie kommt mit dem Setup wieder.", "The README file is missing – the setup brings it back."),
+            "MonHub", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 }

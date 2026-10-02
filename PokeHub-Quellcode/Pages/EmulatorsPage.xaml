@@ -4,10 +4,10 @@
              xmlns:local="clr-namespace:PokeHub">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="30,8,30,28">
-            <TextBlock Text="EMULATOREN" Style="{DynamicResource Hub.Label}"/>
-            <TextBlock Text="Womit gespielt wird" Style="{DynamicResource Hub.Title}" Margin="0,4,0,2"/>
+            <TextBlock Text="{local:L 'EMULATOREN', 'EMULATORS'}" Style="{DynamicResource Hub.Label}"/>
+            <TextBlock Text="{local:L 'Womit gespielt wird', 'What you play with'}" Style="{DynamicResource Hub.Title}" Margin="0,4,0,2"/>
             <TextBlock Style="{DynamicResource Hub.Muted}" MaxWidth="660" HorizontalAlignment="Left"
-                       Text="DS-Spiele laufen in melonDS oder DeSmuME, Game Boy und GBA in mGBA, 3DS in Azahar. Alle sind fertig eingerichtet und speichern in deinen Ordner „Spielstände“."/>
+                       Text="{local:L 'DS-Spiele laufen in melonDS oder DeSmuME, Game Boy und GBA in mGBA, 3DS in Azahar. Alle sind fertig eingerichtet und speichern in deinen Ordner „Spielstände“.', 'DS games run in melonDS or DeSmuME, Game Boy and GBA in mGBA, 3DS in Azahar. All of them are set up and save into your “Spielstände” folder.'}"/>
 
             <Grid x:Name="EmuGrid" Margin="0,20,0,0">
                 <Grid.ColumnDefinitions>
@@ -26,7 +26,7 @@
                             <Image x:Name="MelonIcon" Width="40" Height="40" DockPanel.Dock="Left" Margin="0,0,12,0" VerticalAlignment="Top"/>
                             <Border x:Name="MelonBadge" DockPanel.Dock="Right" Background="{DynamicResource Hub.ChipOn}" CornerRadius="{DynamicResource Hub.RadiusChip}"
                                     Padding="8,3" VerticalAlignment="Top">
-                                <TextBlock Text="STANDARD" FontFamily="{DynamicResource Hub.FontLabel}" FontSize="{DynamicResource Hub.SizeTag}" Foreground="{DynamicResource Hub.ChipOnInk}"/>
+                                <TextBlock Text="{local:L 'STANDARD', 'DEFAULT'}" FontFamily="{DynamicResource Hub.FontLabel}" FontSize="{DynamicResource Hub.SizeTag}" Foreground="{DynamicResource Hub.ChipOnInk}"/>
                             </Border>
                             <StackPanel>
                                 <TextBlock Text="melonDS" Style="{DynamicResource Hub.Heading}"/>
@@ -34,11 +34,11 @@
                             </StackPanel>
                         </DockPanel>
                         <TextBlock Style="{DynamicResource Hub.Body}" Margin="0,12,0,0"
-                                   Text="Schnell und genau – die erste Wahl. Speichert als .sav, das Format, das fast alle Emulatoren lesen."/>
+                                   Text="{local:L 'Schnell und genau – die erste Wahl. Speichert als .sav, das Format, das fast alle Emulatoren lesen.', 'Fast and accurate – the first choice. Saves as .sav, the format almost every emulator reads.'}"/>
                         <WrapPanel Margin="0,14,0,0">
-                            <Button x:Name="BtnMelonOpen" Style="{DynamicResource Hub.Key}" Click="MelonOpen_Click" Margin="0,0,8,6">Öffnen</Button>
-                            <Button x:Name="BtnMelonDefault" Style="{DynamicResource Hub.Ghost}" Click="MelonDefault_Click" Margin="0,0,4,6">Als Standard</Button>
-                            <Button Style="{DynamicResource Hub.Ghost}" Click="MelonSaves_Click" Margin="0,0,4,6">Spielstände</Button>
+                            <Button x:Name="BtnMelonOpen" Style="{DynamicResource Hub.Key}" Click="MelonOpen_Click" Margin="0,0,8,6" Content="{local:L 'Öffnen', 'Open'}"></Button>
+                            <Button x:Name="BtnMelonDefault" Style="{DynamicResource Hub.Ghost}" Click="MelonDefault_Click" Margin="0,0,4,6" Content="{local:L 'Als Standard', 'Make default'}"></Button>
+                            <Button Style="{DynamicResource Hub.Ghost}" Click="MelonSaves_Click" Margin="0,0,4,6" Content="{local:L 'Spielstände', 'Saves'}"></Button>
                         </WrapPanel>
                     </StackPanel>
                 </ContentControl>
@@ -49,7 +49,7 @@
                             <Image x:Name="DesmumeIcon" Width="40" Height="40" DockPanel.Dock="Left" Margin="0,0,12,0" VerticalAlignment="Top"/>
                             <Border x:Name="DesmumeBadge" DockPanel.Dock="Right" Background="{DynamicResource Hub.ChipOn}" CornerRadius="{DynamicResource Hub.RadiusChip}"
                                     Padding="8,3" VerticalAlignment="Top">
-                                <TextBlock Text="STANDARD" FontFamily="{DynamicResource Hub.FontLabel}" FontSize="{DynamicResource Hub.SizeTag}" Foreground="{DynamicResource Hub.ChipOnInk}"/>
+                                <TextBlock Text="{local:L 'STANDARD', 'DEFAULT'}" FontFamily="{DynamicResource Hub.FontLabel}" FontSize="{DynamicResource Hub.SizeTag}" Foreground="{DynamicResource Hub.ChipOnInk}"/>
                             </Border>
                             <StackPanel>
                                 <TextBlock Text="DeSmuME" Style="{DynamicResource Hub.Heading}"/>
@@ -57,27 +57,27 @@
                             </StackPanel>
                         </DockPanel>
                         <TextBlock Style="{DynamicResource Hub.Body}" Margin="0,12,0,0"
-                                   Text="Die Alternative, falls ein Spiel in melonDS zickt. Speichert als .dsv – beim Wechsel nimmt MonHub den Spielstand mit."/>
+                                   Text="{local:L 'Die Alternative, falls ein Spiel in melonDS zickt. Speichert als .dsv – beim Wechsel nimmt MonHub den Spielstand mit.', 'The alternative if a game acts up in melonDS. Saves as .dsv – when you switch, MonHub takes the save along.'}"/>
                         <WrapPanel Margin="0,14,0,0">
-                            <Button x:Name="BtnDesmumeOpen" Style="{DynamicResource Hub.Key}" Click="DesmumeOpen_Click" Margin="0,0,8,6">Öffnen</Button>
-                            <Button x:Name="BtnDesmumeDefault" Style="{DynamicResource Hub.Ghost}" Click="DesmumeDefault_Click" Margin="0,0,4,6">Als Standard</Button>
-                            <Button Style="{DynamicResource Hub.Ghost}" Click="DesmumeSaves_Click" Margin="0,0,4,6">Spielstände</Button>
+                            <Button x:Name="BtnDesmumeOpen" Style="{DynamicResource Hub.Key}" Click="DesmumeOpen_Click" Margin="0,0,8,6" Content="{local:L 'Öffnen', 'Open'}"></Button>
+                            <Button x:Name="BtnDesmumeDefault" Style="{DynamicResource Hub.Ghost}" Click="DesmumeDefault_Click" Margin="0,0,4,6" Content="{local:L 'Als Standard', 'Make default'}"></Button>
+                            <Button Style="{DynamicResource Hub.Ghost}" Click="DesmumeSaves_Click" Margin="0,0,4,6" Content="{local:L 'Spielstände', 'Saves'}"></Button>
                         </WrapPanel>
                     </StackPanel>
                 </ContentControl>
             </Grid>
             <TextBlock Style="{DynamicResource Hub.Muted}" FontSize="12" Margin="0,10,0,0" MaxWidth="660" HorizontalAlignment="Left"
-                       Text="Standard heißt: Neue Runs starten dort. Gespeicherte Spiele öffnen immer in dem Emulator, in dem ihr Spielstand liegt."/>
+                       Text="{local:L 'Standard heißt: Neue Runs starten dort. Gespeicherte Spiele öffnen immer in dem Emulator, in dem ihr Spielstand liegt.', 'Default means: new runs start there. Saved games always open in the emulator that holds their save.'}"/>
 
             <!-- controls: keys, controller and speed for melonDS and mGBA -->
             <ContentControl x:Name="ControlsPanel" Style="{DynamicResource Hub.Panel}" Margin="0,22,0,0">
                 <StackPanel>
                     <DockPanel>
                         <TextBlock x:Name="TxtPad" DockPanel.Dock="Right" Style="{DynamicResource Hub.Muted}" FontSize="12" VerticalAlignment="Center"/>
-                        <TextBlock Text="STEUERUNG &amp; TEMPO" Style="{DynamicResource Hub.Label}"/>
+                        <TextBlock Text="{local:L 'STEUERUNG &amp; TEMPO', 'CONTROLS &amp; SPEED'}" Style="{DynamicResource Hub.Label}"/>
                     </DockPanel>
                     <TextBlock Style="{DynamicResource Hub.Muted}" FontSize="12" Margin="0,4,0,12"
-                               Text="Gilt für melonDS, mGBA und Azahar. Klick auf ein Feld und drück dann die neue Taste – auf der Tastatur oder am Controller (Esc bricht ab). Steuerkreuz: Pfeiltasten bzw. Stick und Steuerkreuz. DeSmuME hat eigene Einstellungen (Config → Control Config)."/>
+                               Text="{local:L 'Gilt für melonDS, mGBA und Azahar. Klick auf ein Feld und drück dann die neue Taste – auf der Tastatur oder am Controller (Esc bricht ab). Steuerkreuz: Pfeiltasten bzw. Stick und Steuerkreuz. DeSmuME hat eigene Einstellungen (Config → Control Config).', 'Applies to melonDS, mGBA and Azahar. Click a field, then press the new key – on the keyboard or the controller (Esc cancels). D-pad: arrow keys, or stick and D-pad. DeSmuME has its own settings (Config → Control Config).'}"/>
                     <ItemsControl x:Name="BindingList" Focusable="False">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -89,11 +89,11 @@
                                 <DockPanel Width="310" Margin="0,0,16,8">
                                     <TextBlock Text="{Binding Label}" Style="{DynamicResource Hub.Body}" Width="130" VerticalAlignment="Center"/>
                                     <Button Style="{DynamicResource Hub.Key}" Padding="8,4" MinWidth="84" Margin="0,0,6,0" Click="Key_Click" Tag="{Binding Id}"
-                                            ToolTip="Tastatur: klicken, dann Taste drücken">
+                                            ToolTip="{local:L 'Tastatur: klicken, dann Taste drücken', 'Keyboard: click, then press a key'}">
                                         <TextBlock Text="{Binding KeyText}"/>
                                     </Button>
                                     <Button Style="{DynamicResource Hub.Key}" Padding="8,4" MinWidth="72" Click="Pad_Click" Tag="{Binding Id}"
-                                            ToolTip="Controller: klicken, dann Knopf drücken" HorizontalAlignment="Left">
+                                            ToolTip="{local:L 'Controller: klicken, dann Knopf drücken', 'Controller: click, then press a button'}" HorizontalAlignment="Left">
                                         <TextBlock Text="{Binding PadText}"/>
                                     </Button>
                                 </DockPanel>
@@ -101,15 +101,15 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <WrapPanel Margin="0,8,0,0">
-                        <TextBlock Text="Schneller (halten)" Style="{DynamicResource Hub.Body}" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                        <TextBlock Text="{local:L 'Schneller (halten)', 'Faster (hold)'}" Style="{DynamicResource Hub.Body}" VerticalAlignment="Center" Margin="0,0,8,6"/>
                         <ComboBox x:Name="CmbFast" Width="84" Margin="0,0,24,6" SelectionChanged="Speed_Changed"/>
-                        <TextBlock Text="Tempo an/aus" Style="{DynamicResource Hub.Body}" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                        <TextBlock Text="{local:L 'Tempo an/aus', 'Speed on/off'}" Style="{DynamicResource Hub.Body}" VerticalAlignment="Center" Margin="0,0,8,6"/>
                         <ComboBox x:Name="CmbToggle" Width="84" Margin="0,0,24,6" SelectionChanged="Speed_Changed"/>
                     </WrapPanel>
                     <DockPanel Margin="0,10,0,0">
                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                            <Button Style="{DynamicResource Hub.Ghost}" Click="ControlsDefault_Click" Margin="0,0,8,0" VerticalAlignment="Center">Standard</Button>
-                            <Button x:Name="BtnControlsApply" Style="{DynamicResource Hub.PrimaryKey}" Padding="16,7" Click="ControlsApply_Click">Übernehmen</Button>
+                            <Button Style="{DynamicResource Hub.Ghost}" Click="ControlsDefault_Click" Margin="0,0,8,0" VerticalAlignment="Center" Content="{local:L 'Standard', 'Defaults'}"></Button>
+                            <Button x:Name="BtnControlsApply" Style="{DynamicResource Hub.PrimaryKey}" Padding="16,7" Click="ControlsApply_Click" Content="{local:L 'Übernehmen', 'Apply'}"></Button>
                         </StackPanel>
                         <TextBlock x:Name="TxtControls" Style="{DynamicResource Hub.Muted}" FontSize="12" VerticalAlignment="Center" Margin="0,0,12,0"/>
                     </DockPanel>
@@ -120,8 +120,8 @@
             <ContentControl Style="{DynamicResource Hub.Inset}" Margin="0,18,0,0">
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
-                        <Button x:Name="BtnBiosRemove" Style="{DynamicResource Hub.Ghost}" Click="BiosRemove_Click" Margin="0,0,6,0">Entfernen</Button>
-                        <Button Style="{DynamicResource Hub.Key}" Click="BiosImport_Click">BIOS einspielen …</Button>
+                        <Button x:Name="BtnBiosRemove" Style="{DynamicResource Hub.Ghost}" Click="BiosRemove_Click" Margin="0,0,6,0" Content="{local:L 'Entfernen', 'Remove'}"></Button>
+                        <Button Style="{DynamicResource Hub.Key}" Click="BiosImport_Click" Content="{local:L 'BIOS einspielen …', 'Add BIOS …'}"></Button>
                     </StackPanel>
                     <local:SpriteView Key="icon/chip" Width="32" Height="32" DockPanel.Dock="Left" Margin="0,0,12,0" VerticalAlignment="Center"/>
                     <StackPanel VerticalAlignment="Center">
@@ -137,8 +137,8 @@
                     <DockPanel>
                         <Image x:Name="MgbaIcon" Width="40" Height="40" DockPanel.Dock="Left" Margin="0,0,12,0" VerticalAlignment="Top"/>
                         <WrapPanel DockPanel.Dock="Right" VerticalAlignment="Top">
-                            <Button x:Name="BtnMgbaOpen" Style="{DynamicResource Hub.Key}" Click="MgbaOpen_Click" Margin="0,0,4,0">Öffnen</Button>
-                            <Button Style="{DynamicResource Hub.Ghost}" Click="MgbaSaves_Click">Spielstände</Button>
+                            <Button x:Name="BtnMgbaOpen" Style="{DynamicResource Hub.Key}" Click="MgbaOpen_Click" Margin="0,0,4,0" Content="{local:L 'Öffnen', 'Open'}"></Button>
+                            <Button Style="{DynamicResource Hub.Ghost}" Click="MgbaSaves_Click" Content="{local:L 'Spielstände', 'Saves'}"></Button>
                         </WrapPanel>
                         <StackPanel>
                             <TextBlock Text="mGBA" Style="{DynamicResource Hub.Heading}"/>
@@ -146,9 +146,9 @@
                         </StackPanel>
                     </DockPanel>
                     <TextBlock Style="{DynamicResource Hub.Body}" Margin="0,12,0,0"
-                               Text="Für Game Boy, Game Boy Color und GBA – Rot, Blau, Gelb bis Smaragd, Feuerrot und Blattgrün (Gen 1–3). Speichert in „Spielstände\mGBA“."/>
+                               Text="{local:L 'Für Game Boy, Game Boy Color und GBA – Rot, Blau, Gelb bis Smaragd, Feuerrot und Blattgrün (Gen 1–3). Speichert in „Spielstände\\mGBA“.', 'For Game Boy, Game Boy Color and GBA – Red, Blue, Yellow up to Emerald, FireRed and LeafGreen (Gen 1–3). Saves into “Spielstände\\mGBA”.'}"/>
                     <TextBlock Style="{DynamicResource Hub.Muted}" FontSize="12" Margin="0,6,0,0"
-                               Text="Tasten: Pfeiltasten = Steuerkreuz, X = A, Z = B, A / S = L / R, Enter = Start, Rücktaste = Select. Rare Candy: 99 Sonderbonbons liegen zu Spielbeginn im PC."/>
+                               Text="{local:L 'Tasten: Pfeiltasten = Steuerkreuz, X = A, Z = B, A / S = L / R, Enter = Start, Rücktaste = Select. Rare Candy: 99 Sonderbonbons liegen zu Spielbeginn im PC.', 'Keys: arrow keys = D-pad, X = A, Z = B, A / S = L / R, Enter = Start, Backspace = Select. Rare Candy: 99 Rare Candies are in the PC at the start of the game.'}"/>
                 </StackPanel>
             </ContentControl>
 
@@ -158,8 +158,8 @@
                     <DockPanel>
                         <Image x:Name="AzaharIcon" Width="40" Height="40" DockPanel.Dock="Left" Margin="0,0,12,0" VerticalAlignment="Top"/>
                         <WrapPanel DockPanel.Dock="Right" VerticalAlignment="Top">
-                            <Button x:Name="BtnAzaharOpen" Style="{DynamicResource Hub.Key}" Click="AzaharOpen_Click" Margin="0,0,4,0">Öffnen</Button>
-                            <Button Style="{DynamicResource Hub.Ghost}" Click="AzaharSaves_Click">Spielstände</Button>
+                            <Button x:Name="BtnAzaharOpen" Style="{DynamicResource Hub.Key}" Click="AzaharOpen_Click" Margin="0,0,4,0" Content="{local:L 'Öffnen', 'Open'}"></Button>
+                            <Button Style="{DynamicResource Hub.Ghost}" Click="AzaharSaves_Click" Content="{local:L 'Spielstände', 'Saves'}"></Button>
                         </WrapPanel>
                         <StackPanel>
                             <TextBlock Text="Azahar" Style="{DynamicResource Hub.Heading}"/>
@@ -167,11 +167,11 @@
                         </StackPanel>
                     </DockPanel>
                     <TextBlock Style="{DynamicResource Hub.Body}" Margin="0,12,0,0"
-                               Text="Für 3DS – X/Y, Omega Rubin/Alpha Saphir, Sonne/Mond, Ultrasonne/Ultramond (Gen 6–7). Jedes Spiel und jeder Run bekommt eine eigene SD-Karte in „Spielstände\Azahar“, damit sich Runs desselben Spiels nicht den Spielstand teilen."/>
+                               Text="{local:L 'Für 3DS – X/Y, Omega Rubin/Alpha Saphir, Sonne/Mond, Ultrasonne/Ultramond (Gen 6–7). Jedes Spiel und jeder Run bekommt eine eigene SD-Karte in „Spielstände\\Azahar“, damit sich Runs desselben Spiels nicht den Spielstand teilen.', 'For 3DS – X/Y, Omega Ruby/Alpha Sapphire, Sun/Moon, Ultra Sun/Ultra Moon (Gen 6–7). Every game and every run gets its own SD card in “Spielstände\\Azahar”, so runs of the same game don’t share a save.'}"/>
                     <TextBlock Style="{DynamicResource Hub.Muted}" FontSize="12" Margin="0,6,0,0"
-                               Text="Nur entschlüsselte Spiele (.3ds, .cci, .cxi). Tasten und Controller wie oben (Pfeiltasten bzw. linker Stick = Schiebepad, „Tempo an/aus“ = Turbo). Ist beim Start ein Controller angeschlossen, nimmt Azahar ihn – sonst die Tastatur. Rare Candy: 999 Sonderbonbons in der Medizin-Tasche."/>
+                               Text="{local:L 'Nur entschlüsselte Spiele (.3ds, .cci, .cxi). Tasten und Controller wie oben (Pfeiltasten bzw. linker Stick = Schiebepad, „Tempo an/aus“ = Turbo). Ist beim Start ein Controller angeschlossen, nimmt Azahar ihn – sonst die Tastatur. Rare Candy: 999 Sonderbonbons in der Medizin-Tasche.', 'Decrypted games only (.3ds, .cci, .cxi). Keys and controller as above (arrow keys or left stick = Circle Pad, “Speed on/off” = turbo). If a controller is connected at start, Azahar uses it – otherwise the keyboard. Rare Candy: 999 Rare Candies in the Medicine pocket.'}"/>
                     <CheckBox x:Name="Chk60Fps" Margin="0,10,0,0" Checked="Fps_Changed" Unchecked="Fps_Changed" Foreground="{DynamicResource Hub.Ink}">
-                        <TextBlock TextWrapping="Wrap" Text="60 FPS statt 30 – flüssiger, aber das ganze Spiel läuft doppelt so schnell. R halten = normales Tempo. Gilt ab dem nächsten Spielstart."/>
+                        <TextBlock TextWrapping="Wrap" Text="{local:L '60 FPS statt 30 – flüssiger, aber das ganze Spiel läuft doppelt so schnell. R halten = normales Tempo. Gilt ab dem nächsten Spielstart.', '60 FPS instead of 30 – smoother, but the whole game runs twice as fast. Hold R = normal speed. Applies from the next game start.'}"/>
                     </CheckBox>
                 </StackPanel>
             </ContentControl>

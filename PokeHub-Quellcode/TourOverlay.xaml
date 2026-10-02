@@ -52,7 +52,7 @@
                                 <Ellipse Stroke="{DynamicResource Hub.Accent}" StrokeThickness="1.5"/>
                             </Grid>
                             <Button x:Name="BtnSkip" DockPanel.Dock="Right" Style="{DynamicResource Hub.Ghost}" Padding="8,3" FontSize="12"
-                                    VerticalAlignment="Top" Margin="8,-4,-8,0" Click="Skip_Click" ToolTip="Esc">Tour überspringen</Button>
+                                    VerticalAlignment="Top" Margin="8,-4,-8,0" Click="Skip_Click" ToolTip="Esc" Content="{local:L 'Tour überspringen', 'Skip tour'}"></Button>
                             <StackPanel VerticalAlignment="Center">
                                 <TextBlock Text="PORYGON" Style="{DynamicResource Hub.Label}" FontSize="10"/>
                                 <TextBlock x:Name="TxtStep" Style="{DynamicResource Hub.Muted}" FontSize="11.5" Margin="0,1,0,0"/>
@@ -66,8 +66,8 @@
                         <TextBlock x:Name="TxtBody" Style="{DynamicResource Hub.Body}" Margin="0,6,0,0" TextWrapping="Wrap" LineHeight="20"/>
 
                         <DockPanel Margin="0,16,0,0" LastChildFill="False">
-                            <Button x:Name="BtnBack" DockPanel.Dock="Left" Style="{DynamicResource Hub.Ghost}" Click="Back_Click" Padding="10,6">Zurück</Button>
-                            <Button x:Name="BtnNext" DockPanel.Dock="Right" Style="{DynamicResource Hub.PrimaryKey}" Click="Next_Click" MinWidth="128" MinHeight="38">Weiter →</Button>
+                            <Button x:Name="BtnBack" DockPanel.Dock="Left" Style="{DynamicResource Hub.Ghost}" Click="Back_Click" Padding="10,6" Content="{local:L 'Zurück', 'Back'}"></Button>
+                            <Button x:Name="BtnNext" DockPanel.Dock="Right" Style="{DynamicResource Hub.PrimaryKey}" Click="Next_Click" MinWidth="128" MinHeight="38" Content="{local:L 'Weiter →', 'Next →'}"></Button>
                             <Button x:Name="BtnSecond" DockPanel.Dock="Right" Style="{DynamicResource Hub.Ghost}" Click="Second_Click" Margin="0,0,8,0" Padding="10,6" Visibility="Collapsed"/>
                         </DockPanel>
                     </StackPanel>

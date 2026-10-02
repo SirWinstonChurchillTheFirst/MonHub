@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:PokeHub"
-        Title="Importieren" Style="{StaticResource Hub.DialogWindow}" Width="900" Height="760" MinWidth="720" MinHeight="560"
+        Title="{local:L 'Importieren', 'Import'}" Style="{StaticResource Hub.DialogWindow}" Width="900" Height="760" MinWidth="720" MinHeight="560"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="{DynamicResource Hub.Dialog}"
         Icon="{StaticResource PokeballImage}" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True">
     <DockPanel Margin="26,20,26,20">
@@ -11,18 +11,18 @@
             <local:SpriteView Key="icon/import" DockPanel.Dock="Left" Width="32" Height="32" VerticalAlignment="Top" Margin="0,4,12,0"/>
             <StackPanel>
                 <TextBlock Text="IMPORT" Style="{DynamicResource Hub.Label}"/>
-                <TextBlock Text="Vom alten Emulator holen" Style="{DynamicResource Hub.Title}" Margin="0,4,0,2"/>
+                <TextBlock Text="{local:L 'Vom alten Emulator holen', 'Bring over from your old emulator'}" Style="{DynamicResource Hub.Title}" Margin="0,4,0,2"/>
                 <TextBlock Style="{DynamicResource Hub.Muted}"
-                           Text="Übernimm ROMs und Spielstände von deinem bisherigen Emulator. Es wird nur kopiert – deine Originaldateien bleiben unverändert, und im MonHub wird nichts überschrieben."/>
+                           Text="{local:L 'Übernimm ROMs und Spielstände von deinem bisherigen Emulator. Es wird nur kopiert – deine Originaldateien bleiben unverändert, und im MonHub wird nichts überschrieben.', 'Take over ROMs and saves from the emulator you used so far. Everything is only copied – your original files stay untouched, and nothing in MonHub is overwritten.'}"/>
             </StackPanel>
         </DockPanel>
 
         <!-- bottom: result + buttons -->
         <DockPanel DockPanel.Dock="Bottom" Margin="0,14,0,0">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                <Button Style="{DynamicResource Hub.Ghost}" IsCancel="True" Margin="0,0,10,0" VerticalAlignment="Center" Click="Close_Click">Schließen</Button>
+                <Button Style="{DynamicResource Hub.Ghost}" IsCancel="True" Margin="0,0,10,0" VerticalAlignment="Center" Click="Close_Click" Content="{local:L 'Schließen', 'Close'}"></Button>
                 <Button x:Name="BtnImport" Style="{DynamicResource Hub.PrimaryKey}" Click="Import_Click">
-                    <TextBlock x:Name="TxtImportButton" Text="Importieren"/>
+                    <TextBlock x:Name="TxtImportButton" Text="{local:L 'Importieren', 'Import'}"/>
                 </Button>
             </StackPanel>
             <!-- while copying the die wobbles, when done it settles -->
@@ -51,17 +51,17 @@
 
             <!-- sources -->
             <DockPanel Margin="0,18,0,6">
-                <Button DockPanel.Dock="Right" Style="{DynamicResource Hub.Key}" Click="AddFolder_Click">Ordner hinzufügen …</Button>
-                <TextBlock Text="WOHER?" Style="{DynamicResource Hub.Label}" VerticalAlignment="Center"/>
+                <Button DockPanel.Dock="Right" Style="{DynamicResource Hub.Key}" Click="AddFolder_Click" Content="{local:L 'Ordner hinzufügen …', 'Add folder …'}"></Button>
+                <TextBlock Text="{local:L 'WOHER?', 'FROM WHERE?'}" Style="{DynamicResource Hub.Label}" VerticalAlignment="Center"/>
             </DockPanel>
             <ContentControl Grid.Row="1" Style="{DynamicResource Hub.Inset}" MinHeight="54">
                 <Grid>
                     <StackPanel x:Name="SearchingPanel" Orientation="Horizontal" VerticalAlignment="Center">
                         <ProgressBar IsIndeterminate="True" Width="120" Height="4" VerticalAlignment="Center"/>
-                        <TextBlock Text="Suche nach Emulatoren auf diesem PC …" Style="{DynamicResource Hub.Muted}" Margin="12,0,0,0"/>
+                        <TextBlock Text="{local:L 'Suche nach Emulatoren auf diesem PC …', 'Looking for emulators on this PC …'}" Style="{DynamicResource Hub.Muted}" Margin="12,0,0,0"/>
                     </StackPanel>
                     <TextBlock x:Name="TxtNoSources" Visibility="Collapsed" VerticalAlignment="Center" Style="{DynamicResource Hub.Muted}"
-                               Text="Kein Emulator automatisch gefunden. Wähle mit „Ordner hinzufügen …“ den Ordner deines Emulators oder deiner ROMs."/>
+                               Text="{local:L 'Kein Emulator automatisch gefunden. Wähle mit „Ordner hinzufügen …“ den Ordner deines Emulators oder deiner ROMs.', 'No emulator found automatically. Use “Add folder …” to choose the folder of your emulator or your ROMs.'}"/>
                     <ItemsControl x:Name="SourceList" Focusable="False">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -81,7 +81,7 @@
             <!-- found files -->
             <DockPanel Grid.Row="2" Margin="0,18,0,6">
                 <TextBlock x:Name="TxtSummary" DockPanel.Dock="Right" Style="{DynamicResource Hub.Muted}" VerticalAlignment="Center"/>
-                <TextBlock Text="GEFUNDEN" Style="{DynamicResource Hub.Label}" VerticalAlignment="Center"/>
+                <TextBlock Text="{local:L 'GEFUNDEN', 'FOUND'}" Style="{DynamicResource Hub.Label}" VerticalAlignment="Center"/>
             </DockPanel>
             <Border Grid.Row="3" Background="{DynamicResource Hub.Surface}" BorderBrush="{DynamicResource Hub.Line}" BorderThickness="1"
                     CornerRadius="{DynamicResource Hub.RadiusInner}" Padding="2">
@@ -95,9 +95,9 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="Art" Width="160" DisplayMemberBinding="{Binding KindText}"/>
-                            <GridViewColumn Header="Datei" Width="330" DisplayMemberBinding="{Binding Name}"/>
-                            <GridViewColumn Header="Größe" Width="80" DisplayMemberBinding="{Binding SizeText}"/>
+                            <GridViewColumn Header="{local:L 'Art', 'Type'}" Width="160" DisplayMemberBinding="{Binding KindText}"/>
+                            <GridViewColumn Header="{local:L 'Datei', 'File'}" Width="330" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="{local:L 'Größe', 'Size'}" Width="80" DisplayMemberBinding="{Binding SizeText}"/>
                             <GridViewColumn Header="Status" Width="180" DisplayMemberBinding="{Binding Status}"/>
                         </GridView>
                     </ListView.View>

@@ -136,7 +136,7 @@
                 <local:SpriteView Key="species/0094" Width="38" Height="38" DockPanel.Dock="Right" VerticalAlignment="Center"
                                   Stretch="Uniform"/>
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="SPUK" FontFamily="Constantia" FontWeight="Bold" FontSize="10.5" Foreground="#B28DFF"/>
+                    <TextBlock Text="{local:L 'SPUK', 'SPOOKY'}" FontFamily="Constantia" FontWeight="Bold" FontSize="10.5" Foreground="#B28DFF"/>
                     <TextBlock Text="MonHub" FontFamily="Constantia" FontWeight="Bold" FontSize="23" Foreground="#FFFFFF"/>
                 </StackPanel>
             </DockPanel>

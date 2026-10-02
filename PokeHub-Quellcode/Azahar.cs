@@ -109,7 +109,7 @@ public static class Azahar3ds
 
     public static string CheatText(string code) => $"{Marker}\n*citra_enabled\n{code}\n";
 
-    const string FpsName = "[60 FPS, R halten = 30 FPS (MonHub)]";
+    static string FpsName => Txt.L("[60 FPS, R halten = 30 FPS (MonHub)]", "[60 FPS, hold R = 30 FPS (MonHub)]");
 
     /// <summary>
     /// 60 FPS (codes by Reshiban, 60FPS-AR-CHEATS-3DS; v1.0 addresses). These games tie their speed to the frame rate, so
@@ -145,13 +145,16 @@ public static class Azahar3ds
     public static string? Prepare(string rom)
     {
         var info = Rom3ds.Read(rom);
-        if (info == null) return "Das ist kein 3DS-Spiel, das Azahar starten kann.";
+        if (info == null) return Txt.L("Das ist kein 3DS-Spiel, das Azahar starten kann.", "This isn't a 3DS game Azahar can start.");
         if (info.Encrypted)
-            return "Dieses 3DS-Spiel ist noch verschlüsselt – Azahar startet nur entschlüsselte Spiele (.3ds/.cci/.cxi).";
+            return Txt.L("Dieses 3DS-Spiel ist noch verschlüsselt – Azahar startet nur entschlüsselte Spiele (.3ds/.cci/.cxi).",
+                "This 3DS game is still encrypted – Azahar only starts decrypted games (.3ds/.cci/.cxi).");
 
         if (TooDeep)
-            return $"Der MonHub-Ordner liegt zu tief für 3DS-Spiele:\n{HubPaths.Root}\n\nDie 3DS-Spiele legen sehr verschachtelte Ordner an, und Windows erlaubt nur 260 Zeichen pro Pfad. " +
-                   "Installier MonHub bitte in einen kürzeren Ordner, z. B. C:\\MonHub.";
+            return Txt.L($"Der MonHub-Ordner liegt zu tief für 3DS-Spiele:\n{HubPaths.Root}\n\nDie 3DS-Spiele legen sehr verschachtelte Ordner an, und Windows erlaubt nur 260 Zeichen pro Pfad. " +
+                         "Installier MonHub bitte in einen kürzeren Ordner, z. B. C:\\MonHub.",
+                         $"The MonHub folder is too deep for 3DS games:\n{HubPaths.Root}\n\n3DS games create deeply nested folders, and Windows only allows 260 characters per path. " +
+                         "Please install MonHub into a shorter folder, e.g. C:\\MonHub.");
 
         var name = Path.GetFileNameWithoutExtension(rom);
         Directory.CreateDirectory(SdCardOf(name));

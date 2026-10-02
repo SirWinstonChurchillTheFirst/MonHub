@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
+using Txt = PokeHub.Txt;
+
 namespace RandoApp;
 
 /// <summary>One option of a randomizer settings file (.rnqs), as reported by RandoHelper settings-dump.</summary>
@@ -31,14 +33,14 @@ public static class RandoSettingsFile
         args.AddRange(changes.Select(c => $"{c.Key}={c.Value}"));
         var output = await RunHelperAsync(cfg, [.. args]);
         if (!output.Contains("OK"))
-            throw new InvalidOperationException("Speichern fehlgeschlagen:\n" + output);
+            throw new InvalidOperationException(Txt.L("Speichern fehlgeschlagen:\n", "Saving failed:\n") + output);
     }
 
     static async Task<string> RunHelperAsync(AppConfig cfg, params string[] args)
     {
         var helperJar = Path.Combine(AppContext.BaseDirectory, "RandoHelper.jar");
-        if (!File.Exists(helperJar)) throw new FileNotFoundException("RandoHelper.jar fehlt neben der App.", helperJar);
-        if (!File.Exists(cfg.RandomizerJar)) throw new FileNotFoundException("PokeRandoZX.jar nicht gefunden.", cfg.RandomizerJar);
+        if (!File.Exists(helperJar)) throw new FileNotFoundException(Txt.L("RandoHelper.jar fehlt neben der App.", "RandoHelper.jar is missing next to the app."), helperJar);
+        if (!File.Exists(cfg.RandomizerJar)) throw new FileNotFoundException(Txt.L("PokeRandoZX.jar nicht gefunden.", "PokeRandoZX.jar not found."), cfg.RandomizerJar);
 
         var psi = new ProcessStartInfo(cfg.ResolveJava())
         {
@@ -58,7 +60,7 @@ public static class RandoSettingsFile
         var stderr = proc.StandardError.ReadToEndAsync();
         await proc.WaitForExitAsync();
         if (proc.ExitCode != 0)
-            throw new InvalidOperationException((await stderr).Trim() is { Length: > 0 } err ? err : $"Java-Helfer beendet mit Code {proc.ExitCode}");
+            throw new InvalidOperationException((await stderr).Trim() is { Length: > 0 } err ? err : Txt.L($"Java-Helfer beendet mit Code {proc.ExitCode}", $"Java helper ended with code {proc.ExitCode}"));
         return await stdout;
     }
 }

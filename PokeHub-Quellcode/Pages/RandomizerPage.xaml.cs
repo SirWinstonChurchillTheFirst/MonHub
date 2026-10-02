@@ -34,18 +34,18 @@ public class RunRom(RomInfo rom)
 
     public string Detail => Rom.Folder.Length > 0 ? $"{Card.SystemText} · {Rom.Folder}" : Card.SystemText;
 
-    public string Edition => Card.Look.Version.Length > 0 ? Card.Look.Version : "Andere";
+    public string Edition => Card.Look.Version.Length > 0 ? Card.Look.Version : Txt.L("Andere", "Other");
 
-    public string Language => Is3DS ? "Mehrsprachig" : GameLook.Region(Rom.GameCode) switch
+    public string Language => Is3DS ? Txt.L("Mehrsprachig", "Multilingual") : GameLook.Region(Rom.GameCode) switch
     {
-        "DE" => "Deutsch",
-        "EN" => "Englisch",
-        "FR" => "Französisch",
-        "IT" => "Italienisch",
-        "ES" => "Spanisch",
-        "JP" => "Japanisch",
-        "KR" => "Koreanisch",
-        _ => "Unbekannt",
+        "DE" => Txt.L("Deutsch", "German"),
+        "EN" => Txt.L("Englisch", "English"),
+        "FR" => Txt.L("Französisch", "French"),
+        "IT" => Txt.L("Italienisch", "Italian"),
+        "ES" => Txt.L("Spanisch", "Spanish"),
+        "JP" => Txt.L("Japanisch", "Japanese"),
+        "KR" => Txt.L("Koreanisch", "Korean"),
+        _ => Txt.L("Unbekannt", "Unknown"),
     };
 }
 
@@ -147,14 +147,15 @@ public partial class RandomizerPage : UserControl, IHubPage
     {
         var previous = SelectedRom?.Path ?? _cfg.LastRom;
         _roms = roms;
-        FillFilter(CmbSystem, "Alle Systeme", roms.Select(r => r.Card.SystemText));
-        FillFilter(CmbEdition, "Alle Editionen", roms.Select(r => r.Edition));
-        FillFilter(CmbLanguage, "Alle Sprachen", roms.Select(r => r.Language));
+        FillFilter(CmbSystem, Txt.L("Alle Systeme", "All systems"), roms.Select(r => r.Card.SystemText));
+        FillFilter(CmbEdition, Txt.L("Alle Editionen", "All editions"), roms.Select(r => r.Edition));
+        FillFilter(CmbLanguage, Txt.L("Alle Sprachen", "All languages"), roms.Select(r => r.Language));
         TxtCount.Text = roms.Count switch
         {
-            0 => "Noch keine Originale im ROM-Ordner.",
-            1 => "1 Original im ROM-Ordner – daraus wird ein neuer Run.",
-            _ => $"{roms.Count} Originale im ROM-Ordner – wähl eins, daraus wird ein neuer Run.",
+            0 => Txt.L("Noch keine Originale im ROM-Ordner.", "No originals in the ROM folder yet."),
+            1 => Txt.L("1 Original im ROM-Ordner – daraus wird ein neuer Run.", "1 original in the ROM folder – it becomes a new run."),
+            _ => Txt.L($"{roms.Count} Originale im ROM-Ordner – wähl eins, daraus wird ein neuer Run.",
+                       $"{roms.Count} originals in the ROM folder – pick one and it becomes a new run."),
         };
         ShowRoms(previous);
     }
@@ -193,8 +194,8 @@ public partial class RandomizerPage : UserControl, IHubPage
         NoRoms.Visibility = visible.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         BtnOpenRoms.Visibility = _roms.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         TxtNoRoms.Text = _roms.Count == 0
-            ? "Leg deine Spiele in den ROM-Ordner – daraus mischt der Randomizer neue Runs."
-            : "Kein Original passt zu Filter und Suche.";
+            ? Txt.L("Leg deine Spiele in den ROM-Ordner – daraus mischt der Randomizer neue Runs.", "Put your games into the ROM folder – the randomizer mixes new runs from them.")
+            : Txt.L("Kein Original passt zu Filter und Suche.", "No original matches the filter and search.");
     }
 
     static bool StartsAWord(string text, string word) =>
@@ -301,7 +302,7 @@ public partial class RandomizerPage : UserControl, IHubPage
         try
         {
             if (text.Length > 0) RareCandyCodes.ParseLines(text);
-            TxtCustomCheatInfo.Text = text.Length > 0 ? "Eigener Code wird benutzt." : "Leer = eingebauter Code.";
+            TxtCustomCheatInfo.Text = text.Length > 0 ? Txt.L("Eigener Code wird benutzt.", "Your own code is used.") : Txt.L("Leer = eingebauter Code.", "Empty = built-in code.");
             TxtCustomCheatInfo.SetResourceReference(TextBlock.ForegroundProperty, "Hub.InkMuted");
             if (text.Length > 0) _cfg.CustomCheats[rom.GameCode] = text;
             else _cfg.CustomCheats.Remove(rom.GameCode);
@@ -330,11 +331,11 @@ public partial class RandomizerPage : UserControl, IHubPage
     {
         if (!File.Exists(_cfg.SettingsFile))
         {
-            SetStatus("Keine Settings-Datei ausgewählt.", "Hub.Danger");
+            SetStatus(Txt.L("Keine Settings-Datei ausgewählt.", "No settings file selected."), "Hub.Danger");
             return;
         }
         BtnEditPreset.IsEnabled = false;
-        SetStatus($"Lade {Path.GetFileName(_cfg.SettingsFile)} …");
+        SetStatus(Txt.L($"Lade {Path.GetFileName(_cfg.SettingsFile)} …", $"Loading {Path.GetFileName(_cfg.SettingsFile)} …"));
         List<RandoOption> options;
         try
         {
@@ -342,7 +343,7 @@ public partial class RandomizerPage : UserControl, IHubPage
         }
         catch (Exception ex)
         {
-            SetStatus("Settings-Datei konnte nicht gelesen werden: " + ex.Message, "Hub.Danger");
+            SetStatus(Txt.L("Settings-Datei konnte nicht gelesen werden: ", "The settings file couldn't be read: ") + ex.Message, "Hub.Danger");
             return;
         }
         finally
@@ -361,8 +362,9 @@ public partial class RandomizerPage : UserControl, IHubPage
             LoadPresets();
             _loading = false;
         }
-        SetStatus(isNew ? $"Neue Settings-Datei gespeichert und ausgewählt: {Path.GetFileName(dlg.SavedPath)}"
-                        : $"{Path.GetFileName(dlg.SavedPath)} gespeichert.", "Hub.Good");
+        var saved = Path.GetFileName(dlg.SavedPath);
+        SetStatus(isNew ? Txt.L($"Neue Settings-Datei gespeichert und ausgewählt: {saved}", $"New settings file saved and selected: {saved}")
+                        : Txt.L($"{saved} gespeichert.", $"{saved} saved."), "Hub.Good");
     }
 
     async void Randomize_Click(object sender, RoutedEventArgs e) => await RandomizeAsync();
@@ -396,7 +398,8 @@ public partial class RandomizerPage : UserControl, IHubPage
             var drive = new DriveInfo(Path.GetPathRoot(Path.GetFullPath(outPath))!);
             if (drive.IsReady && drive.AvailableFreeSpace < need)
             {
-                SetStatus($"Nicht genug Platz auf {drive.Name}: der neue Run braucht etwa {need >> 20} MB, frei sind {drive.AvailableFreeSpace >> 20} MB.", "Hub.Danger");
+                SetStatus(Txt.L($"Nicht genug Platz auf {drive.Name}: der neue Run braucht etwa {need >> 20} MB, frei sind {drive.AvailableFreeSpace >> 20} MB.",
+                    $"Not enough space on {drive.Name}: the new run needs about {need >> 20} MB, {drive.AvailableFreeSpace >> 20} MB are free."), "Hub.Danger");
                 return false;
             }
         }
@@ -409,10 +412,11 @@ public partial class RandomizerPage : UserControl, IHubPage
         ResultPanel.Visibility = Visibility.Collapsed;
         TxtLog.Clear();
         SetStatus("");
-        TxtBusy.Text = $"Mische {Path.GetFileNameWithoutExtension(rom.Path)} … der Ball wackelt!";
+        var name = Path.GetFileNameWithoutExtension(rom.Path);
+        TxtBusy.Text = Txt.L($"Mische {name} … der Würfel rollt!", $"Mixing {name} … the die is rolling!");
         Log($"ROM:      {rom.Path}");
         Log($"Settings: {_cfg.SettingsFile}");
-        Log($"Ausgabe:  {outPath}");
+        Log(Txt.L($"Ausgabe:  {outPath}", $"Output:   {outPath}"));
         Log("");
         try
         {
@@ -424,7 +428,8 @@ public partial class RandomizerPage : UserControl, IHubPage
             if (exit != 0 || !File.Exists(outPath))
             {
                 RemovePartial(outPath);
-                SetStatus($"Oh nein, es ist entkommen! Der Randomizer ist fehlgeschlagen (Exit-Code {exit}). Details im Log.", "Hub.Danger");
+                SetStatus(Txt.L($"Oh nein, es ist entkommen! Der Randomizer ist fehlgeschlagen (Exit-Code {exit}). Details im Log.",
+                    $"Oh no, it got away! The randomizer failed (exit code {exit}). Details in the log."), "Hub.Danger");
                 LogExpander.IsExpanded = true;
                 return false;
             }
@@ -446,9 +451,9 @@ public partial class RandomizerPage : UserControl, IHubPage
         }
         catch (Exception ex)
         {
-            Log("FEHLER: " + ex);
+            Log(Txt.L("FEHLER: ", "ERROR: ") + ex);
             LogExpander.IsExpanded = true;
-            SetStatus("Fehler: " + ex.Message, "Hub.Danger");
+            SetStatus(Txt.L("Fehler: ", "Error: ") + ex.Message, "Hub.Danger");
             return false;
         }
         finally
@@ -468,7 +473,7 @@ public partial class RandomizerPage : UserControl, IHubPage
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
-                Log($"Konnte {Path.GetFileName(file)} nicht entfernen: {ex.Message}");
+                Log(Txt.L($"Konnte {Path.GetFileName(file)} nicht entfernen: {ex.Message}", $"Couldn't remove {Path.GetFileName(file)}: {ex.Message}"));
             }
         }
     }
@@ -480,7 +485,7 @@ public partial class RandomizerPage : UserControl, IHubPage
         var dlg = new NameDialog(current, name => name != current && RandoRun.IsNameTaken(_cfg, name, ext, emu)) { Owner = Window.GetWindow(this) };
         if (dlg.ShowDialog() != true || dlg.ChosenName == current)
         {
-            Log($"Name beibehalten: {current}{ext}");
+            Log(Txt.L($"Name beibehalten: {current}{ext}", $"Name kept: {current}{ext}"));
             return outPath;
         }
         return run.Rename(outPath, dlg.ChosenName);

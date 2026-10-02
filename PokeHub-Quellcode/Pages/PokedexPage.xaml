@@ -21,7 +21,7 @@
                 <TextBox x:Name="TxtSearch" Style="{DynamicResource Hub.Search}" TextChanged="Search_TextChanged"/>
                 <TextBlock Text="&#xE721;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Margin="11,0,0,0" VerticalAlignment="Center"
                            Foreground="{DynamicResource Hub.InkMuted}" IsHitTestVisible="False"/>
-                <TextBlock x:Name="SearchHint" Text="Name oder Nummer …" Margin="31,0,0,0" VerticalAlignment="Center"
+                <TextBlock x:Name="SearchHint" Text="{local:L 'Name oder Nummer …', 'Name or number …'}" Margin="31,0,0,0" VerticalAlignment="Center"
                            Style="{DynamicResource Hub.Muted}" IsHitTestVisible="False"/>
             </Grid>
             <StackPanel>
@@ -34,18 +34,18 @@
         <!-- which save, which Pokémon -->
         <WrapPanel x:Name="FilterBar" Grid.Row="1" Margin="0,16,0,4">
             <ComboBox x:Name="CmbSave" MinWidth="260" MaxWidth="400" Margin="0,0,14,8" SelectionChanged="Save_Changed"
-                      ToolTip="Wessen Dex – jeder Spielstand hat seinen eigenen"/>
+                      ToolTip="{local:L 'Wessen Dex – jeder Spielstand hat seinen eigenen', 'Whose Dex – every save has its own'}"/>
             <RadioButton x:Name="FilterAll" Style="{DynamicResource Hub.Chip}" GroupName="DexFilter" Margin="0,0,6,8" IsChecked="True" Checked="Filter_Changed">
-                <TextBlock x:Name="TxtFilterAll" Text="Alle"/>
+                <TextBlock x:Name="TxtFilterAll" Text="{local:L 'Alle', 'All'}"/>
             </RadioButton>
             <RadioButton x:Name="FilterCaught" Style="{DynamicResource Hub.Chip}" GroupName="DexFilter" Margin="0,0,6,8" Checked="Filter_Changed">
-                <TextBlock x:Name="TxtFilterCaught" Text="Gefangen"/>
+                <TextBlock x:Name="TxtFilterCaught" Text="{local:L 'Gefangen', 'Caught'}"/>
             </RadioButton>
             <RadioButton x:Name="FilterSeen" Style="{DynamicResource Hub.Chip}" GroupName="DexFilter" Margin="0,0,6,8" Checked="Filter_Changed">
-                <TextBlock x:Name="TxtFilterSeen" Text="Nur gesehen"/>
+                <TextBlock x:Name="TxtFilterSeen" Text="{local:L 'Nur gesehen', 'Seen only'}"/>
             </RadioButton>
             <RadioButton x:Name="FilterMissing" Style="{DynamicResource Hub.Chip}" GroupName="DexFilter" Margin="0,0,6,8" Checked="Filter_Changed">
-                <TextBlock x:Name="TxtFilterMissing" Text="Fehlen"/>
+                <TextBlock x:Name="TxtFilterMissing" Text="{local:L 'Fehlen', 'Missing'}"/>
             </RadioButton>
         </WrapPanel>
 

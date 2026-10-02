@@ -43,7 +43,7 @@ public partial class App : Application
             _reporting = true;
             try
             {
-                MessageBox.Show(e.Exception.Message + $"\n\nDetails: {log}", "MonHub – Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(e.Exception.Message + $"\n\nDetails: {log}", Txt.L("MonHub – Fehler", "MonHub – error"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -55,6 +55,17 @@ public partial class App : Application
     }
 
     static Mutex? _single;
+
+    /// <summary>Starts MonHub again (e.g. in another language) and closes this one.</summary>
+    public static void Restart()
+    {
+        // the new MonHub must not find this one still "running" and just bring it to the front
+        try { _single?.ReleaseMutex(); } catch (ApplicationException) { /* not ours (any more) */ }
+        _single?.Dispose();
+        _single = null;
+        if (Environment.ProcessPath is { } exe) System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(exe) { UseShellExecute = true });
+        Current.Shutdown();
+    }
 
     /// <summary>
     /// One MonHub per installation: two would both write the emulators' settings and watch the same folders. A second
@@ -120,6 +131,7 @@ public partial class App : Application
         // the close button of MonHub's own title bars (Hub.DialogWindow)
         System.Windows.Input.CommandManager.RegisterClassCommandBinding(typeof(Window),
             new System.Windows.Input.CommandBinding(SystemCommands.CloseWindowCommand, (s, _) => SystemCommands.CloseWindow((Window)s)));
+        Txt.ApplyCulture();
         Species.Register();
         HubAnim.RegisterButtonPress();
         var config = HubConfig.Load();

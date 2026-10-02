@@ -4,12 +4,12 @@
              xmlns:local="clr-namespace:PokeHub">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="30,8,30,28">
-            <TextBlock Text="OPTIONEN" Style="{DynamicResource Hub.Label}"/>
-            <TextBlock Text="Dein MonHub" Style="{DynamicResource Hub.Title}" Margin="0,4,0,2"/>
-            <TextBlock Style="{DynamicResource Hub.Muted}" Text="Aussehen, Bewegung, dein Name – und wo alles liegt."/>
+            <TextBlock Text="{local:L 'OPTIONEN', 'OPTIONS'}" Style="{DynamicResource Hub.Label}"/>
+            <TextBlock Text="{local:L 'Dein MonHub', 'Your MonHub'}" Style="{DynamicResource Hub.Title}" Margin="0,4,0,2"/>
+            <TextBlock Style="{DynamicResource Hub.Muted}" Text="{local:L 'Aussehen, Bewegung, dein Name – und wo alles liegt.', 'Look, motion, language, your name – and where everything is.'}"/>
 
             <!-- ===== look ===== -->
-            <TextBlock Text="AUSSEHEN" Style="{DynamicResource Hub.Label}" Margin="0,24,0,10"/>
+            <TextBlock Text="{local:L 'AUSSEHEN', 'LOOK'}" Style="{DynamicResource Hub.Label}" Margin="0,24,0,10"/>
             <ItemsControl x:Name="ThemeList" Focusable="False">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -57,14 +57,25 @@
             </ItemsControl>
 
             <!-- ===== motion ===== -->
-            <TextBlock Text="BEWEGUNG" Style="{DynamicResource Hub.Label}" Margin="0,14,0,10"/>
+            <TextBlock Text="{local:L 'BEWEGUNG', 'MOTION'}" Style="{DynamicResource Hub.Label}" Margin="0,14,0,10"/>
             <WrapPanel>
-                <RadioButton x:Name="MotionAuto" Style="{DynamicResource Hub.Chip}" GroupName="Motion" Checked="Motion_Checked" Margin="0,0,6,6">Wie Windows</RadioButton>
-                <RadioButton x:Name="MotionAll" Style="{DynamicResource Hub.Chip}" GroupName="Motion" Checked="Motion_Checked" Margin="0,0,6,6">Alles</RadioButton>
-                <RadioButton x:Name="MotionCalm" Style="{DynamicResource Hub.Chip}" GroupName="Motion" Checked="Motion_Checked" Margin="0,0,6,6">Ruhig</RadioButton>
-                <RadioButton x:Name="MotionOff" Style="{DynamicResource Hub.Chip}" GroupName="Motion" Checked="Motion_Checked" Margin="0,0,6,6">Aus</RadioButton>
+                <RadioButton x:Name="MotionAuto" Style="{DynamicResource Hub.Chip}" GroupName="Motion" Checked="Motion_Checked" Margin="0,0,6,6" Content="{local:L 'Wie Windows', 'Like Windows'}"></RadioButton>
+                <RadioButton x:Name="MotionAll" Style="{DynamicResource Hub.Chip}" GroupName="Motion" Checked="Motion_Checked" Margin="0,0,6,6" Content="{local:L 'Alles', 'Everything'}"></RadioButton>
+                <RadioButton x:Name="MotionCalm" Style="{DynamicResource Hub.Chip}" GroupName="Motion" Checked="Motion_Checked" Margin="0,0,6,6" Content="{local:L 'Ruhig', 'Calm'}"></RadioButton>
+                <RadioButton x:Name="MotionOff" Style="{DynamicResource Hub.Chip}" GroupName="Motion" Checked="Motion_Checked" Margin="0,0,6,6" Content="{local:L 'Aus', 'Off'}"></RadioButton>
             </WrapPanel>
             <TextBlock x:Name="TxtMotion" Style="{DynamicResource Hub.Muted}" MaxWidth="640" HorizontalAlignment="Left" Margin="0,4,0,0"/>
+
+            <!-- ===== language: labelled in both, so it is found in either ===== -->
+            <StackPanel x:Name="LanguagePanel" HorizontalAlignment="Left">
+                <TextBlock Text="{local:L 'SPRACHE · LANGUAGE', 'LANGUAGE · SPRACHE'}" Style="{DynamicResource Hub.Label}" Margin="0,24,0,10"/>
+                <WrapPanel>
+                    <RadioButton x:Name="LangEnglish" Style="{DynamicResource Hub.Chip}" GroupName="Language" Checked="Language_Checked" Margin="0,0,6,6" Content="English"/>
+                    <RadioButton x:Name="LangGerman" Style="{DynamicResource Hub.Chip}" GroupName="Language" Checked="Language_Checked" Margin="0,0,6,6" Content="Deutsch"/>
+                </WrapPanel>
+                <TextBlock Style="{DynamicResource Hub.Muted}" FontSize="12" Margin="0,4,0,0"
+                           Text="{local:L 'MonHub startet dafür kurz neu.', 'MonHub restarts briefly for this.'}"/>
+            </StackPanel>
 
             <!-- ===== trainer ===== -->
             <TextBlock Text="TRAINER" Style="{DynamicResource Hub.Label}" Margin="0,24,0,10"/>
@@ -73,25 +84,25 @@
                 <TextBlock x:Name="TrainerHint" Style="{DynamicResource Hub.Muted}" Margin="11,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
             </Grid>
             <TextBlock Style="{DynamicResource Hub.Muted}" FontSize="12" Margin="0,6,0,0"
-                       Text="Der Name auf der Startseite. Leer lassen = der Name aus deinem neuesten Spielstand."/>
+                       Text="{local:L 'Der Name auf der Startseite. Leer lassen = der Name aus deinem neuesten Spielstand.', 'The name on the start page. Leave it empty = the name from your newest save.'}"/>
 
             <!-- ===== MonHub ===== -->
             <TextBlock Text="MONHUB" Style="{DynamicResource Hub.Label}" Margin="0,24,0,10"/>
             <ContentControl Style="{DynamicResource Hub.Panel}">
                 <StackPanel>
                     <DockPanel>
-                        <Button DockPanel.Dock="Right" Style="{DynamicResource Hub.Key}" Click="OpenRoot_Click" VerticalAlignment="Center">Ordner öffnen</Button>
+                        <Button DockPanel.Dock="Right" Style="{DynamicResource Hub.Key}" Click="OpenRoot_Click" VerticalAlignment="Center" Content="{local:L 'Ordner öffnen', 'Open folder'}"></Button>
                         <StackPanel Margin="0,0,14,0">
-                            <TextBlock Text="Alles liegt in" Style="{DynamicResource Hub.Muted}" FontSize="12"/>
+                            <TextBlock Text="{local:L 'Alles liegt in', 'Everything is in'}" Style="{DynamicResource Hub.Muted}" FontSize="12"/>
                             <TextBlock x:Name="TxtRoot" Style="{DynamicResource Hub.Value}" TextTrimming="CharacterEllipsis"/>
                         </StackPanel>
                     </DockPanel>
                     <Border Style="{DynamicResource Hub.Divider}" Margin="0,14"/>
                     <WrapPanel>
-                        <Button x:Name="BtnTour" Style="{DynamicResource Hub.Key}" Click="Tour_Click" Margin="0,0,10,8">▶ Tour mit Porygon</Button>
-                        <Button Style="{DynamicResource Hub.Key}" Click="Import_Click" Margin="0,0,10,8">Von Emulator importieren …</Button>
-                        <Button Style="{DynamicResource Hub.Ghost}" Click="Help_Click" Margin="0,0,4,8">So geht's</Button>
-                        <Button Style="{DynamicResource Hub.Ghost}" Click="Readme_Click" Margin="0,0,4,8">Liesmich</Button>
+                        <Button x:Name="BtnTour" Style="{DynamicResource Hub.Key}" Click="Tour_Click" Margin="0,0,10,8" Content="{local:L '▶ Tour mit Porygon', '▶ Tour with Porygon'}"></Button>
+                        <Button Style="{DynamicResource Hub.Key}" Click="Import_Click" Margin="0,0,10,8" Content="{local:L 'Von Emulator importieren …', 'Import from emulator …'}"></Button>
+                        <Button Style="{DynamicResource Hub.Ghost}" Click="Help_Click" Margin="0,0,4,8" Content="{local:L 'So geht\'s', 'How it works'}"></Button>
+                        <Button Style="{DynamicResource Hub.Ghost}" Click="Readme_Click" Margin="0,0,4,8" Content="{local:L 'Liesmich', 'Readme'}"></Button>
                     </WrapPanel>
                 </StackPanel>
             </ContentControl>

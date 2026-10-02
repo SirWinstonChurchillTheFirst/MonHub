@@ -2,6 +2,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Txt = PokeHub.Txt;
+
 namespace RandoApp;
 
 /// <summary>Pulls the interesting bits (starters, static Pokémon) out of the randomizer's full spoiler log.</summary>
@@ -37,9 +39,9 @@ public static class SpoilerSummary
                             .Select(m => (Index: int.Parse(m.Groups[1].Value), Name: m.Groups[2].Value.Trim()))
                             .ToList();
         var originals = OriginalStarters(rom.GameCode.Length > 0 ? rom.GameCode : gameCode ?? "");
-        sb.AppendLine("STARTER");
+        sb.AppendLine(Txt.L("STARTER", "STARTERS"));
         if (starters.Count == 0)
-            sb.AppendLine("  unverändert");
+            sb.AppendLine(Txt.L("  unverändert", "  unchanged"));
         foreach (var (index, name) in starters)
         {
             var from = originals != null && index <= originals.Length ? originals[index - 1] : $"Starter {index}";
@@ -58,9 +60,10 @@ public static class SpoilerSummary
                 if (parts.Length == 2) statics.Add((parts[0].Trim(), parts[1].Trim()));
             }
         }
-        sb.AppendLine(statics.Count == 0 ? "STATISCHE POKÉMON" : $"STATISCHE POKÉMON ({statics.Count})");
+        var heading = Txt.L("STATISCHE POKÉMON", "STATIC POKÉMON");
+        sb.AppendLine(statics.Count == 0 ? heading : $"{heading} ({statics.Count})");
         if (statics.Count == 0)
-            sb.AppendLine("  unverändert");
+            sb.AppendLine(Txt.L("  unverändert", "  unchanged"));
         foreach (var (from, to) in statics)
             sb.AppendLine($"  {from,-22} → {to}");
 

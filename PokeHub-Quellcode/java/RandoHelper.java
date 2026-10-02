@@ -24,6 +24,9 @@ import java.util.Random;
  *   settings-write <in.rnqs> <out.rnqs> NAME=VALUE... -> applies the values and saves via Settings.write
  */
 public class RandoHelper {
+    /** MonHub's language for the notes in the log (-Dmonhub.lang=de), English otherwise. */
+    static final boolean GERMAN = "de".equals(System.getProperty("monhub.lang"));
+
     public static void main(String[] args) throws Exception {
         if (args.length >= 2 && args[0].equals("settings-dump")) {
             dumpSettings(args[1]);
@@ -108,8 +111,9 @@ public class RandoHelper {
             off.add("EliteFourUniquePokemonNumber (zusammen mit RivalCarriesStarterThroughout)");
         }
         if (off.isEmpty()) return false;
-        System.out.println("Hinweis: \"Entwicklungen zufaellig (jedes Level)\" vertraegt sich nicht mit: " + off
-            + " -> angepasst (wie in der GUI).");
+        System.out.println(GERMAN
+            ? "Hinweis: \"Entwicklungen zufaellig (jedes Level)\" vertraegt sich nicht mit: " + off + " -> angepasst (wie in der GUI)."
+            : "Note: \"random evolutions (every level)\" doesn't go together with: " + off + " -> adjusted (like the GUI does).");
         return true;
     }
 
@@ -249,8 +253,9 @@ public class RandoHelper {
             flagsOff(s, off, "AllowTotemAltFormes", "TotemLevelsModified", "RandomizeTotemHeldItems");
         }
         if (off.isEmpty()) return false;
-        System.out.println("Hinweis: Diese ROM (" + rom.getROMName() + ") unterstuetzt nicht: " + off
-            + " -> deaktiviert (wie in der GUI).");
+        System.out.println(GERMAN
+            ? "Hinweis: Diese ROM (" + rom.getROMName() + ") unterstuetzt nicht: " + off + " -> deaktiviert (wie in der GUI)."
+            : "Note: this ROM (" + rom.getROMName() + ") doesn't support: " + off + " -> switched off (like the GUI does).");
         return true;
     }
 

@@ -104,48 +104,51 @@ public partial class TourOverlay : UserControl
         BtnBack.Visibility = index > 0 ? Visibility.Visible : Visibility.Collapsed;
         BtnSecond.Visibility = Visibility.Collapsed;
         BtnSkip.Visibility = Visibility.Visible;
-        BtnSkip.Content = "Tour überspringen";
+        BtnSkip.Content = Txt.L("Tour überspringen", "Skip tour");
         Track.Visibility = Visibility.Collapsed;
         Hide(); // the new text appears at its new place, not for a frame at the old one
 
         if (index < 0)
         {
-            TxtStep.Text = _mode == TourMode.Full ? "Kurze Tour · etwa eine Minute" : "Neu in dieser Version";
-            Look(_mode == TourMode.Full ? "Happy" : "Surprised");
-            TxtTitle.Text = _mode == TourMode.Full ? "Hallo, ich bin Porygon!" : "MonHub hat ein Update!";
-            TxtBody.Text = _mode == TourMode.Full
-                ? "Soll ich dir zeigen, wo was ist?"
-                : $"Soll ich dir das Neue zeigen? {(_steps.Count == 1 ? "Nur ein Schritt." : $"{_steps.Count} kurze Schritte.")}";
-            BtnNext.Content = "Tour starten";
+            bool full = _mode == TourMode.Full;
+            TxtStep.Text = full ? Txt.L("Kurze Tour · etwa eine Minute", "Short tour · about a minute") : Txt.L("Neu in dieser Version", "New in this version");
+            Look(full ? "Happy" : "Surprised");
+            TxtTitle.Text = full ? Txt.L("Hallo, ich bin Porygon!", "Hi, I'm Porygon!") : Txt.L("MonHub hat ein Update!", "MonHub got an update!");
+            TxtBody.Text = full
+                ? Txt.L("Soll ich dir zeigen, wo was ist?", "Shall I show you where everything is?")
+                : _steps.Count == 1
+                    ? Txt.L("Soll ich dir das Neue zeigen? Nur ein Schritt.", "Shall I show you what's new? Just one step.")
+                    : Txt.L($"Soll ich dir das Neue zeigen? {_steps.Count} kurze Schritte.", $"Shall I show you what's new? {_steps.Count} short steps.");
+            BtnNext.Content = Txt.L("Tour starten", "Start tour");
             if (_ask)
             {
-                BtnSkip.Content = "Nein, danke";
-                BtnSecond.Content = "Später";
+                BtnSkip.Content = Txt.L("Nein, danke", "No, thanks");
+                BtnSecond.Content = Txt.L("Später", "Later");
                 BtnSecond.Visibility = Visibility.Visible;
             }
             else
-                BtnSkip.Content = "Abbrechen";
+                BtnSkip.Content = Txt.L("Abbrechen", "Cancel");
             Place(fade: true);
             return;
         }
         if (index >= _steps.Count)
         {
-            TxtStep.Text = "Fertig";
+            TxtStep.Text = Txt.L("Fertig", "Done");
             Look("Joyous");
-            TxtTitle.Text = "Das war's!";
-            TxtBody.Text = "Viel Spaß beim Spielen – die Tour findest du jederzeit unter Optionen.";
-            BtnNext.Content = "Los geht's";
+            TxtTitle.Text = Txt.L("Das war's!", "That's it!");
+            TxtBody.Text = Txt.L("Viel Spaß beim Spielen – die Tour findest du jederzeit unter Optionen.", "Have fun playing – you'll find the tour under Options any time.");
+            BtnNext.Content = Txt.L("Los geht's", "Let's go");
             BtnSkip.Visibility = Visibility.Collapsed;
             Place(fade: true);
             return;
         }
 
         var step = _steps[index];
-        TxtStep.Text = $"Schritt {index + 1} von {_steps.Count}";
+        TxtStep.Text = Txt.L($"Schritt {index + 1} von {_steps.Count}", $"Step {index + 1} of {_steps.Count}");
         Look(index % 3 == 2 ? "Inspired" : "Normal");
         TxtTitle.Text = step.Title;
         TxtBody.Text = step.Text;
-        BtnNext.Content = index == _steps.Count - 1 ? "Fertig" : "Weiter →";
+        BtnNext.Content = index == _steps.Count - 1 ? Txt.L("Fertig", "Done") : Txt.L("Weiter →", "Next →");
         Track.Visibility = Visibility.Visible;
         if (step.Page != null) _navigate(step.Page);
         // measure once the page is shown (and scrolled to the part), not while it is still being built

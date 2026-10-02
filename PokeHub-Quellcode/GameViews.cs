@@ -8,12 +8,12 @@ public class TeamSlot(PartyMember member)
 {
     public PartyMember Member { get; } = member;
     public string? Sprite => Member.IsEgg ? null : Species.SpriteKey(Member.Species);
-    public string LevelText => Member.IsEgg ? "Ei" : $"Lv.{Member.Level}";
+    public string LevelText => Member.IsEgg ? Txt.L("Ei", "Egg") : $"Lv.{Member.Level}";
     public string Tooltip
     {
         get
         {
-            if (Member.IsEgg) return "Ein Ei";
+            if (Member.IsEgg) return Txt.L("Ein Ei", "An egg");
             var name = Species.Name(Member.Species);
             bool nicknamed = Member.Nickname.Length > 0 && !Member.Nickname.Equals(name, StringComparison.OrdinalIgnoreCase);
             return nicknamed ? $"{Member.Nickname} ({name}) · Lv. {Member.Level}" : $"{name} · Lv. {Member.Level}";
@@ -61,7 +61,7 @@ public class GameCard
     public Visibility VersionVisibility => Look.Version.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
     public string KindText => Game.IsRun ? "Run" : "Original";
     public string SystemText => Game.SystemText;
-    public string SaveTime => Game.NewestSave is { } save ? TimeText.Ago(save.Time) : "Kein Spielstand";
+    public string SaveTime => Game.NewestSave is { } save ? TimeText.Ago(save.Time) : Txt.L("Kein Spielstand", "No save");
     public string SaveEmulator => Game.NewestSave?.Emulator ?? "";
     public bool HasSave => Game.NewestSave != null;
     public Visibility SaveVisibility => Game.IsDS || Game.Is3DS || Game.IsGameBoy ? Visibility.Visible : Visibility.Collapsed;
@@ -69,7 +69,7 @@ public class GameCard
     public string FavoriteGlyph => IsFavorite ? "★" : "☆";
 
     /// <summary>"Antje · 8:45 · 1 Orden" – what the game shows on its continue screen.</summary>
-    public string TrainerLine => Summary is { } s ? s.BadgeSlots > 0 ? $"{s.Trainer} · {s.PlayTime} · {s.Badges} Orden" : $"{s.Trainer} · {s.PlayTime}" : "";
+    public string TrainerLine => Summary is { } s ? s.BadgeSlots > 0 ? $"{s.Trainer} · {s.PlayTime} · {s.Badges} " + Txt.L("Orden", s.Badges == 1 ? "badge" : "badges") : $"{s.Trainer} · {s.PlayTime}" : "";
     public Visibility TrainerVisibility => Summary != null ? Visibility.Visible : Visibility.Collapsed;
     public List<TeamSlot> Team => _team ??= TeamSlot.Of(Summary);
     List<TeamSlot>? _team;

@@ -143,7 +143,7 @@
     <DataTemplate x:Key="Hub.RailIdentity">
         <StackPanel Margin="20,22,16,18">
             <TextBlock Text="MonHub" FontFamily="{DynamicResource Hub.FontDisplay}" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource Hub.RailInk}"/>
-            <TextBlock Text="Dein Spielzentrum" Foreground="{DynamicResource Hub.RailInkMuted}" FontSize="12"/>
+            <TextBlock Text="{local:L 'Dein Spielzentrum', 'Your game hub'}" Foreground="{DynamicResource Hub.RailInkMuted}" FontSize="12"/>
         </StackPanel>
     </DataTemplate>
     <DataTemplate x:Key="Hub.RailDeco">
@@ -565,7 +565,7 @@
             <Grid>
                 <local:SpriteView x:Name="Sprite" Key="{Binding Sprite}" Still="True" Decorative="True" MaxWidth="46" MaxHeight="40"
                                   Stretch="Uniform" StretchDirection="DownOnly" VerticalAlignment="Center" Margin="0,2,0,14"/>
-                <TextBlock Text="Ei" Visibility="{Binding EggVisibility}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,14"
+                <TextBlock Text="{local:L 'Ei', 'Egg'}" Visibility="{Binding EggVisibility}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,14"
                            Style="{DynamicResource Hub.Label}"/>
                 <TextBlock Text="{Binding LevelText}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,3"
                            FontFamily="{DynamicResource Hub.FontLabel}" FontSize="10" Foreground="{DynamicResource Hub.InkMuted}"/>
@@ -1062,7 +1062,7 @@
                                 <TextBlock Text="{TemplateBinding Title}" Margin="16,0,60,0" VerticalAlignment="Center" FontSize="12"
                                            Foreground="{DynamicResource Hub.Ink}" Opacity="0.75" TextTrimming="CharacterEllipsis"/>
                                 <Button HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource Chrome.Close}" Content="&#xE8BB;"
-                                        Command="{x:Static SystemCommands.CloseWindowCommand}" ToolTip="Schließen"/>
+                                        Command="{x:Static SystemCommands.CloseWindowCommand}" ToolTip="{local:L 'Schließen', 'Close'}"/>
                             </Grid>
                             <AdornerDecorator>
                                 <ContentPresenter/>

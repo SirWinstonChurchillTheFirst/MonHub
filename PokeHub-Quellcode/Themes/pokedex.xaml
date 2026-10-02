@@ -167,7 +167,7 @@
                 </StackPanel>
             </StackPanel>
             <TextBlock Text="MonHub" FontFamily="{DynamicResource Hub.FontDisplay}" FontSize="24" Foreground="#FFFFFF" Margin="0,12,0,0"/>
-            <TextBlock Text="DEIN SPIELZENTRUM" FontFamily="{DynamicResource Hub.FontLabel}" FontSize="10" Foreground="#F4B9BC"/>
+            <TextBlock Text="{local:L 'DEIN SPIELZENTRUM', 'YOUR GAME HUB'}" FontFamily="{DynamicResource Hub.FontLabel}" FontSize="10" Foreground="#F4B9BC"/>
             <Path Data="M0,1 H132 L146,11 H196" Stroke="#6E0F15" StrokeThickness="2" Margin="-20,14,0,0" SnapsToDevicePixels="True"/>
         </StackPanel>
     </DataTemplate>

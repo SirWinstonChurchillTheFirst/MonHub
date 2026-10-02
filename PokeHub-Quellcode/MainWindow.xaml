@@ -48,49 +48,49 @@
                             <RadioButton Style="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="start" Checked="Nav_Checked">
                                 <StackPanel Orientation="Horizontal">
                                     <local:SpriteView Key="icon/play" Width="32" Height="32" Margin="-5,-6,7,-6" Visibility="{DynamicResource Hub.NavIconVisibility}"/>
-                                    <TextBlock Tag="Weiter" VerticalAlignment="Center"/>
+                                    <TextBlock Tag="{local:L 'Weiter', 'Continue'}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </RadioButton>
                             <RadioButton Style="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="games" Checked="Nav_Checked">
                                 <StackPanel Orientation="Horizontal">
                                     <local:SpriteView Key="icon/cartridge" Width="32" Height="32" Margin="-5,-6,7,-6" Visibility="{DynamicResource Hub.NavIconVisibility}"/>
-                                    <TextBlock Tag="Spiele" VerticalAlignment="Center"/>
+                                    <TextBlock Tag="{local:L 'Spiele', 'Games'}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </RadioButton>
                             <RadioButton Style="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="run" Checked="Nav_Checked">
                                 <StackPanel Orientation="Horizontal">
                                     <local:SpriteView Key="icon/dice" Width="32" Height="32" Margin="-5,-6,7,-6" Visibility="{DynamicResource Hub.NavIconVisibility}"/>
-                                    <TextBlock Tag="Neuer Run" VerticalAlignment="Center"/>
+                                    <TextBlock Tag="{local:L 'Neuer Run', 'New run'}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </RadioButton>
                             <RadioButton Style="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="nuzlocke" Checked="Nav_Checked">
                                 <StackPanel Orientation="Horizontal">
                                     <local:SpriteView Key="icon/journal" Width="32" Height="32" Margin="-5,-6,7,-6" Visibility="{DynamicResource Hub.NavIconVisibility}"/>
-                                    <TextBlock Tag="Nuzlocke" VerticalAlignment="Center"/>
+                                    <TextBlock Tag="{local:L 'Nuzlocke', 'Nuzlocke'}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </RadioButton>
                             <RadioButton Style="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="pokedex" Checked="Nav_Checked">
                                 <StackPanel Orientation="Horizontal">
                                     <local:SpriteView Key="icon/magnifier" Width="32" Height="32" Margin="-5,-6,7,-6" Visibility="{DynamicResource Hub.NavIconVisibility}"/>
-                                    <TextBlock Tag="Dex" VerticalAlignment="Center"/>
+                                    <TextBlock Tag="{local:L 'Dex', 'Dex'}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </RadioButton>
                             <RadioButton Style="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="fangames" Checked="Nav_Checked">
                                 <StackPanel Orientation="Horizontal">
                                     <local:SpriteView Key="icon/star" Width="32" Height="32" Margin="-5,-6,7,-6" Visibility="{DynamicResource Hub.NavIconVisibility}"/>
-                                    <TextBlock Tag="Fangames" VerticalAlignment="Center"/>
+                                    <TextBlock Tag="{local:L 'Fangames', 'Fangames'}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </RadioButton>
                             <RadioButton Style="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="emulators" Checked="Nav_Checked">
                                 <StackPanel Orientation="Horizontal">
                                     <local:SpriteView Key="icon/console" Width="32" Height="32" Margin="-5,-6,7,-6" Visibility="{DynamicResource Hub.NavIconVisibility}"/>
-                                    <TextBlock Tag="Emulatoren" VerticalAlignment="Center"/>
+                                    <TextBlock Tag="{local:L 'Emulatoren', 'Emulators'}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </RadioButton>
                             <RadioButton Style="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="options" Checked="Nav_Checked">
                                 <StackPanel Orientation="Horizontal">
                                     <local:SpriteView Key="icon/gear" Width="32" Height="32" Margin="-5,-6,7,-6" Visibility="{DynamicResource Hub.NavIconVisibility}"/>
-                                    <TextBlock Tag="Optionen" VerticalAlignment="Center"/>
+                                    <TextBlock Tag="{local:L 'Optionen', 'Options'}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </RadioButton>
                         </StackPanel>
@@ -101,7 +101,7 @@
                             <TextBlock x:Name="TxtVersion" DockPanel.Dock="Right" Foreground="{DynamicResource Hub.RailInkMuted}" FontSize="11"
                                        FontFamily="{DynamicResource Hub.FontLabel}" VerticalAlignment="Center"/>
                             <Button Style="{DynamicResource Hub.RailLink}" Click="Help_Click" HorizontalAlignment="Left">
-                                <TextBlock x:Name="TxtHelp" Tag="So geht's"/>
+                                <TextBlock x:Name="TxtHelp" Tag="{local:L 'So geht\'s', 'How it works'}"/>
                             </Button>
                         </DockPanel>
                     </Grid>
@@ -116,9 +116,9 @@
 
         <!-- the title bar over the top edge: drag to move, double-click to maximize (Windows does that for the free area) -->
         <StackPanel x:Name="CaptionButtons" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-            <Button x:Name="BtnMinimize" Style="{StaticResource Chrome.Button}" Click="Minimize_Click" ToolTip="Minimieren" Content="&#xE921;"/>
+            <Button x:Name="BtnMinimize" Style="{StaticResource Chrome.Button}" Click="Minimize_Click" ToolTip="{local:L 'Minimieren', 'Minimize'}" Content="&#xE921;"/>
             <Button x:Name="BtnMaximize" Style="{StaticResource Chrome.Button}" Click="Maximize_Click" Content="&#xE922;"/>
-            <Button x:Name="BtnClose" Style="{StaticResource Chrome.Close}" Click="Close_Click" ToolTip="Schließen" Content="&#xE8BB;"/>
+            <Button x:Name="BtnClose" Style="{StaticResource Chrome.Close}" Click="Close_Click" ToolTip="{local:L 'Schließen', 'Close'}" Content="&#xE8BB;"/>
         </StackPanel>
 
         <!-- Porygon's tour, on top of everything but the title bar (closing and moving the window keep working) -->

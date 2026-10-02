@@ -22,19 +22,19 @@ public static class HubThemes
 
     public static readonly HubTheme[] All =
     [
-        new("pokedex", "Rot", "Rotes Gehäuse, Display-Scheibe, Status-LEDs", false, SpriteTint.None,
+        new("pokedex", Txt.L("Rot", "Red"), Txt.L("Rotes Gehäuse, Display-Scheibe, Status-LEDs", "Red casing, display lens, status LEDs"), false, SpriteTint.None,
             "#C8202A", "#141A22", "#1E2733", "#46C3F0", "#E6EEF4"),
-        new("gameboy", "Retro", "Vier Grüntöne, Pixelschrift, START-Menü mit ▶", true, SpriteTint.GameBoy,
+        new("gameboy", "Retro", Txt.L("Vier Grüntöne, Pixelschrift, START-Menü mit ▶", "Four greens, pixel font, START menu with ▶"), true, SpriteTint.GameBoy,
             "#9BBC0F", "#8BAC0F", "#9BBC0F", "#0F380F", "#0F380F") { RailRight = true },
-        new("center", "Rosa", "Hell und freundlich, Heilstation im Menü", true, SpriteTint.None,
+        new("center", Txt.L("Rosa", "Pink"), Txt.L("Hell und freundlich, Heilstation im Menü", "Bright and friendly, a healing station in the menu"), true, SpriteTint.None,
             "#FFFFFF", "#FBF1EA", "#FFFFFF", "#E0485C", "#3E2A2F"),
-        new("cgear", "Neon", "Nachtblau mit Lichtringen", false, SpriteTint.None,
+        new("cgear", "Neon", Txt.L("Nachtblau mit Lichtringen", "Night blue with rings of light"), false, SpriteTint.None,
             "#0B1230", "#070B1F", "#101A3D", "#35D2FF", "#DDE8FF"),
-        new("safari", "Savanne", "Holzschilder, Gras und Sand", true, SpriteTint.None,
+        new("safari", Txt.L("Savanne", "Savanna"), Txt.L("Holzschilder, Gras und Sand", "Wooden signs, grass and sand"), true, SpriteTint.None,
             "#8A5A2E", "#EFE3C2", "#FFF8E6", "#4E9A37", "#3A2A18"),
-        new("lavandia", "Spuk", "Nacht im Geisterturm, Kerzen und ein Nebulak", false, SpriteTint.None,
+        new("lavandia", Txt.L("Spuk", "Spooky"), Txt.L("Nacht im Geisterturm, Kerzen und ein Nebulak", "Night in the ghost tower, candles and a Gastly"), false, SpriteTint.None,
             "#0E0819", "#150D26", "#1E1435", "#B28DFF", "#E6DCFF"),
-        new("schlicht", "Schlicht", "Ruhig und modern, ohne Deko", true, SpriteTint.None,
+        new("schlicht", Txt.L("Schlicht", "Plain"), Txt.L("Ruhig und modern, ohne Deko", "Calm and modern, no decoration"), true, SpriteTint.None,
             "#FFFFFF", "#F4F4F2", "#FFFFFF", "#D93A26", "#1E1E1E"),
     ];
 

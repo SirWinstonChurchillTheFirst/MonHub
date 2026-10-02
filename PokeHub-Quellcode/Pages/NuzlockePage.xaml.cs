@@ -71,14 +71,14 @@ public partial class NuzlockePage : UserControl, IHubPage
             .OrderByDescending(g => g.IsRun).ThenByDescending(g => g.NewestSave?.Time ?? g.RomTime).ToList();
         var keep = _game?.Rom ?? GameLibrary.Continue(all)?.Game.Rom;
         _loading = true;
-        CmbRun.ItemsSource = _games.Select(g => $"{g.Name}  ·  {(g.IsRun ? "Run" : "Original")}").ToList();
+        CmbRun.ItemsSource = _games.Select(g => $"{g.Name}  ·  {(g.IsRun ? "Run" : "Original")}").ToList(); // the same word in both languages
         int at = _games.FindIndex(g => g.Rom == keep);
         CmbRun.SelectedIndex = at >= 0 ? at : _games.Count > 0 ? 0 : -1;
         _loading = false;
         if (CmbRun.SelectedIndex >= 0 && (_game == null || _games[CmbRun.SelectedIndex].Rom != _game.Rom))
             Open(_games[CmbRun.SelectedIndex]);
         else if (_games.Count == 0)
-            TxtSummary.Text = "Noch keine Spiele – leg ROMs in den ROM-Ordner oder misch einen Run.";
+            TxtSummary.Text = Txt.L("Noch keine Spiele – leg ROMs in den ROM-Ordner oder misch einen Run.", "No games yet – put ROMs into the ROM folder or mix a run.");
     }
 
     void Run_Changed(object sender, SelectionChangedEventArgs e)
@@ -117,8 +117,10 @@ public partial class NuzlockePage : UserControl, IHubPage
         if (_run == null || _game == null) return;
         var all = _run.Routes.SelectMany(r => r.Catches).ToList();
         int caught = all.Count(c => c.Species > 0 && !c.Gone), gone = all.Count(c => c.Gone);
-        var edition = NuzlockeData.VersionOf(_game) is null ? "Spiel nicht erkannt – füg deine Routen selbst hinzu" : _game.Name;
-        TxtSummary.Text = $"{edition} · {_run.Routes.Count} Routen · {caught} dabei · {gone} gestrichen · {_run.Players.Count} {(_run.Players.Count == 1 ? "Spieler" : "Spieler")}";
+        var edition = NuzlockeData.VersionOf(_game) is null ? Txt.L("Spiel nicht erkannt – füg deine Routen selbst hinzu", "Game not recognized – add your routes yourself") : _game.Name;
+        int players = _run.Players.Count;
+        TxtSummary.Text = Txt.L($"{edition} · {_run.Routes.Count} Routen · {caught} dabei · {gone} gestrichen · {players} Spieler",
+            $"{edition} · {_run.Routes.Count} routes · {caught} in the team · {gone} struck · {players} {(players == 1 ? "player" : "players")}");
     }
 
     void Changed()
@@ -155,7 +157,7 @@ public partial class NuzlockePage : UserControl, IHubPage
     void AddPlayer_Click(object sender, RoutedEventArgs e)
     {
         if (_run == null) return;
-        _run.Players.Add($"Spieler {_run.Players.Count + 1}");
+        _run.Players.Add(Txt.L($"Spieler {_run.Players.Count + 1}", $"Player {_run.Players.Count + 1}"));
         foreach (var route in _run.Routes) route.Catches.Add(new NuzlockeCatch());
         Build();
         Changed();
@@ -164,7 +166,7 @@ public partial class NuzlockePage : UserControl, IHubPage
     void RemovePlayer_Click(object sender, RoutedEventArgs e)
     {
         if (_run == null || _run.Players.Count < 2 || sender is not FrameworkElement { Tag: int index }) return;
-        if (MessageBox.Show(Window.GetWindow(this), $"„{_run.Players[index]}“ mit allen Einträgen entfernen?", "Nuzlocke",
+        if (MessageBox.Show(Window.GetWindow(this), Txt.L($"„{_run.Players[index]}“ mit allen Einträgen entfernen?", $"Remove “{_run.Players[index]}” with all entries?"), "Nuzlocke",
                 MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
         _run.Players.RemoveAt(index);
         foreach (var route in _run.Routes)

@@ -25,13 +25,13 @@ public class ImportItem
     public string KindText => Kind switch
     {
         ImportKind.Rom => "ROM",
-        ImportKind.SaveDeSmuME => "Spielstand (DeSmuME)",
-        ImportKind.SaveRaw => "Spielstand (DS)",
-        ImportKind.SaveGba => "Spielstand (GBA/GB)",
+        ImportKind.SaveDeSmuME => Txt.L("Spielstand (DeSmuME)", "Save (DeSmuME)"),
+        ImportKind.SaveRaw => Txt.L("Spielstand (DS)", "Save (DS)"),
+        ImportKind.SaveGba => Txt.L("Spielstand (GBA/GB)", "Save (GBA/GB)"),
         _ => "",
     };
     public string SizeText => Size >= 1 << 20 ? $"{Size / (1 << 20)} MB" : $"{Math.Max(1, Size / 1024)} KB";
-    public string Status => Note ?? "neu";
+    public string Status => Note ?? Txt.L("neu", "new");
 }
 
 /// <summary>A place to import from: an emulator install or any folder.</summary>
@@ -312,7 +312,7 @@ public static class Importer
                 var target = Path.Combine(HubPaths.Roms, f.Name);
                 if (File.Exists(target))
                 {
-                    item.Note = new FileInfo(target).Length == f.Length ? "schon im MonHub" : "Name im MonHub schon belegt";
+                    item.Note = new FileInfo(target).Length == f.Length ? AlreadyThere : Txt.L("Name im MonHub schon belegt", "name already taken in MonHub");
                     item.Selected = false;
                 }
                 items.Add(item);
@@ -342,12 +342,14 @@ public static class Importer
     /// <summary>DS saves are 8 KB – 1 MB in power-of-two sizes; GBA ones are ≤ 128 KB. Unknown .sav of 256 KB+ are DS.</summary>
     static bool LooksLikeDsSave(FileInfo f) => f.Length >= 256 * 1024 && (f.Length & (f.Length - 1)) == 0;
 
+    static string AlreadyThere => Txt.L("schon im MonHub", "already in MonHub");
+
     static ImportItem SaveItem(ImportKind kind, FileInfo f)
     {
         var item = new ImportItem { Kind = kind, SourcePath = f.FullName, Size = f.Length };
         if (TargetsFor(item).All(t => File.Exists(t.Path)))
         {
-            item.Note = "schon im MonHub";
+            item.Note = AlreadyThere;
             item.Selected = false;
         }
         return item;

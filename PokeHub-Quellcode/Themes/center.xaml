@@ -179,7 +179,7 @@
                     </StackPanel>
                 </Border>
                 <TextBlock Text="MonHub" FontFamily="{DynamicResource Hub.FontDisplay}" FontSize="23" FontWeight="Bold" Foreground="#2A181D" Margin="0,12,0,0"/>
-                <TextBlock Text="Heilstation · rund um die Uhr geöffnet" FontSize="11.5" Foreground="#9A8287" TextWrapping="Wrap"/>
+                <TextBlock Text="{local:L 'Heilstation · rund um die Uhr geöffnet', 'Healing station · open around the clock'}" FontSize="11.5" Foreground="#9A8287" TextWrapping="Wrap"/>
             </StackPanel>
         </StackPanel>
     </DataTemplate>
@@ -190,7 +190,7 @@
             <DockPanel>
                 <local:SpriteView Key="species/0113" Width="46" Height="46" DockPanel.Dock="Left" Margin="0,0,8,0" Decorative="True"
                                   Stretch="Uniform" VerticalAlignment="Center"/>
-                <TextBlock Text="Dein Team ist wieder topfit!" TextWrapping="Wrap" VerticalAlignment="Center"
+                <TextBlock Text="{local:L 'Dein Team ist wieder topfit!', 'Your team is fighting fit again!'}" TextWrapping="Wrap" VerticalAlignment="Center"
                            FontFamily="{DynamicResource Hub.FontLabel}" FontSize="11.5" Foreground="#9A4A57"/>
             </DockPanel>
         </Border>

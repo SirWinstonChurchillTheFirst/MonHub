@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -27,7 +28,9 @@ public class NuzlockeRoute
 public class NuzlockeRun
 {
     public string Version { get; set; } = "";
-    public List<string> Players { get; set; } = ["Spieler 1"];
+    public List<string> Players { get; set; } = [FirstPlayer];
+
+    public static string FirstPlayer => Txt.L("Spieler 1", "Player 1");
     /// <summary>Soul Link: the players' Pokémon of a route are linked – struck (or not) together, per route.</summary>
     public bool SoulLink { get; set; }
     public List<NuzlockeRoute> Routes { get; set; } = new();
@@ -52,7 +55,10 @@ public class NuzlockeRun
         }
         run ??= new NuzlockeRun();
         // a hand-edited or old file may have empty spots ("Players": null …) – the page expects complete lists
-        run.Players = run.Players?.Select(p => p ?? "").ToList() ?? [];
+        // "Spieler 2" / "Player 2" are MonHub's own names – they follow the language; names the player typed stay
+        run.Players = run.Players?.Select(p => p ?? "")
+            .Select(p => Regex.Match(p, @"^(Spieler|Player) (\d+)$") is { Success: true } m ? Txt.L($"Spieler {m.Groups[2].Value}", $"Player {m.Groups[2].Value}") : p)
+            .ToList() ?? [];
         run.Routes = (run.Routes ?? []).Where(r => r != null).ToList();
         foreach (var route in run.Routes)
         {
@@ -61,14 +67,18 @@ public class NuzlockeRun
             route.Catches = (route.Catches ?? []).Select(c => c ?? new NuzlockeCatch()).ToList();
         }
         run.Version ??= "";
-        if (run.Players.Count == 0) run.Players.Add("Spieler 1");
+        if (run.Players.Count == 0) run.Players.Add(NuzlockeRun.FirstPlayer);
         run.Version = NuzlockeData.VersionOf(game) ?? run.Version;
 
         // the game's places in story order, the player's own ones where they were
         var known = run.Routes.DistinctBy(r => r.Id).ToDictionary(r => r.Id); // a doubled ID would throw
         var merged = new List<NuzlockeRoute>();
         foreach (var (id, name) in NuzlockeData.RoutesFor(run.Version))
-            merged.Add(known.Remove(id, out var saved) ? saved : new NuzlockeRoute { Id = id, Name = name });
+        {
+            // a known place takes its name from the list – in the language MonHub speaks now
+            if (known.Remove(id, out var saved)) saved.Name = name;
+            merged.Add(saved ?? new NuzlockeRoute { Id = id, Name = name });
+        }
         merged.AddRange(known.Values); // custom routes (and places of another list) at the end
         run.Routes = merged;
         foreach (var route in run.Routes)
@@ -88,7 +98,7 @@ public static class NuzlockeData
 {
     static Dictionary<string, List<RouteEntry>>? _routes;
 
-    record RouteEntry(string id, string name);
+    record RouteEntry(string id, string name, string? en);
 
     public static IEnumerable<(string Id, string Name)> RoutesFor(string version)
     {
@@ -97,7 +107,7 @@ public static class NuzlockeData
             var stream = Application.GetResourceStream(new Uri("pack://application:,,,/Assets/Nuzlocke/routes.json"))!.Stream;
             _routes = JsonSerializer.Deserialize<Dictionary<string, List<RouteEntry>>>(stream) ?? new();
         }
-        return _routes.TryGetValue(version, out var list) ? list.Select(r => (r.id, r.name)) : [("starter", "Starter")];
+        return _routes.TryGetValue(version, out var list) ? list.Select(r => (r.id, Txt.English ? r.en ?? r.name : r.name)) : [("starter", "Starter")];
     }
 
     static readonly Dictionary<string, string> ByCode = new(StringComparer.OrdinalIgnoreCase)

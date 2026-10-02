@@ -15,25 +15,26 @@ public partial class StartPage : UserControl, IHubPage
         public bool Saved { get; } = saved;
         SaveSummary? S => Card.Summary;
 
-        public string Kicker => Saved ? "WEITER" : "NEUER RUN";
+        public string Kicker => Saved ? Txt.L("WEITER", "CONTINUE") : Txt.L("NEUER RUN", "NEW RUN");
         public string Player => S?.Trainer ?? "–";
         public string Time => S?.PlayTime ?? "–";
-        public string Dex => S != null ? $"{S.DexSeen} gesehen · {S.DexCaught} gefangen" : "–";
+        public string Dex => S != null ? Txt.L($"{S.DexSeen} gesehen · {S.DexCaught} gefangen", $"{S.DexSeen} seen · {S.DexCaught} caught") : "–";
         public List<bool> Badges => Enumerable.Range(0, S?.BadgeSlots ?? 8).Select(i => i < (S?.Badges ?? 0)).ToList();
         public string TeamHint => S == null
-            ? Saved ? Card.Game.Family != null ? "Den Spielstand kann MonHub nicht lesen." : "Team und Orden liest MonHub aus diesem Spiel noch nicht."
-                    : "Noch kein Team – im Spiel wählst du gleich deinen Starter."
-            : S.Party.Count == 0 ? "Noch kein Pokémon im Team." : "";
+            ? Saved ? Card.Game.Family != null ? Txt.L("Den Spielstand kann MonHub nicht lesen.", "MonHub can't read this save.")
+                                               : Txt.L("Team und Orden liest MonHub aus diesem Spiel noch nicht.", "MonHub doesn't read team and badges from this game yet.")
+                    : Txt.L("Noch kein Team – im Spiel wählst du gleich deinen Starter.", "No team yet – you'll pick your starter in the game in a moment.")
+            : S.Party.Count == 0 ? Txt.L("Noch kein Pokémon im Team.", "No Pokémon in the team yet.") : "";
         public Visibility TeamHintVisibility => TeamHint.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
-        public string ButtonText => Saved ? "▶  Weiterspielen" : "▶  Run starten";
+        public string ButtonText => Saved ? Txt.L("▶  Weiterspielen", "▶  Continue") : Txt.L("▶  Run starten", "▶  Start run");
         public string Note
         {
             get
             {
-                var where = Emulator ?? "Standardprogramm";
+                var where = Emulator ?? Txt.L("Standardprogramm", "Default program");
                 return Saved && Card.Game.NewestSave is { } save
-                    ? $"{where} · gespeichert {TimeText.Ago(save.Time)}"
-                    : $"{where} · erstellt {TimeText.Ago(Card.Game.RomTime)}";
+                    ? $"{where} · " + Txt.L($"gespeichert {TimeText.Ago(save.Time)}", $"saved {TimeText.Ago(save.Time)}")
+                    : $"{where} · " + Txt.L($"erstellt {TimeText.Ago(Card.Game.RomTime)}", $"created {TimeText.Ago(Card.Game.RomTime)}");
             }
         }
     }
@@ -50,7 +51,7 @@ public partial class StartPage : UserControl, IHubPage
     }
 
     static readonly int[][] StarterTrios = [[1, 4, 7], [152, 155, 158], [252, 255, 258], [387, 390, 393], [495, 498, 501], [650, 653, 656], [722, 725, 728]];
-    static readonly string[] Regions = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Einall", "Kalos", "Alola"];
+    static readonly string[] Regions = ["Kanto", "Johto", "Hoenn", "Sinnoh", Txt.L("Einall", "Unova"), "Kalos", "Alola"];
 
     (GameEntry Game, string? Emulator, bool Saved)? _continue;
 
@@ -59,7 +60,8 @@ public partial class StartPage : UserControl, IHubPage
         InitializeComponent();
         int trio = Random.Shared.Next(StarterTrios.Length);
         StarterRow.ItemsSource = StarterTrios[trio].Select(Species.SpriteKey).Where(k => k != null).ToList();
-        TxtStarterLine.Text = $"Mische ein Spiel neu – Starter, Trainer und wilde Pokémon. Heute schauen die Starter aus {Regions[trio]} vorbei.";
+        TxtStarterLine.Text = Txt.L($"Mische ein Spiel neu – Starter, Trainer und wilde Pokémon. Heute schauen die Starter aus {Regions[trio]} vorbei.",
+            $"Mix up a game – starters, trainers and wild Pokémon. Today the starters from {Regions[trio]} drop by.");
         SizeChanged += (_, e) => Arrange(e.NewSize.Width);
     }
 
@@ -100,14 +102,14 @@ public partial class StartPage : UserControl, IHubPage
                  : _continue is { } c0 && new GameCard(c0.Game).Summary is { } s0 ? s0.Trainer
                  : withSummary.FirstOrDefault()?.Summary?.Trainer ?? "Trainer";
 
-        TxtKicker.Text = _continue is { Saved: true } ? "WEITER" : games.Count == 0 ? "WILLKOMMEN" : "BEREIT";
-        TxtGreeting.Text = _continue is { Saved: true } ? $"Willkommen zurück, {name}!"
-                         : games.Count > 0 ? $"Hallo, {name}!" : "Willkommen im MonHub!";
+        TxtKicker.Text = _continue is { Saved: true } ? Txt.L("WEITER", "CONTINUE") : games.Count == 0 ? Txt.L("WILLKOMMEN", "WELCOME") : Txt.L("BEREIT", "READY");
+        TxtGreeting.Text = _continue is { Saved: true } ? Txt.L($"Willkommen zurück, {name}!", $"Welcome back, {name}!")
+                         : games.Count > 0 ? Txt.L($"Hallo, {name}!", $"Hi, {name}!") : Txt.L("Willkommen im MonHub!", "Welcome to MonHub!");
         TxtSubline.Text = _continue switch
         {
-            { Saved: true } => "Dein letztes Abenteuer wartet – genau da, wo du gespeichert hast.",
-            { } => "Dein neuer Run ist bereit.",
-            null when games.Count > 0 => "Such dir unter „Spiele“ etwas aus oder erstelle einen neuen Run.",
+            { Saved: true } => Txt.L("Dein letztes Abenteuer wartet – genau da, wo du gespeichert hast.", "Your last adventure is waiting – right where you saved."),
+            { } => Txt.L("Dein neuer Run ist bereit.", "Your new run is ready."),
+            null when games.Count > 0 => Txt.L("Such dir unter „Spiele“ etwas aus oder erstelle einen neuen Run.", "Pick something under “Games” or create a new run."),
             _ => "",
         };
 
@@ -127,17 +129,20 @@ public partial class StartPage : UserControl, IHubPage
     {
         var total = withSummary.Aggregate(TimeSpan.Zero, (sum, g) => sum + g.Summary!.PlayTimeSpan);
         var rows = new List<TrainerRow>();
-        if (current.Summary is { } s) rows.Add(new("GELD", $"₽ {s.Money:N0}"));
-        rows.Add(new("SPIELZEIT GESAMT", total.TotalHours >= 1 ? $"{(int)total.TotalHours} Std. {total.Minutes} Min." : $"{total.Minutes} Min."));
-        rows.Add(new("ORDEN GESAMT", withSummary.Sum(g => g.Summary!.Badges).ToString()));
-        rows.Add(new("ABENTEUER", withSummary.Count.ToString()));
-        rows.Add(new("RUNS ERSTELLT", all.Count(g => g.Game.IsRun).ToString()));
+        if (current.Summary is { } s) rows.Add(new(Txt.L("GELD", "MONEY"), $"₽ {s.Money:N0}"));
+        rows.Add(new(Txt.L("SPIELZEIT GESAMT", "TOTAL PLAY TIME"), total.TotalHours >= 1
+            ? Txt.L($"{(int)total.TotalHours} Std. {total.Minutes} Min.", $"{(int)total.TotalHours} h {total.Minutes} min")
+            : Txt.L($"{total.Minutes} Min.", $"{total.Minutes} min")));
+        rows.Add(new(Txt.L("ORDEN GESAMT", "TOTAL BADGES"), withSummary.Sum(g => g.Summary!.Badges).ToString()));
+        rows.Add(new(Txt.L("ABENTEUER", "ADVENTURES"), withSummary.Count.ToString()));
+        rows.Add(new(Txt.L("RUNS ERSTELLT", "RUNS CREATED"), all.Count(g => g.Game.IsRun).ToString()));
         return new TrainerView
         {
             Name = name,
-            IdLine = current.Summary is { } cs ? $"ID-Nr. {cs.TrainerId:00000} · {current.Look.Version}".TrimEnd(' ', '·') : "Noch ohne Spielstand",
+            IdLine = current.Summary is { } cs ? (Txt.L("ID-Nr. ", "ID No. ") + $"{cs.TrainerId:00000} · {current.Look.Version}").TrimEnd(' ', '·')
+                : Txt.L("Noch ohne Spielstand", "No save yet"),
             Rows = rows,
-            Footnote = withSummary.Count > 0 ? "Aus deinen Spielständen gelesen." : "",
+            Footnote = withSummary.Count > 0 ? Txt.L("Aus deinen Spielständen gelesen.", "Read from your saves.") : "",
         };
     }
 

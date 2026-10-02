@@ -32,7 +32,7 @@ public static class Shell
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception)
         {
-            MessageBox.Show(Main!, $"Der Ordner lässt sich nicht öffnen:\n{dir}\n\n{ex.Message}", "MonHub", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(Main!, Txt.L($"Der Ordner lässt sich nicht öffnen:\n{dir}\n\n{ex.Message}", $"The folder can't be opened:\n{dir}\n\n{ex.Message}"), "MonHub", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 

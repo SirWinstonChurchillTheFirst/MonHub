@@ -74,14 +74,15 @@ public partial class LibraryPage : UserControl, IHubPage
     {
         _cards = games.Select(g => new GameCard(g)).ToList();
         int runs = _cards.Count(c => c.Game.IsRun), saved = _cards.Count(c => c.HasSave), favorites = _cards.Count(c => c.IsFavorite);
-        TxtCounts.Text = _cards.Count == 0 ? "Noch leer."
-            : $"{_cards.Count} {(_cards.Count == 1 ? "Spiel" : "Spiele")}, davon {runs} {(runs == 1 ? "Run" : "Runs")} · {saved} mit Spielstand";
-        TxtFilterAll.Text = $"Alle  {_cards.Count}";
-        TxtFilterFavorites.Text = $"★ Favoriten  {favorites}";
-        TxtFilterSaved.Text = $"Mit Spielstand  {saved}";
+        TxtCounts.Text = _cards.Count == 0 ? Txt.L("Noch leer.", "Empty so far.")
+            : Txt.L($"{_cards.Count} {(_cards.Count == 1 ? "Spiel" : "Spiele")}, davon {runs} {(runs == 1 ? "Run" : "Runs")} · {saved} mit Spielstand",
+                    $"{_cards.Count} {(_cards.Count == 1 ? "game" : "games")}, {runs} of them {(runs == 1 ? "a run" : "runs")} · {saved} with a save");
+        TxtFilterAll.Text = Txt.L($"Alle  {_cards.Count}", $"All  {_cards.Count}");
+        TxtFilterFavorites.Text = Txt.L($"★ Favoriten  {favorites}", $"★ Favorites  {favorites}");
+        TxtFilterSaved.Text = Txt.L($"Mit Spielstand  {saved}", $"With save  {saved}");
         TxtFilterRuns.Text = $"Runs  {runs}";
-        TxtFilterOriginals.Text = $"Originale  {_cards.Count - runs}";
-        TxtOrphans.Text = $"{orphans} {(orphans == 1 ? "Spielstand" : "Spielstände")} ohne Spiel";
+        TxtFilterOriginals.Text = Txt.L($"Originale  {_cards.Count - runs}", $"Originals  {_cards.Count - runs}");
+        TxtOrphans.Text = Txt.L($"{orphans} {(orphans == 1 ? "Spielstand" : "Spielstände")} ohne Spiel", $"{orphans} {(orphans == 1 ? "save" : "saves")} without a game");
         BtnOrphans.Visibility = orphans > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowGames(keepRom);
     }
@@ -101,8 +102,10 @@ public partial class LibraryPage : UserControl, IHubPage
         EmptyPanel.Visibility = visible.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         EmptyActions.Visibility = _cards.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         TxtEmpty.Text = _cards.Count == 0
-            ? "Noch keine Spiele. Leg ROMs in den Ordner „ROMs“ oder hol sie mit „Importieren“ von deinem alten Emulator."
-            : FilterFavorites.IsChecked == true ? "Noch keine Favoriten – markier ein Spiel mit dem ☆." : "Hier ist nichts – anderer Filter oder Suchbegriff?";
+            ? Txt.L("Noch keine Spiele. Leg ROMs in den Ordner „ROMs“ oder hol sie mit „Importieren“ von deinem alten Emulator.",
+                    "No games yet. Put ROMs into the “ROMs” folder or bring them over from your old emulator with “Import”.")
+            : FilterFavorites.IsChecked == true ? Txt.L("Noch keine Favoriten – markier ein Spiel mit dem ☆.", "No favorites yet – mark a game with the ☆.")
+            : Txt.L("Hier ist nichts – anderer Filter oder Suchbegriff?", "Nothing here – another filter or search?");
         UpdateChoice();
     }
 
@@ -196,15 +199,15 @@ public partial class LibraryPage : UserControl, IHubPage
         if (game.Is3DS && ChosenEmulator == GameLibrary.Azahar)
         {
             TxtHint.Text = Rom3ds.Read(game.Rom) is { Encrypted: true }
-                ? "Dieses 3DS-Spiel ist noch verschlüsselt – Azahar startet nur entschlüsselte Spiele."
-                : game.AzaharSave is { } n3dsSave ? $"Gespeichert {TimeText.Ago(n3dsSave.Time)} in Azahar." : "Noch kein Spielstand – das Spiel startet von vorn.";
+                ? Txt.L("Dieses 3DS-Spiel ist noch verschlüsselt – Azahar startet nur entschlüsselte Spiele.", "This 3DS game is still encrypted – Azahar only starts decrypted games.")
+                : game.AzaharSave is { } n3dsSave ? SavedIn(n3dsSave.Time, "Azahar") : NoSaveYet;
             return;
         }
         if (!game.IsDS)
         {
             TxtHint.Text = ChosenEmulator == GameLibrary.MGBA
-                ? game.MGBASave is { } gbSave ? $"Gespeichert {TimeText.Ago(gbSave.Time)} in mGBA." : "Noch kein Spielstand – das Spiel startet von vorn."
-                : "Öffnet mit dem Programm, das Windows für diese Datei benutzt.";
+                ? game.MGBASave is { } gbSave ? SavedIn(gbSave.Time, "mGBA") : NoSaveYet
+                : Txt.L("Öffnet mit dem Programm, das Windows für diese Datei benutzt.", "Opens with the program Windows uses for this file.");
             return;
         }
 
@@ -212,33 +215,46 @@ public partial class LibraryPage : UserControl, IHubPage
         var newest = game.NewestSave;
         if (game.NeedsDeSmuME && !RbMelonDS.IsEnabled)
         {
-            TxtHint.Text = "Diese ROM ist verschlüsselt (typisch für US-Versionen) – melonDS bräuchte dafür ein Nintendo-BIOS, deshalb startet sie in DeSmuME.";
+            TxtHint.Text = Txt.L("Diese ROM ist verschlüsselt (typisch für US-Versionen) – melonDS bräuchte dafür ein Nintendo-BIOS, deshalb startet sie in DeSmuME.",
+                "This ROM is encrypted (typical for US versions) – melonDS would need a Nintendo BIOS for it, so it starts in DeSmuME.");
             return;
         }
         var own = game.SaveOf(emulator);
         if (newest == null)
-            TxtHint.Text = "Noch kein Spielstand – das Spiel startet von vorn.";
+            TxtHint.Text = NoSaveYet;
         else if (newest.Emulator == emulator)
-            TxtHint.Text = $"Gespeichert {TimeText.Ago(newest.Time)} in {emulator}.";
+            TxtHint.Text = SavedIn(newest.Time, emulator);
         else
         {
             // the newest save is in the other emulator
             bool possible = GameLibrary.CanTransfer(game, emulator);
             ChkTransfer.Visibility = Visibility.Visible;
             ChkTransfer.IsEnabled = possible;
-            ChkTransfer.Content = $"Spielstand aus {newest.Emulator} mitnehmen ({TimeText.Ago(newest.Time)})";
+            ChkTransfer.Content = Txt.L($"Spielstand aus {newest.Emulator} mitnehmen ({TimeText.Ago(newest.Time)})",
+                $"Take the save from {newest.Emulator} along ({TimeText.Ago(newest.Time)})");
             if (!possible)
-                TxtHint.Text = $"Dieser Spielstand lässt sich nicht nach {emulator} übernehmen – {emulator} startet {(own != null ? $"mit seinem älteren Spielstand ({TimeText.Ago(own.Time)})" : "ohne Spielstand")}.";
+                TxtHint.Text = own != null
+                    ? Txt.L($"Dieser Spielstand lässt sich nicht nach {emulator} übernehmen – {emulator} startet mit seinem älteren Spielstand ({TimeText.Ago(own.Time)}).",
+                            $"This save can't be taken over to {emulator} – {emulator} starts with its older save ({TimeText.Ago(own.Time)}).")
+                    : Txt.L($"Dieser Spielstand lässt sich nicht nach {emulator} übernehmen – {emulator} startet ohne Spielstand.",
+                            $"This save can't be taken over to {emulator} – {emulator} starts without a save.");
             else if (ChkTransfer.IsChecked == true)
                 TxtHint.Text = own != null
-                    ? $"Dein älterer {emulator}-Spielstand ({TimeText.Ago(own.Time)}) kommt dabei in den Papierkorb."
-                    : $"Der Spielstand wird für {emulator} umgewandelt – der aus {newest.Emulator} bleibt auch da.";
+                    ? Txt.L($"Dein älterer {emulator}-Spielstand ({TimeText.Ago(own.Time)}) kommt dabei in den Papierkorb.",
+                            $"Your older {emulator} save ({TimeText.Ago(own.Time)}) goes to the Recycle Bin.")
+                    : Txt.L($"Der Spielstand wird für {emulator} umgewandelt – der aus {newest.Emulator} bleibt auch da.",
+                            $"The save is converted for {emulator} – the one from {newest.Emulator} stays too.");
             else
                 TxtHint.Text = own != null
-                    ? $"{emulator} startet mit seinem älteren Spielstand ({TimeText.Ago(own.Time)})."
-                    : $"{emulator} hat keinen Spielstand – das Spiel startet von vorn.";
+                    ? Txt.L($"{emulator} startet mit seinem älteren Spielstand ({TimeText.Ago(own.Time)}).", $"{emulator} starts with its older save ({TimeText.Ago(own.Time)}).")
+                    : Txt.L($"{emulator} hat keinen Spielstand – das Spiel startet von vorn.", $"{emulator} has no save – the game starts from the beginning.");
         }
     }
+
+    static string NoSaveYet => Txt.L("Noch kein Spielstand – das Spiel startet von vorn.", "No save yet – the game starts from the beginning.");
+
+    static string SavedIn(DateTime time, string emulator) =>
+        Txt.L($"Gespeichert {TimeText.Ago(time)} in {emulator}.", $"Saved {TimeText.Ago(time)} in {emulator}.");
 
     void Play_Click(object sender, RoutedEventArgs e)
     {
@@ -250,13 +266,14 @@ public partial class LibraryPage : UserControl, IHubPage
         {
             if (Launcher.IsRunning(emulator))
             {
-                MessageBox.Show(owner, $"{emulator} läuft noch. Bitte speichere und schließe es zuerst – sonst kann es den Spielstand beim Beenden überschreiben.",
-                    "Spielen", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(owner, Txt.L($"{emulator} läuft noch. Bitte speichere und schließe es zuerst – sonst kann es den Spielstand beim Beenden überschreiben.",
+                    $"{emulator} is still running. Please save and close it first – otherwise it can overwrite the save when it closes."),
+                    Txt.L("Spielen", "Play"), MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
             if (GameLibrary.TransferSave(game, emulator) is { } error)
             {
-                MessageBox.Show(owner, error, "Spielen", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(owner, error, Txt.L("Spielen", "Play"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 Reload(game.Rom);
                 return;
             }
@@ -275,12 +292,14 @@ public partial class LibraryPage : UserControl, IHubPage
     {
         var game = SelectedGame;
         var owner = Window.GetWindow(this);
-        if (game?.NewestSave == null || Launcher.EmulatorsOpen(owner, "Spielstand löschen")) return;
-        if (MessageBox.Show(owner, $"Alle Spielstände von „{game.Name}“ löschen?\n\nSie kommen in den Papierkorb (alle Emulatoren und Savestates) – von dort kannst du sie zurückholen.",
-                "Spielstand löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+        var title = Txt.L("Spielstand löschen", "Delete save");
+        if (game?.NewestSave == null || Launcher.EmulatorsOpen(owner, title)) return;
+        if (MessageBox.Show(owner, Txt.L($"Alle Spielstände von „{game.Name}“ löschen?\n\nSie kommen in den Papierkorb (alle Emulatoren und Savestates) – von dort kannst du sie zurückholen.",
+                    $"Delete all saves of “{game.Name}”?\n\nThey go to the Recycle Bin (all emulators and savestates) – you can restore them from there."),
+                title, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
             return;
         if (!GameLibrary.DeleteSaves(game))
-            MessageBox.Show(owner, "Nicht alle Spielstände konnten gelöscht werden.", "Spielstand löschen", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(owner, Txt.L("Nicht alle Spielstände konnten gelöscht werden.", "Not all saves could be deleted."), title, MessageBoxButton.OK, MessageBoxImage.Warning);
         Reload(game.Rom);
     }
 
@@ -289,23 +308,30 @@ public partial class LibraryPage : UserControl, IHubPage
     {
         var game = SelectedGame;
         var owner = Window.GetWindow(this);
-        if (game == null || Launcher.EmulatorsOpen(owner, "Spiel löschen")) return;
+        var title = Txt.L("Spiel löschen", "Delete game");
+        if (game == null || Launcher.EmulatorsOpen(owner, title)) return;
 
         var files = GameLibrary.FilesOf(game);
         int Count(GameLibrary.FileRole role) => files.Count(f => f.Role == role);
-        var lines = new List<string> { $"•  das Spiel ({SizeText(game.Rom)})" };
-        if (Count(GameLibrary.FileRole.Save) is > 0 and var saves) lines.Add(saves == 1 ? "•  1 Spielstand" : $"•  {saves} Spielstände");
+        var lines = new List<string> { Txt.L($"•  das Spiel ({SizeText(game.Rom)})", $"•  the game ({SizeText(game.Rom)})") };
+        if (Count(GameLibrary.FileRole.Save) is > 0 and var saves)
+            lines.Add(saves == 1 ? Txt.L("•  1 Spielstand", "•  1 save") : Txt.L($"•  {saves} Spielstände", $"•  {saves} saves"));
         if (Count(GameLibrary.FileRole.Savestate) is > 0 and var states) lines.Add(states == 1 ? "•  1 Savestate" : $"•  {states} Savestates");
-        if (Count(GameLibrary.FileRole.Cheats) is > 0 and var cheats) lines.Add(cheats == 1 ? "•  die Cheats" : $"•  die Cheats ({cheats} Dateien)");
-        if (Count(GameLibrary.FileRole.Spoiler) > 0) lines.Add("•  Spoiler und Log vom Randomizer");
-        if (Count(GameLibrary.FileRole.Tracker) > 0) lines.Add("•  der Nuzlocke-Tracker");
-        var original = game.IsRun ? "" : "\n\nAchtung: Das ist ein Original-Spiel – daraus mischt der Randomizer neue Runs.";
+        if (Count(GameLibrary.FileRole.Cheats) is > 0 and var cheats)
+            lines.Add(cheats == 1 ? Txt.L("•  die Cheats", "•  the cheats") : Txt.L($"•  die Cheats ({cheats} Dateien)", $"•  the cheats ({cheats} files)"));
+        if (Count(GameLibrary.FileRole.Spoiler) > 0) lines.Add(Txt.L("•  Spoiler und Log vom Randomizer", "•  spoiler and log from the randomizer"));
+        if (Count(GameLibrary.FileRole.Tracker) > 0) lines.Add(Txt.L("•  der Nuzlocke-Tracker", "•  the Nuzlocke tracker"));
+        var original = game.IsRun ? "" : Txt.L("\n\nAchtung: Das ist ein Original-Spiel – daraus mischt der Randomizer neue Runs.",
+            "\n\nCareful: this is an original game – the randomizer mixes new runs from it.");
+        var list = string.Join("\n", lines);
 
-        if (MessageBox.Show(owner, $"„{game.Name}“ löschen?\n\nIn den Papierkorb kommen:\n{string.Join("\n", lines)}{original}\n\nVom Papierkorb aus kannst du alles zurückholen.",
-                "Spiel löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+        if (MessageBox.Show(owner, Txt.L($"„{game.Name}“ löschen?\n\nIn den Papierkorb kommen:\n{list}{original}\n\nVom Papierkorb aus kannst du alles zurückholen.",
+                    $"Delete “{game.Name}”?\n\nThese go to the Recycle Bin:\n{list}{original}\n\nYou can restore everything from the Recycle Bin."),
+                title, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
             return;
         if (!GameLibrary.DeleteGame(game))
-            MessageBox.Show(owner, "Nicht alles konnte gelöscht werden – ist die Datei noch irgendwo geöffnet?", "Spiel löschen", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(owner, Txt.L("Nicht alles konnte gelöscht werden – ist die Datei noch irgendwo geöffnet?", "Not everything could be deleted – is the file still open somewhere?"),
+                title, MessageBoxButton.OK, MessageBoxImage.Warning);
         Reload(null);
     }
 

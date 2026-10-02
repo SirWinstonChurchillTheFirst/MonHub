@@ -195,13 +195,15 @@ public static class GameLibrary
         if (source == null || source.Emulator == emulator) return null;
         byte[] data;
         try { data = File.ReadAllBytes(source.Path); }
-        catch (Exception ex) { return "Spielstand nicht lesbar: " + ex.Message; }
+        catch (Exception ex) { return Txt.L("Spielstand nicht lesbar: ", "Save can't be read: ") + ex.Message; }
         var converted = emulator == MelonDS ? SaveFormat.DsvToRaw(data) : SaveFormat.RawToDsv(data);
-        if (converted == null) return $"Dieser Spielstand kann nicht nach {emulator} übernommen werden (unbekanntes Format).";
+        if (converted == null) return Txt.L($"Dieser Spielstand kann nicht nach {emulator} übernommen werden (unbekanntes Format).",
+            $"This save can't be taken over to {emulator} (unknown format).");
 
         var target = SavePath(emulator, game.Name);
         if (File.Exists(target) && !RecycleBin.Delete(target))
-            return $"Der alte {emulator}-Spielstand konnte nicht in den Papierkorb gelegt werden – ist das Spiel noch offen?";
+            return Txt.L($"Der alte {emulator}-Spielstand konnte nicht in den Papierkorb gelegt werden – ist das Spiel noch offen?",
+                $"The old {emulator} save couldn't be moved to the Recycle Bin – is the game still open?");
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(target)!);
@@ -211,7 +213,7 @@ public static class GameLibrary
         }
         catch (Exception ex)
         {
-            return "Spielstand konnte nicht übernommen werden: " + ex.Message;
+            return Txt.L("Spielstand konnte nicht übernommen werden: ", "The save couldn't be taken over: ") + ex.Message;
         }
         return null;
     }
@@ -618,11 +620,11 @@ public static class TimeText
     public static string Ago(DateTime time)
     {
         var span = DateTime.Now - time;
-        if (span.TotalMinutes < 1) return "gerade eben";
-        if (span.TotalHours < 1) return $"vor {(int)span.TotalMinutes} Min.";
-        if (span.TotalDays < 1) return $"vor {(int)span.TotalHours} Std.";
-        if (span.TotalDays < 2) return "gestern";
-        return $"am {time:dd.MM.yyyy}";
+        if (span.TotalMinutes < 1) return Txt.L("gerade eben", "just now");
+        if (span.TotalHours < 1) return Txt.L($"vor {(int)span.TotalMinutes} Min.", $"{(int)span.TotalMinutes} min ago");
+        if (span.TotalDays < 1) return Txt.L($"vor {(int)span.TotalHours} Std.", $"{(int)span.TotalHours} h ago");
+        if (span.TotalDays < 2) return Txt.L("gestern", "yesterday");
+        return Txt.L($"am {time:dd.MM.yyyy}", $"on {time:MMM d, yyyy}");
     }
 }
 

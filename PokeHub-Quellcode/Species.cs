@@ -1,9 +1,11 @@
 namespace PokeHub;
 
-/// <summary>Every Pokémon up to Gen 7: German name and idle sprite (data in SpeciesData.g.cs, built by tools/build_species.py).</summary>
+/// <summary>Every Pokémon up to Gen 7: German and English name and idle sprite (data in SpeciesData.g.cs, built by tools/build_species.py).</summary>
 public static partial class Species
 {
-    public static string Name(int dex) => dex >= 1 && dex <= GermanNames.Length ? GermanNames[dex - 1] : $"#{dex}";
+    public static string Name(int dex) => dex >= 1 && dex <= Names.Length ? Names[dex - 1] : $"#{dex}";
+
+    static string[] Names => Txt.English ? EnglishNames : GermanNames;
 
     /// <summary>Sprite key for <see cref="SpriteView"/>, null if there is no sprite.</summary>
     public static string? SpriteKey(int dex) => Durations.ContainsKey(dex) ? $"species/{dex:0000}" : null;

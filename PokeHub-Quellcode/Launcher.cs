@@ -11,7 +11,7 @@ public static class Launcher
     {
         if (file == null || !File.Exists(file))
         {
-            MessageBox.Show(owner, $"Nicht gefunden:\n{file}", "MonHub", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(owner, Txt.L($"Nicht gefunden:\n{file}", $"Not found:\n{file}"), "MonHub", MessageBoxButton.OK, MessageBoxImage.Warning);
             return false;
         }
         var psi = new ProcessStartInfo(file)
@@ -40,12 +40,12 @@ public static class Launcher
         {
             if (HubPaths.AzaharExe == null)
             {
-                MessageBox.Show(owner, "Azahar (3DS-Emulator) fehlt – bitte MonHub neu installieren.", "MonHub", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(owner, Txt.L("Azahar (3DS-Emulator) fehlt – bitte MonHub neu installieren.", "Azahar (3DS emulator) is missing – please reinstall MonHub."), "MonHub", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
             string? problem;
             try { problem = Azahar3ds.Prepare(rom); }
-            catch (Exception ex) { problem = "Azahar konnte nicht vorbereitet werden: " + ex.Message; }
+            catch (Exception ex) { problem = Txt.L("Azahar konnte nicht vorbereitet werden: ", "Azahar couldn't be prepared: ") + ex.Message; }
             if (problem != null)
             {
                 MessageBox.Show(owner, problem, "MonHub", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -121,7 +121,8 @@ public static class Launcher
     {
         // mGBA too: it keeps the save in memory and writes it back – a deleted GBA save would come back
         if (!IsRunning(GameLibrary.MelonDS) && !IsRunning(GameLibrary.DeSmuME) && !IsRunning(GameLibrary.Azahar) && !IsRunning(GameLibrary.MGBA)) return false;
-        MessageBox.Show(owner, "Bitte schließ zuerst die Emulatoren (melonDS, DeSmuME, mGBA, Azahar) – ein offenes Spiel würde seinen Spielstand beim Beenden wieder hinschreiben.",
+        MessageBox.Show(owner, Txt.L("Bitte schließ zuerst die Emulatoren (melonDS, DeSmuME, mGBA, Azahar) – ein offenes Spiel würde seinen Spielstand beim Beenden wieder hinschreiben.",
+                "Please close the emulators first (melonDS, DeSmuME, mGBA, Azahar) – an open game would write its save back when it closes."),
             title, MessageBoxButton.OK, MessageBoxImage.Information);
         return true;
     }

@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
+using Txt = PokeHub.Txt;
+
 namespace RandoApp;
 
 /// <summary>
@@ -69,7 +71,8 @@ public class MelonDSInstall : IEmulator
     {
         if (!File.Exists(ConfigFile) || InstanceSetting("EnableCheats") == "true") return null;
         if (Process.GetProcessesByName("melonDS").Length > 0)
-            return "In melonDS sind Cheats noch ausgeschaltet – melonDS schließen und nochmal randomisieren, oder in melonDS unter „System“ die Cheats einschalten.";
+            return Txt.L("In melonDS sind Cheats noch ausgeschaltet – melonDS schließen und nochmal randomisieren, oder in melonDS unter „System“ die Cheats einschalten.",
+                "Cheats are still switched off in melonDS – close melonDS and randomize again, or switch cheats on in melonDS under “System”.");
 
         var lines = File.ReadAllLines(ConfigFile).ToList();
         bool inSection = false, done = false;
@@ -86,10 +89,10 @@ public class MelonDSInstall : IEmulator
         if (!done)
         {
             int at = lines.FindIndex(l => l.Trim() == "[Instance0]");
-            if (at < 0) return "In melonDS unter „System“ die Cheats einschalten.";
+            if (at < 0) return Txt.L("In melonDS unter „System“ die Cheats einschalten.", "Switch cheats on in melonDS under “System”.");
             lines.Insert(at + 1, "EnableCheats = true");
         }
         SafeFile.WriteAllLines(ConfigFile, lines); // UTF-8 without BOM, never half-written
-        return "Cheats in melonDS wurden eingeschaltet.";
+        return Txt.L("Cheats in melonDS wurden eingeschaltet.", "Cheats were switched on in melonDS.");
     }
 }

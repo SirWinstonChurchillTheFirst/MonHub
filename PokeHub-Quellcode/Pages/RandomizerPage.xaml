@@ -14,14 +14,14 @@
                 <TextBox x:Name="TxtSearch" Style="{DynamicResource Hub.Search}" TextChanged="Search_TextChanged"/>
                 <TextBlock Text="&#xE721;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Margin="11,0,0,0" VerticalAlignment="Center"
                            Foreground="{DynamicResource Hub.InkMuted}" IsHitTestVisible="False"/>
-                <TextBlock x:Name="SearchHint" Text="Original suchen …" Margin="31,0,0,0" VerticalAlignment="Center"
+                <TextBlock x:Name="SearchHint" Text="{local:L 'Original suchen …', 'Search originals …'}" Margin="31,0,0,0" VerticalAlignment="Center"
                            Style="{DynamicResource Hub.Muted}" IsHitTestVisible="False"/>
             </Grid>
             <local:SpriteView Key="species/0132" DockPanel.Dock="Right" Height="48" VerticalAlignment="Bottom" Margin="16,0,0,0"
-                              ToolTip="Ditto – verwandelt sich in alles"/>
+                              ToolTip="{local:L 'Ditto – verwandelt sich in alles', 'Ditto – transforms into anything'}"/>
             <StackPanel>
-                <TextBlock Text="NEUER RUN" Style="{DynamicResource Hub.Label}"/>
-                <TextBlock Text="Ein Spiel neu mischen" Style="{DynamicResource Hub.Title}" Margin="0,4,0,2"/>
+                <TextBlock Text="{local:L 'NEUER RUN', 'NEW RUN'}" Style="{DynamicResource Hub.Label}"/>
+                <TextBlock Text="{local:L 'Ein Spiel neu mischen', 'Randomize a game'}" Style="{DynamicResource Hub.Title}" Margin="0,4,0,2"/>
                 <TextBlock x:Name="TxtCount" Style="{DynamicResource Hub.Muted}"/>
             </StackPanel>
         </DockPanel>
@@ -40,9 +40,9 @@
             <!-- ===== the originals ===== -->
             <DockPanel>
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,10">
-                    <ComboBox x:Name="CmbSystem" MinWidth="130" Margin="0,0,8,0" SelectionChanged="Filter_Changed" ToolTip="Nur dieses System zeigen"/>
-                    <ComboBox x:Name="CmbEdition" MinWidth="170" Margin="0,0,8,0" SelectionChanged="Filter_Changed" ToolTip="Nur diese Edition zeigen"/>
-                    <ComboBox x:Name="CmbLanguage" MinWidth="140" SelectionChanged="Filter_Changed" ToolTip="Nur diese Sprache zeigen"/>
+                    <ComboBox x:Name="CmbSystem" MinWidth="130" Margin="0,0,8,0" SelectionChanged="Filter_Changed" ToolTip="{local:L 'Nur dieses System zeigen', 'Show only this system'}"/>
+                    <ComboBox x:Name="CmbEdition" MinWidth="170" Margin="0,0,8,0" SelectionChanged="Filter_Changed" ToolTip="{local:L 'Nur diese Edition zeigen', 'Show only this edition'}"/>
+                    <ComboBox x:Name="CmbLanguage" MinWidth="140" SelectionChanged="Filter_Changed" ToolTip="{local:L 'Nur diese Sprache zeigen', 'Show only this language'}"/>
                 </StackPanel>
             <Grid>
                 <ListBox x:Name="RomList" Background="Transparent" BorderThickness="0" Padding="0"
@@ -84,7 +84,7 @@
                 <ContentControl x:Name="NoRoms" Style="{DynamicResource Hub.Inset}" Visibility="Collapsed" VerticalAlignment="Top">
                     <StackPanel>
                         <TextBlock x:Name="TxtNoRoms" Style="{DynamicResource Hub.Muted}"/>
-                        <Button x:Name="BtnOpenRoms" Style="{DynamicResource Hub.Key}" Click="OpenRoms_Click" HorizontalAlignment="Left" Margin="0,10,0,0">ROM-Ordner öffnen</Button>
+                        <Button x:Name="BtnOpenRoms" Style="{DynamicResource Hub.Key}" Click="OpenRoms_Click" HorizontalAlignment="Left" Margin="0,10,0,0" Content="{local:L 'ROM-Ordner öffnen', 'Open ROM folder'}"></Button>
                     </StackPanel>
                 </ContentControl>
             </Grid>
@@ -101,19 +101,19 @@
                                     <local:SpriteView Key="{Binding Card.Sprite}" MaxWidth="60" MaxHeight="56" Stretch="Uniform" StretchDirection="DownOnly"/>
                                 </Border>
                                 <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="GEWÄHLT" Style="{DynamicResource Hub.Label}"/>
+                                    <TextBlock Text="{local:L 'GEWÄHLT', 'SELECTED'}" Style="{DynamicResource Hub.Label}"/>
                                     <TextBlock Text="{Binding Card.Name}" Style="{DynamicResource Hub.Heading}" FontSize="15" TextWrapping="Wrap"/>
                                     <TextBlock Text="{Binding Detail}" Style="{DynamicResource Hub.Muted}" FontSize="12"/>
                                 </StackPanel>
                             </DockPanel>
                             <TextBlock x:Name="TxtEmuHint" Style="{DynamicResource Hub.Muted}" FontSize="12" Margin="0,8,0,0" Visibility="Collapsed"
-                                       Text="Verschlüsselte ROM (typisch für US-Versionen) – startet in DeSmuME, melonDS bräuchte dafür ein Nintendo-BIOS."/>
+                                       Text="{local:L 'Verschlüsselte ROM (typisch für US-Versionen) – startet in DeSmuME, melonDS bräuchte dafür ein Nintendo-BIOS.', 'Encrypted ROM (typical for US versions) – starts in DeSmuME; melonDS would need a Nintendo BIOS for it.'}"/>
                             <Button x:Name="BtnRandomizePlay" Style="{DynamicResource Hub.PrimaryKey}" Click="RandomizePlay_Click" HorizontalAlignment="Stretch" Margin="0,14,0,8">
                                 <Viewbox StretchDirection="DownOnly">
-                                    <TextBlock Text="▶  Mischen &amp; spielen"/>
+                                    <TextBlock Text="{local:L '▶  Mischen &amp; spielen', '▶  Mix &amp; play'}"/>
                                 </Viewbox>
                             </Button>
-                            <Button x:Name="BtnRandomize" Style="{DynamicResource Hub.Key}" Click="Randomize_Click" HorizontalAlignment="Stretch">Nur mischen</Button>
+                            <Button x:Name="BtnRandomize" Style="{DynamicResource Hub.Key}" Click="Randomize_Click" HorizontalAlignment="Stretch" Content="{local:L 'Nur mischen', 'Mix only'}"></Button>
 
                             <!-- while the randomizer runs: the ball wobbles -->
                             <StackPanel x:Name="BusyPanel" Orientation="Horizontal" Visibility="Collapsed" Margin="0,12,0,0">
@@ -136,10 +136,10 @@
                             <TextBlock x:Name="TxtResultCheat" Style="{DynamicResource Hub.Muted}" FontSize="12"/>
                             <WrapPanel Margin="0,12,0,0">
                                 <Button Style="{DynamicResource Hub.PrimaryKey}" Click="Play_Click" Margin="0,0,10,6" Padding="16,8">
-                                    <TextBlock Text="▶  Spielen"/>
+                                    <TextBlock Text="{local:L '▶  Spielen', '▶  Play'}"/>
                                 </Button>
-                                <Button Style="{DynamicResource Hub.Ghost}" Click="ShowFile_Click" Margin="0,0,0,6" VerticalAlignment="Center">Im Ordner</Button>
-                                <Button Style="{DynamicResource Hub.Ghost}" Click="Games_Click" Margin="0,0,0,6" VerticalAlignment="Center">Zu den Spielen</Button>
+                                <Button Style="{DynamicResource Hub.Ghost}" Click="ShowFile_Click" Margin="0,0,0,6" VerticalAlignment="Center" Content="{local:L 'Im Ordner', 'In folder'}"></Button>
+                                <Button Style="{DynamicResource Hub.Ghost}" Click="Games_Click" Margin="0,0,0,6" VerticalAlignment="Center" Content="{local:L 'Zu den Spielen', 'To your games'}"></Button>
                             </WrapPanel>
                         </StackPanel>
                     </ContentControl>
@@ -147,47 +147,47 @@
                     <!-- settings for the run -->
                     <ContentControl x:Name="OptionsPanel" Style="{DynamicResource Hub.Panel}" Margin="0,14,0,0">
                         <StackPanel>
-                            <TextBlock Text="EINSTELLUNGEN" Style="{DynamicResource Hub.Label}" Margin="0,0,0,6"/>
+                            <TextBlock Text="{local:L 'EINSTELLUNGEN', 'SETTINGS'}" Style="{DynamicResource Hub.Label}" Margin="0,0,0,6"/>
                             <DockPanel>
                                 <Button x:Name="BtnEditPreset" DockPanel.Dock="Right" Style="{DynamicResource Hub.Ghost}" Click="EditPreset_Click"
-                                        VerticalAlignment="Center" Margin="6,0,0,0" ToolTip="Alle Optionen des Randomizers">Bearbeiten …</Button>
+                                        VerticalAlignment="Center" Margin="6,0,0,0" ToolTip="{local:L 'Alle Optionen des Randomizers', 'All of the randomizer’s options'}" Content="{local:L 'Bearbeiten …', 'Edit …'}"></Button>
                                 <ComboBox x:Name="CmbPreset" DisplayMemberPath="Name" SelectionChanged="Preset_SelectionChanged"/>
                             </DockPanel>
 
                             <Border Style="{DynamicResource Hub.Divider}" Margin="0,14"/>
                             <CheckBox x:Name="ChkRareCandy" Checked="RareCandy_Changed" Unchecked="RareCandy_Changed" Foreground="{DynamicResource Hub.Ink}">
-                                <TextBlock Text="Rare-Candy-Cheat (999 Sonderbonbons)" TextWrapping="Wrap"/>
+                                <TextBlock Text="{local:L 'Rare-Candy-Cheat (999 Sonderbonbons)', 'Rare Candy cheat (999 Rare Candies)'}" TextWrapping="Wrap"/>
                             </CheckBox>
                             <TextBlock x:Name="TxtCheatHint" Style="{DynamicResource Hub.Muted}" FontSize="12" Margin="0,4,0,0"/>
-                            <Expander x:Name="CheatExpander" Header="Eigener Cheat-Code für dieses Spiel" Margin="0,8,0,0" Foreground="{DynamicResource Hub.InkMuted}">
+                            <Expander x:Name="CheatExpander" Header="{local:L 'Eigener Cheat-Code für dieses Spiel', 'Own cheat code for this game'}" Margin="0,8,0,0" Foreground="{DynamicResource Hub.InkMuted}">
                                 <StackPanel Margin="0,6,0,0">
                                     <TextBox x:Name="TxtCustomCheat" AcceptsReturn="True" MinHeight="54" FontFamily="Consolas" FontSize="12"
                                              TextChanged="CustomCheat_TextChanged" LostFocus="CustomCheat_LostFocus"/>
                                     <TextBlock x:Name="TxtCustomCheatInfo" Style="{DynamicResource Hub.Muted}" FontSize="12" Margin="0,4,0,0"
-                                               Text="Leer = eingebauter Code. Action-Replay-Zeilen, z. B. „94000130 FCFF0000“."/>
+                                               Text="{local:L 'Leer = eingebauter Code. Action-Replay-Zeilen, z. B. „94000130 FCFF0000“.', 'Empty = built-in code. Action Replay lines, e.g. “94000130 FCFF0000”.'}"/>
                                 </StackPanel>
                             </Expander>
 
                             <Border Style="{DynamicResource Hub.Divider}" Margin="0,14"/>
                             <CheckBox x:Name="ChkAskName" Checked="Option_Changed" Unchecked="Option_Changed" Foreground="{DynamicResource Hub.Ink}" Margin="0,0,0,6">
-                                <TextBlock Text="Namen nach dem Mischen selbst eingeben" TextWrapping="Wrap"/>
+                                <TextBlock Text="{local:L 'Namen nach dem Mischen selbst eingeben', 'Name the run myself after mixing'}" TextWrapping="Wrap"/>
                             </CheckBox>
                             <CheckBox x:Name="ChkSpoilerFile" Checked="Option_Changed" Unchecked="Option_Changed" Foreground="{DynamicResource Hub.Ink}" Margin="0,0,0,6">
-                                <TextBlock Text="Spoiler als Datei speichern" TextWrapping="Wrap"/>
+                                <TextBlock Text="{local:L 'Spoiler als Datei speichern', 'Save the spoiler as a file'}" TextWrapping="Wrap"/>
                             </CheckBox>
                             <CheckBox x:Name="ChkFullLog" Checked="Option_Changed" Unchecked="Option_Changed" Foreground="{DynamicResource Hub.Ink}">
-                                <TextBlock Text="Komplettes Randomizer-Log behalten" TextWrapping="Wrap"/>
+                                <TextBlock Text="{local:L 'Komplettes Randomizer-Log behalten', 'Keep the full randomizer log'}" TextWrapping="Wrap"/>
                             </CheckBox>
                         </StackPanel>
                     </ContentControl>
 
-                    <Expander x:Name="SpoilerExpander" Header="Spoiler (Starter &amp; Legendäre)" Margin="0,12,0,0" Foreground="{DynamicResource Hub.InkMuted}"
+                    <Expander x:Name="SpoilerExpander" Header="{local:L 'Spoiler (Starter &amp; Legendäre)', 'Spoiler (starters &amp; legendaries)'}" Margin="0,12,0,0" Foreground="{DynamicResource Hub.InkMuted}"
                               Visibility="Collapsed">
                         <ContentControl Style="{DynamicResource Hub.Inset}" Margin="0,6,0,0">
                             <TextBlock x:Name="TxtSpoiler" Style="{DynamicResource Hub.Body}" FontFamily="Consolas" FontSize="11.5"/>
                         </ContentControl>
                     </Expander>
-                    <Expander x:Name="LogExpander" Header="Details (Log)" Margin="0,12,0,0" Foreground="{DynamicResource Hub.InkMuted}">
+                    <Expander x:Name="LogExpander" Header="{local:L 'Details (Log)', 'Details (log)'}" Margin="0,12,0,0" Foreground="{DynamicResource Hub.InkMuted}">
                         <TextBox x:Name="TxtLog" IsReadOnly="True" TextWrapping="NoWrap" MaxHeight="260" Margin="0,6,0,0"
                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="11"/>
                     </Expander>

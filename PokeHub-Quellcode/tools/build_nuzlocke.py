@@ -1,7 +1,7 @@
 """
-Route lists for the Nuzlocke tracker: every place with wild Pokémon per game (PokeAPI data, German names), in story order.
+Route lists for the Nuzlocke tracker: every place with wild Pokémon per game (PokeAPI data, German and English names), in story order.
 The order is hand-made per region below; places the order doesn't know are appended (and printed) so nothing is lost.
-Output: Assets/Nuzlocke/routes.json   {"firered": [{"id": "kanto-route-1", "name": "Route 1"}, ...], ...}
+Output: Assets/Nuzlocke/routes.json   {"firered": [{"id": "kanto-route-1", "name": "Route 1", "en": "Route 1"}, ...], ...}
 
 Run:  python tools/build_nuzlocke.py   (downloads the PokeAPI CSVs once into tools/.pokeapi)
 """
@@ -152,10 +152,11 @@ for version, story in STORY.items():
     missing = sorted(have - set(order))
     if missing:
         print(f"{version}: nicht einsortiert: {' '.join(missing)}")
-    entries = [{"id": "starter", "name": "Starter"}]
+    entries = [{"id": "starter", "name": "Starter", "en": "Starter"}]
     for p in order + missing:
         n = names[location_id[p]]
-        entries.append({"id": p, "name": n.get(GERMAN) or n.get(ENGLISH) or p.replace("-", " ").title()})
+        en = n.get(ENGLISH) or p.replace("-", " ").title()
+        entries.append({"id": p, "name": n.get(GERMAN) or en, "en": en})
     result[version] = entries
 
 out = os.path.join(ROOT, "Assets", "Nuzlocke", "routes.json")

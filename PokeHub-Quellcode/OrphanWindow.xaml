@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:PokeHub"
-        Title="Spielstände ohne Spiel" Style="{StaticResource Hub.DialogWindow}" Width="860" Height="700" MinWidth="640" MinHeight="480"
+        Title="{local:L 'Spielstände ohne Spiel', 'Saves without a game'}" Style="{StaticResource Hub.DialogWindow}" Width="860" Height="700" MinWidth="640" MinHeight="480"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="{DynamicResource Hub.Dialog}"
         Icon="{StaticResource PokeballImage}" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True">
     <Window.Resources>
@@ -11,7 +11,7 @@
             <Grid Height="68" Background="Transparent">
                 <Grid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Im Ordner zeigen" Click="ShowFile_Click"/>
+                        <MenuItem Header="{local:L 'Im Ordner zeigen', 'Show in folder'}" Click="ShowFile_Click"/>
                     </ContextMenu>
                 </Grid.ContextMenu>
                 <Grid.ColumnDefinitions>
@@ -69,25 +69,25 @@
         <DockPanel DockPanel.Dock="Top">
             <local:SpriteView Key="0094/idle" Height="56" VerticalAlignment="Top" Margin="0,0,16,0"/>
             <StackPanel>
-                <TextBlock Text="AUFRÄUMEN" Style="{DynamicResource Hub.Label}"/>
-                <TextBlock Text="Spielstände ohne Spiel" Style="{DynamicResource Hub.Title}" Margin="0,4,0,2"/>
+                <TextBlock Text="{local:L 'AUFRÄUMEN', 'TIDY UP'}" Style="{DynamicResource Hub.Label}"/>
+                <TextBlock Text="{local:L 'Spielstände ohne Spiel', 'Saves without a game'}" Style="{DynamicResource Hub.Title}" Margin="0,4,0,2"/>
                 <TextBlock Style="{DynamicResource Hub.Muted}"
-                           Text="Zu diesen Spielständen gibt es kein Spiel mehr im MonHub – meist wurde die ROM gelöscht oder umbenannt. Was du löschst, kommt in den Papierkorb."/>
+                           Text="{local:L 'Zu diesen Spielständen gibt es kein Spiel mehr im MonHub – meist wurde die ROM gelöscht oder umbenannt. Was du löschst, kommt in den Papierkorb.', 'There is no game in MonHub anymore for these saves – usually the ROM was deleted or renamed. Whatever you delete goes to the Recycle Bin.'}"/>
             </StackPanel>
         </DockPanel>
 
         <!-- select all + totals -->
         <DockPanel DockPanel.Dock="Top" Margin="22,18,6,10">
             <TextBlock x:Name="TxtCount" DockPanel.Dock="Right" Style="{DynamicResource Hub.Muted}" VerticalAlignment="Center"/>
-            <CheckBox x:Name="ChkAll" Content="Alle auswählen" Checked="All_Toggled" Unchecked="All_Toggled" Foreground="{DynamicResource Hub.Ink}"/>
+            <CheckBox x:Name="ChkAll" Content="{local:L 'Alle auswählen', 'Select all'}" Checked="All_Toggled" Unchecked="All_Toggled" Foreground="{DynamicResource Hub.Ink}"/>
         </DockPanel>
 
         <!-- bottom buttons -->
         <DockPanel DockPanel.Dock="Bottom" Margin="0,14,0,0" LastChildFill="False">
             <Button x:Name="BtnDelete" DockPanel.Dock="Right" Style="{DynamicResource Hub.DangerKey}" MinWidth="150" Click="Delete_Click" IsEnabled="False">
-                <TextBlock x:Name="TxtDelete" Text="Löschen"/>
+                <TextBlock x:Name="TxtDelete" Text="{local:L 'Löschen', 'Delete'}"/>
             </Button>
-            <Button DockPanel.Dock="Right" Style="{DynamicResource Hub.Ghost}" IsCancel="True" Margin="0,0,12,0" VerticalAlignment="Center">Schließen</Button>
+            <Button DockPanel.Dock="Right" Style="{DynamicResource Hub.Ghost}" IsCancel="True" Margin="0,0,12,0" VerticalAlignment="Center" Content="{local:L 'Schließen', 'Close'}"></Button>
         </DockPanel>
 
         <!-- the saves -->
@@ -98,8 +98,8 @@
                      SelectionChanged="SaveList_SelectionChanged"/>
             <StackPanel x:Name="EmptyPanel" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <local:SpriteView Key="0025/idle" Height="84" HorizontalAlignment="Center"/>
-                <TextBlock Text="Alles aufgeräumt!" Style="{DynamicResource Hub.Heading}" FontSize="20" HorizontalAlignment="Center" Margin="0,14,0,0"/>
-                <TextBlock Text="Es gibt keine Spielstände ohne Spiel." Style="{DynamicResource Hub.Muted}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                <TextBlock Text="{local:L 'Alles aufgeräumt!', 'All tidy!'}" Style="{DynamicResource Hub.Heading}" FontSize="20" HorizontalAlignment="Center" Margin="0,14,0,0"/>
+                <TextBlock Text="{local:L 'Es gibt keine Spielstände ohne Spiel.', 'There are no saves without a game.'}" Style="{DynamicResource Hub.Muted}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
             </StackPanel>
         </Grid>
     </DockPanel>

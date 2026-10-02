@@ -6,7 +6,7 @@
         <StackPanel Margin="30,8,30,28">
 
             <!-- greeting -->
-            <TextBlock x:Name="TxtKicker" Text="WEITER" Style="{DynamicResource Hub.Label}"/>
+            <TextBlock x:Name="TxtKicker" Text="{local:L 'WEITER', 'CONTINUE'}" Style="{DynamicResource Hub.Label}"/>
             <TextBlock x:Name="TxtGreeting" Style="{DynamicResource Hub.Title}" Margin="0,4,0,2"/>
             <TextBlock x:Name="TxtSubline" Style="{DynamicResource Hub.Muted}"/>
 
@@ -19,13 +19,13 @@
                     </Grid.ColumnDefinitions>
                     <local:SpriteView Key="0143/sleep" Height="96" VerticalAlignment="Top" Margin="0,4,24,0"/>
                     <StackPanel Grid.Column="1">
-                        <TextBlock Text="Noch ist es ruhig hier." Style="{DynamicResource Hub.Heading}"/>
+                        <TextBlock Text="{local:L 'Noch ist es ruhig hier.', 'It’s quiet here so far.'}" Style="{DynamicResource Hub.Heading}"/>
                         <TextBlock Style="{DynamicResource Hub.Muted}" Margin="0,4,0,14"
-                                   Text="Leg deine eigenen ROMs in den MonHub – oder hol sie samt Spielständen von deinem bisherigen Emulator. Danach landet hier dein Abenteuer."/>
+                                   Text="{local:L 'Leg deine eigenen ROMs in den MonHub – oder hol sie samt Spielständen von deinem bisherigen Emulator. Danach landet hier dein Abenteuer.', 'Put your own ROMs into MonHub – or bring them over together with your saves from the emulator you used so far. Then your adventure shows up here.'}"/>
                         <WrapPanel>
-                            <Button Style="{DynamicResource Hub.PrimaryKey}" Click="Import_Click" Margin="0,0,10,8">Vom Emulator importieren</Button>
-                            <Button Style="{DynamicResource Hub.Key}" Click="OpenRoms_Click" Margin="0,0,10,8">ROM-Ordner öffnen</Button>
-                             <Button Style="{DynamicResource Hub.Key}" Click="NeuerRun_Click" Margin="0,0,10,8">Neuer Run</Button>
+                            <Button Style="{DynamicResource Hub.PrimaryKey}" Click="Import_Click" Margin="0,0,10,8" Content="{local:L 'Vom Emulator importieren', 'Import from emulator'}"></Button>
+                            <Button Style="{DynamicResource Hub.Key}" Click="OpenRoms_Click" Margin="0,0,10,8" Content="{local:L 'ROM-Ordner öffnen', 'Open ROM folder'}"></Button>
+                             <Button Style="{DynamicResource Hub.Key}" Click="NeuerRun_Click" Margin="0,0,10,8" Content="{local:L 'Neuer Run', 'New run'}"></Button>
                         </WrapPanel>
                     </StackPanel>
                 </Grid>
@@ -78,11 +78,11 @@
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Text="SPIELER" Style="{DynamicResource Hub.Label}" VerticalAlignment="Center" Margin="0,0,24,6"/>
+                                        <TextBlock Text="{local:L 'SPIELER', 'PLAYER'}" Style="{DynamicResource Hub.Label}" VerticalAlignment="Center" Margin="0,0,24,6"/>
                                         <TextBlock Grid.Column="1" Text="{Binding Player}" Style="{DynamicResource Hub.Value}" HorizontalAlignment="Right" Margin="0,0,0,6"/>
-                                        <TextBlock Grid.Row="1" Text="SPIELZEIT" Style="{DynamicResource Hub.Label}" VerticalAlignment="Center" Margin="0,0,24,6"/>
+                                        <TextBlock Grid.Row="1" Text="{local:L 'SPIELZEIT', 'PLAY TIME'}" Style="{DynamicResource Hub.Label}" VerticalAlignment="Center" Margin="0,0,24,6"/>
                                         <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Time}" Style="{DynamicResource Hub.Value}" HorizontalAlignment="Right" Margin="0,0,0,6"/>
-                                        <TextBlock Grid.Row="2" Text="ORDEN" Style="{DynamicResource Hub.Label}" VerticalAlignment="Center" Margin="0,0,24,6"/>
+                                        <TextBlock Grid.Row="2" Text="{local:L 'ORDEN', 'BADGES'}" Style="{DynamicResource Hub.Label}" VerticalAlignment="Center" Margin="0,0,24,6"/>
                                         <ItemsControl Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Badges}" ItemTemplate="{DynamicResource Hub.BadgeTemplate}"
                                                       HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,-4,6" Focusable="False">
                                             <ItemsControl.ItemsPanel>
@@ -113,7 +113,7 @@
                                 <TextBlock Text="{Binding ButtonText}"/>
                             </Button>
                             <TextBlock Text="{Binding Note}" Style="{DynamicResource Hub.Muted}" VerticalAlignment="Center" TextWrapping="NoWrap" Margin="0,0,14,0"/>
-                            <Button Style="{DynamicResource Hub.Ghost}" Click="OtherGame_Click" VerticalAlignment="Center">Anderes Spiel …</Button>
+                            <Button Style="{DynamicResource Hub.Ghost}" Click="OtherGame_Click" VerticalAlignment="Center" Content="{local:L 'Anderes Spiel …', 'Other game …'}"></Button>
                         </WrapPanel>
                     </StackPanel>
                 </ContentControl>
@@ -127,7 +127,7 @@
                     <StackPanel>
                         <DockPanel>
                             <local:SpriteView Key="icon/card" DockPanel.Dock="Right" Width="32" Height="32" VerticalAlignment="Top"/>
-                            <TextBlock Text="TRAINERPASS" Style="{DynamicResource Hub.Label}"/>
+                            <TextBlock Text="{local:L 'TRAINERPASS', 'TRAINER CARD'}" Style="{DynamicResource Hub.Label}"/>
                         </DockPanel>
                         <TextBlock Text="{Binding Name}" Style="{DynamicResource Hub.Title}" FontSize="22" Margin="0,2,0,0"/>
                         <TextBlock Text="{Binding IdLine}" Style="{DynamicResource Hub.Muted}" Margin="0,0,0,12"/>
@@ -149,7 +149,7 @@
 
             <!-- ===== recent saves ===== -->
             <StackPanel x:Name="RecentSection" Margin="0,26,0,0">
-                <TextBlock Text="ZULETZT GESPIELT" Style="{DynamicResource Hub.Label}" Margin="0,0,0,6"/>
+                <TextBlock Text="{local:L 'ZULETZT GESPIELT', 'RECENTLY PLAYED'}" Style="{DynamicResource Hub.Label}" Margin="0,0,0,6"/>
                 <ListBox x:Name="RecentList" Background="Transparent" BorderThickness="0" Padding="0"
                          ItemContainerStyle="{DynamicResource Hub.Row}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          PreviewMouseWheel="List_PreviewMouseWheel" SelectionChanged="Recent_SelectionChanged">
@@ -205,10 +205,10 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Neues Abenteuer" Style="{DynamicResource Hub.Heading}"/>
+                        <TextBlock Text="{local:L 'Neues Abenteuer', 'New adventure'}" Style="{DynamicResource Hub.Heading}"/>
                         <TextBlock x:Name="TxtStarterLine" Style="{DynamicResource Hub.Muted}"/>
                     </StackPanel>
-                    <Button Grid.Column="2" Style="{DynamicResource Hub.Key}" Click="NeuerRun_Click" VerticalAlignment="Center">Neuer Run</Button>
+                    <Button Grid.Column="2" Style="{DynamicResource Hub.Key}" Click="NeuerRun_Click" VerticalAlignment="Center" Content="{local:L 'Neuer Run', 'New run'}"></Button>
                 </Grid>
             </ContentControl>
         </StackPanel>

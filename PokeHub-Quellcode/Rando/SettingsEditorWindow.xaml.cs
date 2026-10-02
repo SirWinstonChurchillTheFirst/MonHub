@@ -5,9 +5,11 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.Win32;
 
+using Txt = PokeHub.Txt;
+
 namespace RandoApp;
 
-/// <summary>Quick editor for a randomizer settings file: the most important options in German, the rest under "Experte".</summary>
+/// <summary>Quick editor for a randomizer settings file: the most important options with plain names, the rest under "Experte".</summary>
 public partial class SettingsEditorWindow : Window
 {
     record Field(string Name, string Label);
@@ -15,104 +17,104 @@ public partial class SettingsEditorWindow : Window
     // The options most people care about, grouped like the randomizer's own tabs.
     static readonly (string Group, Field[] Fields)[] Curated =
     [
-        ("Starter", [
-            new("StartersMod", "Starter"),
-            new("RandomizeStartersHeldItems", "Starter tragen zufällige Items"),
+        (Txt.L("Starter", "Starters"), [
+            new("StartersMod", Txt.L("Starter", "Starters")),
+            new("RandomizeStartersHeldItems", Txt.L("Starter tragen zufällige Items", "Starters hold random items")),
         ]),
-        ("Statische Pokémon (Legendäre, Geschenke, Fossile …)", [
-            new("StaticPokemonMod", "Statische Pokémon"),
-            new("StaticLevelModified", "Level ändern"),
-            new("StaticLevelModifier", "Level-Änderung in %"),
+        (Txt.L("Statische Pokémon (Legendäre, Geschenke, Fossile …)", "Static Pokémon (legendaries, gifts, fossils …)"), [
+            new("StaticPokemonMod", Txt.L("Statische Pokémon", "Static Pokémon")),
+            new("StaticLevelModified", Txt.L("Level ändern", "Change levels")),
+            new("StaticLevelModifier", Txt.L("Level-Änderung in %", "Level change in %")),
         ]),
-        ("Wilde Pokémon", [
-            new("WildPokemonMod", "Wilde Pokémon"),
-            new("WildPokemonRestrictionMod", "Einschränkung"),
-            new("BlockWildLegendaries", "Keine wilden Legendären"),
-            new("UseTimeBasedEncounters", "Tageszeit-Begegnungen mit randomisieren"),
-            new("RandomizeWildPokemonHeldItems", "Tragen zufällige Items"),
-            new("WildLevelsModified", "Level ändern"),
-            new("WildLevelModifier", "Level-Änderung in %"),
-            new("UseMinimumCatchRate", "Mindest-Fangrate erhöhen"),
-            new("MinimumCatchRateLevel", "Fangrate-Stufe (1–5)"),
+        (Txt.L("Wilde Pokémon", "Wild Pokémon"), [
+            new("WildPokemonMod", Txt.L("Wilde Pokémon", "Wild Pokémon")),
+            new("WildPokemonRestrictionMod", Txt.L("Einschränkung", "Restriction")),
+            new("BlockWildLegendaries", Txt.L("Keine wilden Legendären", "No wild legendaries")),
+            new("UseTimeBasedEncounters", Txt.L("Tageszeit-Begegnungen mit randomisieren", "Randomize time-of-day encounters too")),
+            new("RandomizeWildPokemonHeldItems", Txt.L("Tragen zufällige Items", "Hold random items")),
+            new("WildLevelsModified", Txt.L("Level ändern", "Change levels")),
+            new("WildLevelModifier", Txt.L("Level-Änderung in %", "Level change in %")),
+            new("UseMinimumCatchRate", Txt.L("Mindest-Fangrate erhöhen", "Raise the minimum catch rate")),
+            new("MinimumCatchRateLevel", Txt.L("Fangrate-Stufe (1–5)", "Catch rate level (1–5)")),
         ]),
-        ("Trainer", [
-            new("TrainersMod", "Trainer-Pokémon"),
-            new("TrainersUsePokemonOfSimilarStrength", "Ähnlich starke Pokémon"),
-            new("RivalCarriesStarterThroughout", "Rivale behält seinen Starter"),
-            new("TrainersBlockLegendaries", "Keine Legendären bei Trainern"),
-            new("TrainersForceFullyEvolved", "Ab einem Level voll entwickelt"),
-            new("TrainersForceFullyEvolvedLevel", "… ab Level"),
-            new("TrainersLevelModified", "Level ändern"),
-            new("TrainersLevelModifier", "Level-Änderung in %"),
-            new("BetterTrainerMovesets", "Bessere Attacken"),
-            new("RandomizeTrainerNames", "Namen randomisieren"),
-            new("RandomizeTrainerClassNames", "Klassen-Namen randomisieren"),
+        (Txt.L("Trainer", "Trainers"), [
+            new("TrainersMod", Txt.L("Trainer-Pokémon", "Trainer Pokémon")),
+            new("TrainersUsePokemonOfSimilarStrength", Txt.L("Ähnlich starke Pokémon", "Pokémon of similar strength")),
+            new("RivalCarriesStarterThroughout", Txt.L("Rivale behält seinen Starter", "Rival keeps their starter")),
+            new("TrainersBlockLegendaries", Txt.L("Keine Legendären bei Trainern", "No legendaries for trainers")),
+            new("TrainersForceFullyEvolved", Txt.L("Ab einem Level voll entwickelt", "Fully evolved from a level on")),
+            new("TrainersForceFullyEvolvedLevel", Txt.L("… ab Level", "… from level")),
+            new("TrainersLevelModified", Txt.L("Level ändern", "Change levels")),
+            new("TrainersLevelModifier", Txt.L("Level-Änderung in %", "Level change in %")),
+            new("BetterTrainerMovesets", Txt.L("Bessere Attacken", "Better movesets")),
+            new("RandomizeTrainerNames", Txt.L("Namen randomisieren", "Randomize names")),
+            new("RandomizeTrainerClassNames", Txt.L("Klassen-Namen randomisieren", "Randomize class names")),
         ]),
-        ("Pokémon-Werte & Entwicklungen", [
-            new("BaseStatisticsMod", "Basiswerte"),
-            new("TypesMod", "Typen"),
-            new("AbilitiesMod", "Fähigkeiten"),
-            new("EvolutionsMod", "Entwicklungen"),
-            new("ChangeImpossibleEvolutions", "Unmögliche Entwicklungen ändern (z. B. Tausch → Level)"),
-            new("MakeEvolutionsEasier", "Entwicklungen erleichtern"),
-            new("StandardizeEXPCurves", "EP-Kurven vereinheitlichen"),
-            new("SelectedEXPCurve", "EP-Kurve"),
+        (Txt.L("Pokémon-Werte & Entwicklungen", "Pokémon stats & evolutions"), [
+            new("BaseStatisticsMod", Txt.L("Basiswerte", "Base stats")),
+            new("TypesMod", Txt.L("Typen", "Types")),
+            new("AbilitiesMod", Txt.L("Fähigkeiten", "Abilities")),
+            new("EvolutionsMod", Txt.L("Entwicklungen", "Evolutions")),
+            new("ChangeImpossibleEvolutions", Txt.L("Unmögliche Entwicklungen ändern (z. B. Tausch → Level)", "Change impossible evolutions (e.g. trade → level)")),
+            new("MakeEvolutionsEasier", Txt.L("Entwicklungen erleichtern", "Make evolutions easier")),
+            new("StandardizeEXPCurves", Txt.L("EP-Kurven vereinheitlichen", "Standardize EXP curves")),
+            new("SelectedEXPCurve", Txt.L("EP-Kurve", "EXP curve")),
         ]),
-        ("Attacken", [
-            new("MovesetsMod", "Level-Attacken"),
-            new("TmsMod", "TM-Attacken"),
-            new("TmsHmsCompatibilityMod", "TM/VM-Kompatibilität"),
-            new("FullHMCompat", "Alle können alle VMs lernen"),
-            new("MoveTutorMovesMod", "Attacken-Lehrer"),
-            new("MoveTutorsCompatibilityMod", "Lehrer-Kompatibilität"),
+        (Txt.L("Attacken", "Moves"), [
+            new("MovesetsMod", Txt.L("Level-Attacken", "Level-up moves")),
+            new("TmsMod", Txt.L("TM-Attacken", "TM moves")),
+            new("TmsHmsCompatibilityMod", Txt.L("TM/VM-Kompatibilität", "TM/HM compatibility")),
+            new("FullHMCompat", Txt.L("Alle können alle VMs lernen", "Everyone can learn every HM")),
+            new("MoveTutorMovesMod", Txt.L("Attacken-Lehrer", "Move tutors")),
+            new("MoveTutorsCompatibilityMod", Txt.L("Lehrer-Kompatibilität", "Tutor compatibility")),
         ]),
-        ("Items & Tausch", [
-            new("FieldItemsMod", "Items auf dem Boden"),
-            new("ShopItemsMod", "Shop-Items"),
-            new("PickupItemsMod", "Mitnahme-Items"),
-            new("InGameTradesMod", "Tausch im Spiel"),
+        (Txt.L("Items & Tausch", "Items & trades"), [
+            new("FieldItemsMod", Txt.L("Items auf dem Boden", "Field items")),
+            new("ShopItemsMod", Txt.L("Shop-Items", "Shop items")),
+            new("PickupItemsMod", Txt.L("Mitnahme-Items", "Pickup items")),
+            new("InGameTradesMod", Txt.L("Tausch im Spiel", "In-game trades")),
         ]),
     ];
 
     static readonly Dictionary<string, string> ChoiceLabels = new()
     {
-        ["UNCHANGED"] = "Unverändert",
-        ["RANDOM"] = "Zufällig",
-        ["RANDOMIZE"] = "Zufällig",
-        ["COMPLETELY_RANDOM"] = "Komplett zufällig",
-        ["SHUFFLE"] = "Gemischt",
-        ["CUSTOM"] = "Eigene Auswahl (aus der Datei)",
-        ["RANDOM_WITH_TWO_EVOLUTIONS"] = "Zufällig (mit 2 Entwicklungen)",
-        ["RANDOM_MATCHING"] = "Zufällig (Legendär ↔ Legendär)",
-        ["SIMILAR_STRENGTH"] = "Ähnliche Stärke",
-        ["SAME_STRENGTH"] = "Gleiche Stärke",
-        ["AREA_MAPPING"] = "1:1 pro Gebiet",
-        ["GLOBAL_MAPPING"] = "1:1 im ganzen Spiel",
-        ["NONE"] = "Keine",
-        ["CATCH_EM_ALL"] = "Alle Pokémon fangbar",
-        ["TYPE_THEME_AREAS"] = "Typ-Thema pro Gebiet",
-        ["DISTRIBUTED"] = "Gleichmäßig verteilt",
-        ["MAINPLAYTHROUGH"] = "Gleichmäßig (nur Hauptspiel)",
-        ["TYPE_THEMED"] = "Typ-Themen",
-        ["TYPE_THEMED_ELITE4_GYMS"] = "Typ-Themen (nur Arenen & Top 4)",
-        ["RANDOM_FOLLOW_EVOLUTIONS"] = "Zufällig (folgt Entwicklungen)",
-        ["RANDOM_EVERY_LEVEL"] = "Zufällig (jedes Level)",
-        ["RANDOM_PREFER_SAME_TYPE"] = "Zufällig (gleicher Typ bevorzugt)",
-        ["RANDOM_PREFER_TYPE"] = "Zufällig (Typ bevorzugt)",
-        ["METRONOME_ONLY"] = "Nur Metronom",
-        ["FULL"] = "Alle kompatibel",
-        ["RANDOM_EVEN"] = "Zufällig (gleichmäßig)",
-        ["RANDOMIZE_GIVEN"] = "Nur angebotenes Pokémon",
-        ["RANDOMIZE_GIVEN_AND_REQUESTED"] = "Angebotenes & gewünschtes",
-        ["SLOW"] = "Langsam",
-        ["MEDIUM_SLOW"] = "Mittel-langsam",
-        ["MEDIUM_FAST"] = "Mittel-schnell",
-        ["FAST"] = "Schnell",
-        ["ERRATIC"] = "Unregelmäßig",
-        ["FLUCTUATING"] = "Schwankend",
-        ["LEGENDARIES"] = "Legendäre",
-        ["STRONG_LEGENDARIES"] = "Starke Legendäre",
-        ["ALL"] = "Alle",
+        ["UNCHANGED"] = Txt.L("Unverändert", "Unchanged"),
+        ["RANDOM"] = Txt.L("Zufällig", "Random"),
+        ["RANDOMIZE"] = Txt.L("Zufällig", "Random"),
+        ["COMPLETELY_RANDOM"] = Txt.L("Komplett zufällig", "Completely random"),
+        ["SHUFFLE"] = Txt.L("Gemischt", "Shuffled"),
+        ["CUSTOM"] = Txt.L("Eigene Auswahl (aus der Datei)", "Custom (from the file)"),
+        ["RANDOM_WITH_TWO_EVOLUTIONS"] = Txt.L("Zufällig (mit 2 Entwicklungen)", "Random (with 2 evolutions)"),
+        ["RANDOM_MATCHING"] = Txt.L("Zufällig (Legendär ↔ Legendär)", "Random (legendary ↔ legendary)"),
+        ["SIMILAR_STRENGTH"] = Txt.L("Ähnliche Stärke", "Similar strength"),
+        ["SAME_STRENGTH"] = Txt.L("Gleiche Stärke", "Same strength"),
+        ["AREA_MAPPING"] = Txt.L("1:1 pro Gebiet", "1:1 per area"),
+        ["GLOBAL_MAPPING"] = Txt.L("1:1 im ganzen Spiel", "1:1 across the game"),
+        ["NONE"] = Txt.L("Keine", "None"),
+        ["CATCH_EM_ALL"] = Txt.L("Alle Pokémon fangbar", "Catch 'em all"),
+        ["TYPE_THEME_AREAS"] = Txt.L("Typ-Thema pro Gebiet", "Type theme per area"),
+        ["DISTRIBUTED"] = Txt.L("Gleichmäßig verteilt", "Evenly distributed"),
+        ["MAINPLAYTHROUGH"] = Txt.L("Gleichmäßig (nur Hauptspiel)", "Even (main game only)"),
+        ["TYPE_THEMED"] = Txt.L("Typ-Themen", "Type themed"),
+        ["TYPE_THEMED_ELITE4_GYMS"] = Txt.L("Typ-Themen (nur Arenen & Top 4)", "Type themed (gyms & Elite Four only)"),
+        ["RANDOM_FOLLOW_EVOLUTIONS"] = Txt.L("Zufällig (folgt Entwicklungen)", "Random (follows evolutions)"),
+        ["RANDOM_EVERY_LEVEL"] = Txt.L("Zufällig (jedes Level)", "Random (every level)"),
+        ["RANDOM_PREFER_SAME_TYPE"] = Txt.L("Zufällig (gleicher Typ bevorzugt)", "Random (same type preferred)"),
+        ["RANDOM_PREFER_TYPE"] = Txt.L("Zufällig (Typ bevorzugt)", "Random (type preferred)"),
+        ["METRONOME_ONLY"] = Txt.L("Nur Metronom", "Metronome only"),
+        ["FULL"] = Txt.L("Alle kompatibel", "All compatible"),
+        ["RANDOM_EVEN"] = Txt.L("Zufällig (gleichmäßig)", "Random (even)"),
+        ["RANDOMIZE_GIVEN"] = Txt.L("Nur angebotenes Pokémon", "Offered Pokémon only"),
+        ["RANDOMIZE_GIVEN_AND_REQUESTED"] = Txt.L("Angebotenes & gewünschtes", "Offered & requested"),
+        ["SLOW"] = Txt.L("Langsam", "Slow"),
+        ["MEDIUM_SLOW"] = Txt.L("Mittel-langsam", "Medium slow"),
+        ["MEDIUM_FAST"] = Txt.L("Mittel-schnell", "Medium fast"),
+        ["FAST"] = Txt.L("Schnell", "Fast"),
+        ["ERRATIC"] = Txt.L("Unregelmäßig", "Erratic"),
+        ["FLUCTUATING"] = Txt.L("Schwankend", "Fluctuating"),
+        ["LEGENDARIES"] = Txt.L("Legendäre", "Legendaries"),
+        ["STRONG_LEGENDARIES"] = Txt.L("Starke Legendäre", "Strong legendaries"),
+        ["ALL"] = Txt.L("Alle", "All"),
     };
 
     // Not editable here: bit field / read-only / meta values.
@@ -141,7 +143,8 @@ public partial class SettingsEditorWindow : Window
 
         TxtFile.Text = Path.GetFileName(path);
         var romName = _options.TryGetValue("RomName", out var rn) ? rn.Value : "?";
-        TxtMadeWith.Text = $"Erstellt mit: {romName}.  Nicht jede Option gibt es in jedem Spiel – was ein Spiel nicht kann, lässt der Randomizer weg.";
+        TxtMadeWith.Text = Txt.L($"Erstellt mit: {romName}.  Nicht jede Option gibt es in jedem Spiel – was ein Spiel nicht kann, lässt der Randomizer weg.",
+            $"Made with: {romName}.  Not every option exists in every game – what a game can't do, the randomizer leaves out.");
 
         var curatedNames = new HashSet<string>();
         foreach (var (group, fields) in Curated)
@@ -153,7 +156,7 @@ public partial class SettingsEditorWindow : Window
         }
 
         var rest = options.Where(o => !curatedNames.Contains(o.Name) && !Hidden.Contains(o.Name)).ToList();
-        var expert = new Expander { Header = $"Alle weiteren Optionen (Experte, {rest.Count})", Margin = new Thickness(0, 4, 0, 0) };
+        var expert = new Expander { Header = Txt.L($"Alle weiteren Optionen (Experte, {rest.Count})", $"All other options (expert, {rest.Count})"), Margin = new Thickness(0, 4, 0, 0) };
         expert.Content = BuildGroup(null, rest.Select(o => (o, SplitCamelCase(o.Name))));
         Groups.Children.Add(expert);
 
@@ -245,16 +248,16 @@ public partial class SettingsEditorWindow : Window
     {
         TxtChanges.Text = _changes.Count switch
         {
-            0 => "Keine Änderungen",
-            1 => "1 Änderung",
-            var n => $"{n} Änderungen",
+            0 => Txt.L("Keine Änderungen", "No changes"),
+            1 => Txt.L("1 Änderung", "1 change"),
+            var n => Txt.L($"{n} Änderungen", $"{n} changes"),
         };
         BtnOverwrite.IsEnabled = _changes.Count > 0;
     }
 
     bool HasInvalidInput() =>
-        FindInvalid(Groups) is { } bad && MessageBox.Show(this, "Mindestens ein Zahlenfeld enthält keine gültige Zahl (rot umrandet).",
-            "Settings bearbeiten", MessageBoxButton.OK, MessageBoxImage.Warning) == MessageBoxResult.OK;
+        FindInvalid(Groups) is { } bad && MessageBox.Show(this, Txt.L("Mindestens ein Zahlenfeld enthält keine gültige Zahl (rot umrandet).", "At least one number field doesn't hold a valid number (outlined in red)."),
+            Txt.L("Settings bearbeiten", "Edit settings"), MessageBoxButton.OK, MessageBoxImage.Warning) == MessageBoxResult.OK;
 
     static DependencyObject? FindInvalid(DependencyObject root)
     {
@@ -276,7 +279,7 @@ public partial class SettingsEditorWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, "Speichern fehlgeschlagen", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(this, ex.Message, Txt.L("Speichern fehlgeschlagen", "Saving failed"), MessageBoxButton.OK, MessageBoxImage.Error);
         }
         finally
         {
@@ -287,9 +290,11 @@ public partial class SettingsEditorWindow : Window
     async void BtnOverwrite_Click(object sender, RoutedEventArgs e)
     {
         if (HasInvalidInput()) return;
-        var count = _changes.Count == 1 ? "1 Änderung" : $"{_changes.Count} Änderungen";
-        var answer = MessageBox.Show(this, $"„{Path.GetFileName(_path)}“ mit {count} überschreiben?",
-            "Überschreiben", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        var file = Path.GetFileName(_path);
+        var answer = MessageBox.Show(this, _changes.Count == 1
+                ? Txt.L($"„{file}“ mit 1 Änderung überschreiben?", $"Overwrite “{file}” with 1 change?")
+                : Txt.L($"„{file}“ mit {_changes.Count} Änderungen überschreiben?", $"Overwrite “{file}” with {_changes.Count} changes?"),
+            Txt.L("Überschreiben", "Overwrite"), MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (answer == MessageBoxResult.Yes)
             await SaveTo(_path);
     }
@@ -301,7 +306,7 @@ public partial class SettingsEditorWindow : Window
         {
             Filter = "Randomizer Settings (*.rnqs)|*.rnqs",
             InitialDirectory = Path.GetDirectoryName(_path),
-            FileName = Path.GetFileNameWithoutExtension(_path) + "_neu.rnqs",
+            FileName = Path.GetFileNameWithoutExtension(_path) + Txt.L("_neu.rnqs", "_new.rnqs"),
             OverwritePrompt = true,
         };
         if (dlg.ShowDialog(this) == true)

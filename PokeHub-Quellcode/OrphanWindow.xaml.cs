@@ -26,7 +26,8 @@ public partial class OrphanWindow : Window
         SaveList.ItemsSource = orphans;
         long size = orphans.Sum(o => o.Size);
         TxtCount.Text = orphans.Count == 0 ? ""
-            : $"{orphans.Count} {(orphans.Count == 1 ? "Spiel" : "Spiele")} · {orphans.Sum(o => o.Files.Count)} Dateien · {SizeText(size)}";
+            : Txt.L($"{orphans.Count} {(orphans.Count == 1 ? "Spiel" : "Spiele")} · {orphans.Sum(o => o.Files.Count)} Dateien · {SizeText(size)}",
+                    $"{orphans.Count} {(orphans.Count == 1 ? "game" : "games")} · {orphans.Sum(o => o.Files.Count)} files · {SizeText(size)}");
         EmptyPanel.Visibility = orphans.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         ChkAll.Visibility = orphans.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
         UpdateButtons();
@@ -42,7 +43,7 @@ public partial class OrphanWindow : Window
         _updating = true;
         ChkAll.IsChecked = total > 0 && selected == total;
         _updating = false;
-        TxtDelete.Text = selected == 0 ? "Löschen" : $"{selected} löschen";
+        TxtDelete.Text = selected == 0 ? Txt.L("Löschen", "Delete") : Txt.L($"{selected} löschen", $"Delete {selected}");
         BtnDelete.IsEnabled = selected > 0;
     }
 
@@ -56,17 +57,22 @@ public partial class OrphanWindow : Window
     void Delete_Click(object sender, RoutedEventArgs e)
     {
         var chosen = SaveList.SelectedItems.Cast<OrphanSave>().ToList();
-        if (chosen.Count == 0 || Launcher.EmulatorsOpen(this, "Spielstände löschen")) return;
+        var title = Txt.L("Spielstände löschen", "Delete saves");
+        if (chosen.Count == 0 || Launcher.EmulatorsOpen(this, title)) return;
 
         var lines = chosen.Take(6).Select(o => "•  " + o.Name).ToList();
-        if (chosen.Count > 6) lines.Add($"    … und {chosen.Count - 6} weitere");
-        var what = chosen.Count == 1 ? "diesen Spielstand" : $"diese {chosen.Count} Spielstände";
-        if (MessageBox.Show(this, $"Wirklich {what} löschen?\n\n{string.Join("\n", lines)}\n\nSie kommen in den Papierkorb – von dort kannst du sie zurückholen.",
-                "Spielstände löschen", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
+        if (chosen.Count > 6) lines.Add(Txt.L($"    … und {chosen.Count - 6} weitere", $"    … and {chosen.Count - 6} more"));
+        var list = string.Join("\n", lines);
+        var question = chosen.Count == 1
+            ? Txt.L($"Wirklich diesen Spielstand löschen?\n\n{list}\n\nEr kommt in den Papierkorb – von dort kannst du ihn zurückholen.",
+                    $"Really delete this save?\n\n{list}\n\nIt goes to the Recycle Bin – you can restore it from there.")
+            : Txt.L($"Wirklich diese {chosen.Count} Spielstände löschen?\n\n{list}\n\nSie kommen in den Papierkorb – von dort kannst du sie zurückholen.",
+                    $"Really delete these {chosen.Count} saves?\n\n{list}\n\nThey go to the Recycle Bin – you can restore them from there.");
+        if (MessageBox.Show(this, question, title, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
             return;
         if (!RecycleBin.Delete(chosen.SelectMany(o => o.Files).Select(f => f.Path).ToArray()))
-            MessageBox.Show(this, "Nicht alles konnte gelöscht werden – ist eine Datei noch irgendwo geöffnet?", "Spielstände löschen",
-                MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(this, Txt.L("Nicht alles konnte gelöscht werden – ist eine Datei noch irgendwo geöffnet?",
+                "Not everything could be deleted – is a file still open somewhere?"), title, MessageBoxButton.OK, MessageBoxImage.Warning);
         Reload();
     }
 

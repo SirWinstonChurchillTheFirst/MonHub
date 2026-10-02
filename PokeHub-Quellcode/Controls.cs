@@ -23,7 +23,7 @@ public class ControlSettings
     public static readonly (string Id, string Label)[] Actions =
     [
         ("A", "A"), ("B", "B"), ("X", "X (DS, 3DS)"), ("Y", "Y (DS, 3DS)"), ("L", "L"), ("R", "R"),
-        ("Start", "Start"), ("Select", "Select"), ("Fast", "Schneller (halten)"), ("Toggle", "Tempo an/aus"),
+        ("Start", "Start"), ("Select", "Select"), ("Fast", Txt.L("Schneller (halten)", "Faster (hold)")), ("Toggle", Txt.L("Tempo an/aus", "Speed on/off")),
     ];
 
     /// <summary>What MonHub set up before this existed – the same as the shipped emulator settings.</summary>
@@ -45,13 +45,13 @@ public class ControlSettings
 
     static readonly Dictionary<Key, (int Code, string Name, string Label)> Special = new()
     {
-        [Key.Space] = (' ', "Space", "Leertaste"), [Key.Tab] = (0x01000001, "Tab", "Tab"),
-        [Key.Back] = (0x01000003, "Backspace", "Rücktaste"), [Key.Return] = (0x01000004, "Return", "Enter"),
-        [Key.Insert] = (0x01000006, "Ins", "Einfg"), [Key.Delete] = (0x01000007, "Del", "Entf"),
-        [Key.Home] = (0x01000010, "Home", "Pos1"), [Key.End] = (0x01000011, "End", "Ende"),
-        [Key.PageUp] = (0x01000016, "PgUp", "Bild ↑"), [Key.PageDown] = (0x01000017, "PgDown", "Bild ↓"),
+        [Key.Space] = (' ', "Space", Txt.L("Leertaste", "Space")), [Key.Tab] = (0x01000001, "Tab", "Tab"),
+        [Key.Back] = (0x01000003, "Backspace", Txt.L("Rücktaste", "Backspace")), [Key.Return] = (0x01000004, "Return", "Enter"),
+        [Key.Insert] = (0x01000006, "Ins", Txt.L("Einfg", "Ins")), [Key.Delete] = (0x01000007, "Del", Txt.L("Entf", "Del")),
+        [Key.Home] = (0x01000010, "Home", Txt.L("Pos1", "Home")), [Key.End] = (0x01000011, "End", Txt.L("Ende", "End")),
+        [Key.PageUp] = (0x01000016, "PgUp", Txt.L("Bild ↑", "PgUp")), [Key.PageDown] = (0x01000017, "PgDown", Txt.L("Bild ↓", "PgDn")),
         [Key.LeftShift] = (0x01000020, "Shift", "Shift"), [Key.RightShift] = (0x01000020, "Shift", "Shift"),
-        [Key.LeftCtrl] = (0x01000021, "Ctrl", "Strg"), [Key.RightCtrl] = (0x01000021, "Ctrl", "Strg"),
+        [Key.LeftCtrl] = (0x01000021, "Ctrl", Txt.L("Strg", "Ctrl")), [Key.RightCtrl] = (0x01000021, "Ctrl", Txt.L("Strg", "Ctrl")),
         [Key.OemComma] = (',', ",", ","), [Key.OemPeriod] = ('.', ".", "."), [Key.OemMinus] = ('-', "-", "-"), [Key.OemPlus] = ('+', "+", "+"),
     };
 
@@ -205,7 +205,7 @@ public class ControlSettings
                     Azahar3ds.Set(lines, "Controls", $@"profiles\1\button_{button}", $"\"code:{code},engine:keyboard\"");
             HubSetup.SetIni(lines, "Shortcuts", @"Main%20Window\Toggle%20Turbo%20Mode\KeySeq", KeyName(Keys.GetValueOrDefault("Toggle", -1)));
         }
-        HubSetup.SetIni(lines, "Controls", @"profiles\1\name", "Tastatur");
+        HubSetup.SetIni(lines, "Controls", @"profiles\1\name", Txt.L("Tastatur", "Keyboard"));
         HubSetup.SetIni(lines, "Controls", @"profiles\2\name", ControllerProfile);
         foreach (var (action, button) in AzaharButtons)
             if (AzaharPad(Pad.GetValueOrDefault(action, "")) is { } param)

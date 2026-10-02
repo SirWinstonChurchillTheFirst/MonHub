@@ -282,7 +282,7 @@ public partial class MainWindow : Window
         bool max = WindowState == WindowState.Maximized;
         Root.Margin = max ? FrameThickness() : new Thickness(0);
         BtnMaximize.Content = max ? "\uE923" : "\uE922";
-        BtnMaximize.ToolTip = max ? "Verkleinern" : "Maximieren";
+        BtnMaximize.ToolTip = max ? Txt.L("Verkleinern", "Restore") : Txt.L("Maximieren", "Maximize");
     }
 
     Thickness FrameThickness()

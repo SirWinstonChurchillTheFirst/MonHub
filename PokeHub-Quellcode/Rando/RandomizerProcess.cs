@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.IO;
 
+using Txt = PokeHub.Txt;
+
 namespace RandoApp;
 
 /// <summary>
@@ -23,6 +25,7 @@ public static class RandomizerProcess
             RedirectStandardError = true,
         };
         psi.ArgumentList.Add($"-Xmx{cfg.JavaMaxMemoryMb}M");
+        psi.ArgumentList.Add($"-Dmonhub.lang={PokeHub.Txt.Code}"); // RandoHelper's notes in the log
         // RandoHelper wraps the CLI and, like the GUI, disables options the ROM doesn't support
         // (the plain CLI crashes e.g. with "Correct Static Music" on German Black/White).
         var helperJar = Path.Combine(AppContext.BaseDirectory, "RandoHelper.jar");
@@ -68,7 +71,8 @@ public static class RandomizerProcess
         }
         catch (System.ComponentModel.Win32Exception)
         {
-            throw new InvalidOperationException($"Java wurde nicht gefunden ('{psi.FileName}'). Java installieren oder Pfad in den Einstellungen setzen.");
+            throw new InvalidOperationException(Txt.L($"Java wurde nicht gefunden ('{psi.FileName}'). Java installieren oder Pfad in den Einstellungen setzen.",
+                $"Java was not found ('{psi.FileName}'). Install Java or set its path in the settings."));
         }
         proc.BeginOutputReadLine();
         proc.BeginErrorReadLine();
@@ -122,7 +126,7 @@ public static class RandomizerProcess
         }
         catch (Exception ex)
         {
-            log("Spoiler konnte nicht gelesen werden: " + ex.Message);
+            log(Txt.L("Spoiler konnte nicht gelesen werden: ", "The spoiler couldn't be read: ") + ex.Message);
             return null;
         }
         finally

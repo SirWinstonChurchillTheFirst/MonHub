@@ -32,6 +32,9 @@ public class HubConfig
     /// <summary>null = follow Windows' "animation effects" setting.</summary>
     public MotionLevel? Motion { get; set; }
 
+    /// <summary>"en" or "de", chosen under Optionen; null = not chosen yet (then Setup's language, else English). Read at start by <see cref="Txt"/>.</summary>
+    public string? Language { get; set; }
+
     /// <summary>Trainer name for the start page; empty = the name from the newest save.</summary>
     public string TrainerName { get; set; } = "";
 

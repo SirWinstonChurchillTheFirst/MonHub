@@ -21,7 +21,9 @@ public class DexCell(int number, bool seen, bool caught)
     public Visibility UnknownVisibility => Seen && Sprite != null ? Visibility.Collapsed : Visibility.Visible;
     /// <summary>Seen, not caught: a little faded, like the games show it.</summary>
     public double Fade => Caught || !Seen ? 1 : 0.6;
-    public string Tooltip => Caught ? $"{NumberText} {FullName} · gefangen" : Seen ? $"{NumberText} {FullName} · gesehen" : $"{NumberText} · noch nicht gesehen";
+    public string Tooltip => Caught ? $"{NumberText} {FullName} · " + Txt.L("gefangen", "caught")
+        : Seen ? $"{NumberText} {FullName} · " + Txt.L("gesehen", "seen")
+        : $"{NumberText} · " + Txt.L("noch nicht gesehen", "not seen yet");
 }
 
 /// <summary>
@@ -82,10 +84,12 @@ public partial class PokedexPage : UserControl, IHubPage
         {
             _game = null;
             bool unreadable = all.Any(g => g.NewestSave != null);
-            TxtSummary.Text = "Noch kein Spielstand mit Dex.";
+            TxtSummary.Text = Txt.L("Noch kein Spielstand mit Dex.", "No save with a Dex yet.");
             TxtEmpty.Text = unreadable
-                ? "Hier erscheint der Dex deiner Spielstände – aus diesen Spielen kann MonHub ihn nicht lesen (ROM-Hacks, japanische Versionen)."
-                : "Spiel ein Pokémon-Spiel und speichere einmal – dann steht hier, welche Pokémon du gesehen und gefangen hast.";
+                ? Txt.L("Hier erscheint der Dex deiner Spielstände – aus diesen Spielen kann MonHub ihn nicht lesen (ROM-Hacks, japanische Versionen).",
+                        "The Dex of your saves shows up here – MonHub can't read it from these games (ROM hacks, Japanese versions).")
+                : Txt.L("Spiel ein Pokémon-Spiel und speichere einmal – dann steht hier, welche Pokémon du gesehen und gefangen hast.",
+                        "Play a Pokémon game and save once – then this shows which Pokémon you have seen and caught.");
             return;
         }
 
@@ -113,13 +117,15 @@ public partial class PokedexPage : UserControl, IHubPage
 
         var look = GameLook.For(game);
         var edition = look.Version.Length > 0 ? look.Version : game.Name;
-        TxtSummary.Text = $"{summary.Trainer} · {edition} · {summary.PlayTime} Std. · {seen} gesehen · {caught} gefangen";
-        TxtFilterAll.Text = $"Alle  {dex.Size}";
-        TxtFilterCaught.Text = $"Gefangen  {caught}";
-        TxtFilterSeen.Text = $"Nur gesehen  {seen - caught}";
-        TxtFilterMissing.Text = $"Fehlen  {dex.Size - caught}";
+        TxtSummary.Text = Txt.L($"{summary.Trainer} · {edition} · {summary.PlayTime} Std. · {seen} gesehen · {caught} gefangen",
+            $"{summary.Trainer} · {edition} · {summary.PlayTime} h · {seen} seen · {caught} caught");
+        TxtFilterAll.Text = Txt.L($"Alle  {dex.Size}", $"All  {dex.Size}");
+        TxtFilterCaught.Text = Txt.L($"Gefangen  {caught}", $"Caught  {caught}");
+        TxtFilterSeen.Text = Txt.L($"Nur gesehen  {seen - caught}", $"Seen only  {seen - caught}");
+        TxtFilterMissing.Text = Txt.L($"Fehlen  {dex.Size - caught}", $"Missing  {dex.Size - caught}");
         Progress.Value = dex.Size == 0 ? 0 : (double)caught / dex.Size;
-        TxtProgress.Text = $"{caught} von {dex.Size} gefangen ({100.0 * caught / Math.Max(1, dex.Size):0} %)";
+        TxtProgress.Text = Txt.L($"{caught} von {dex.Size} gefangen ({100.0 * caught / Math.Max(1, dex.Size):0} %)",
+            $"{caught} of {dex.Size} caught ({100.0 * caught / Math.Max(1, dex.Size):0}%)");
         ShowCells(scrollTop: true);
     }
 

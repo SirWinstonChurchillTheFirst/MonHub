@@ -39,34 +39,36 @@ public partial class EmulatorsPage : UserControl, IHubPage
         bool melon = HubPaths.MelonDSExe != null, desmume = HubPaths.DeSmuMEExe != null;
         var main = GameLibrary.MainEmulator();
 
-        TxtMelonStatus.Text = melon ? Status(HubPaths.MelonDSSaves, "*.sav") : "Nicht gefunden – bitte MonHub neu installieren.";
-        TxtDesmumeStatus.Text = desmume ? Status(HubPaths.DeSmuMESaves, "*.dsv") : "Nicht gefunden – bitte MonHub neu installieren.";
+        TxtMelonStatus.Text = melon ? Status(HubPaths.MelonDSSaves, "*.sav") : Missing;
+        TxtDesmumeStatus.Text = desmume ? Status(HubPaths.DeSmuMESaves, "*.dsv") : Missing;
         BtnMelonOpen.IsEnabled = melon;
         BtnDesmumeOpen.IsEnabled = desmume;
         MgbaIcon.Source = IconHelper.Get(HubPaths.MGBAExe);
         BtnMgbaOpen.IsEnabled = HubPaths.MGBAExe != null;
-        TxtMgbaStatus.Text = HubPaths.MGBAExe != null ? Status(HubPaths.MGBASaves, "*.sav") : "Nicht gefunden – bitte MonHub neu installieren.";
+        TxtMgbaStatus.Text = HubPaths.MGBAExe != null ? Status(HubPaths.MGBASaves, "*.sav") : Missing;
         AzaharIcon.Source = IconHelper.Get(HubPaths.AzaharExe);
         BtnAzaharOpen.IsEnabled = HubPaths.AzaharExe != null;
         _loadingSpeeds = true;
         Chk60Fps.IsChecked = HubConfig.Current.Azahar60Fps;
         _loadingSpeeds = false;
-        TxtAzaharStatus.Text = HubPaths.AzaharExe != null ? Status(HubPaths.AzaharSaves, "main", recursive: true) : "Nicht gefunden – bitte MonHub neu installieren.";
+        TxtAzaharStatus.Text = HubPaths.AzaharExe != null ? Status(HubPaths.AzaharSaves, "main", recursive: true) : Missing;
         MelonBadge.Visibility = melon && main == GameLibrary.MelonDS ? Visibility.Visible : Visibility.Collapsed;
         DesmumeBadge.Visibility = desmume && main == GameLibrary.DeSmuME ? Visibility.Visible : Visibility.Collapsed;
         BtnMelonDefault.Visibility = melon && main != GameLibrary.MelonDS ? Visibility.Visible : Visibility.Collapsed;
         BtnDesmumeDefault.Visibility = desmume && main != GameLibrary.DeSmuME ? Visibility.Visible : Visibility.Collapsed;
 
         bool bios = Bios.Installed;
-        TxtBiosTitle.Text = bios ? "Eigenes DS-BIOS: eingerichtet" : "Eigenes DS-BIOS (optional)";
+        TxtBiosTitle.Text = bios ? Txt.L("Eigenes DS-BIOS: eingerichtet", "Own DS BIOS: set up") : Txt.L("Eigenes DS-BIOS (optional)", "Own DS BIOS (optional)");
         TxtBios.Text = bios
-            ? "melonDS startet damit auch verschlüsselte ROMs (z. B. US-Versionen)."
-            : "Deine eigenen Dumps (bios7.bin, bios9.bin, firmware.bin – einzeln oder als ZIP). Damit startet melonDS auch verschlüsselte ROMs; " +
-              "ohne laufen die in DeSmuME. MonHub bringt kein BIOS mit.";
+            ? Txt.L("melonDS startet damit auch verschlüsselte ROMs (z. B. US-Versionen).", "With it, melonDS starts encrypted ROMs too (e.g. US versions).")
+            : Txt.L("Deine eigenen Dumps (bios7.bin, bios9.bin, firmware.bin – einzeln oder als ZIP). Damit startet melonDS auch verschlüsselte ROMs; " +
+                    "ohne laufen die in DeSmuME. MonHub bringt kein BIOS mit.",
+                    "Your own dumps (bios7.bin, bios9.bin, firmware.bin – one by one or as a ZIP). With them, melonDS starts encrypted ROMs too; " +
+                    "without them those run in DeSmuME. MonHub doesn't include a BIOS.");
         BtnBiosRemove.Visibility = bios ? Visibility.Visible : Visibility.Collapsed;
 
         if (!_dirty) _edit = Copy(HubConfig.Current.Controls ?? new ControlSettings()); // unsaved changes survive a refresh
-        TxtPad.Text = ControlSettings.ConnectedPad() is { } pad ? $"Controller {pad + 1} verbunden" : "Kein Controller verbunden";
+        TxtPad.Text = ControlSettings.ConnectedPad() is { } pad ? Txt.L($"Controller {pad + 1} verbunden", $"Controller {pad + 1} connected") : Txt.L("Kein Controller verbunden", "No controller connected");
         ShowControls();
     }
 
@@ -78,8 +80,8 @@ public partial class EmulatorsPage : UserControl, IHubPage
     void ShowControls()
     {
         BindingList.ItemsSource = ControlSettings.Actions.Select(a => new BindingRow(a.Id, a.Label,
-            _listenKey == a.Id ? "Taste …" : ControlSettings.KeyLabel(_edit.Keys.GetValueOrDefault(a.Id, -1)),
-            _listenPad == a.Id ? "Knopf …" : ControlSettings.PadLabel(_edit.Pad.GetValueOrDefault(a.Id, "")))).ToList();
+            _listenKey == a.Id ? Txt.L("Taste …", "Key …") : ControlSettings.KeyLabel(_edit.Keys.GetValueOrDefault(a.Id, -1)),
+            _listenPad == a.Id ? Txt.L("Knopf …", "Button …") : ControlSettings.PadLabel(_edit.Pad.GetValueOrDefault(a.Id, "")))).ToList();
         _loadingSpeeds = true;
         CmbFast.SelectedItem = Speed(_edit.FastForward);
         CmbToggle.SelectedItem = Speed(_edit.Toggle);
@@ -89,8 +91,8 @@ public partial class EmulatorsPage : UserControl, IHubPage
         var doubleKeys = _edit.Keys.Where(k => k.Value > 0).GroupBy(k => k.Value).Where(g => g.Count() > 1).Select(g => ControlSettings.KeyLabel(g.Key));
         var doublePads = _edit.Pad.Where(p => p.Value.Length > 0).GroupBy(p => p.Value).Where(g => g.Count() > 1).Select(g => ControlSettings.PadLabel(g.Key));
         var doubles = doubleKeys.Concat(doublePads).ToList();
-        TxtControls.Text = doubles.Count > 0 ? "⚠ Doppelt belegt: " + string.Join(", ", doubles)
-                         : _dirty ? "Geändert – mit „Übernehmen“ speichern." : "";
+        TxtControls.Text = doubles.Count > 0 ? Txt.L("⚠ Doppelt belegt: ", "⚠ Used twice: ") + string.Join(", ", doubles)
+                         : _dirty ? Txt.L("Geändert – mit „Übernehmen“ speichern.", "Changed – save with “Apply”.") : "";
         BtnControlsApply.IsEnabled = _dirty;
     }
 
@@ -122,7 +124,8 @@ public partial class EmulatorsPage : UserControl, IHubPage
         _listenKey = null;
         if (ControlSettings.ConnectedPad() == null)
         {
-            TxtControls.Text = "Kein Controller gefunden – anschließen oder einschalten, dann nochmal klicken.";
+            TxtControls.Text = Txt.L("Kein Controller gefunden – anschließen oder einschalten, dann nochmal klicken.",
+                "No controller found – plug it in or switch it on, then click again.");
             return;
         }
         _listenPad = (string)((FrameworkElement)sender).Tag;
@@ -179,8 +182,9 @@ public partial class EmulatorsPage : UserControl, IHubPage
         var open = new[] { ("melonDS", "melonDS"), ("mGBA", "mGBA"), ("azahar", "Azahar") }.Where(x => HubSetup.IsRunning(x.Item1)).Select(x => x.Item2).ToList();
         HubSetup.EnsureAll();
         ShowControls();
-        TxtControls.Text = open.Count == 0 ? "✓ Übernommen – gilt beim nächsten Spielstart."
-            : $"Gespeichert – {string.Join(" und ", open)} {(open.Count == 1 ? "ist" : "sind")} gerade offen und bekommt es, sobald du es schließt.";
+        TxtControls.Text = open.Count == 0 ? Txt.L("✓ Übernommen – gilt beim nächsten Spielstart.", "✓ Applied – takes effect at the next game start.")
+            : Txt.L($"Gespeichert – {string.Join(" und ", open)} {(open.Count == 1 ? "ist" : "sind")} gerade offen und bekommt es, sobald du es schließt.",
+                    $"Saved – {string.Join(" and ", open)} {(open.Count == 1 ? "is" : "are")} open right now and {(open.Count == 1 ? "gets" : "get")} it once you close {(open.Count == 1 ? "it" : "them")}.");
     }
 
     void BiosImport_Click(object sender, RoutedEventArgs e)
@@ -188,8 +192,8 @@ public partial class EmulatorsPage : UserControl, IHubPage
         var owner = Window.GetWindow(this);
         var dlg = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "Eigene BIOS-Dateien wählen (ZIP oder bios7.bin, bios9.bin, firmware.bin)",
-            Filter = "BIOS-Dateien (*.zip;*.bin)|*.zip;*.bin",
+            Title = Txt.L("Eigene BIOS-Dateien wählen (ZIP oder bios7.bin, bios9.bin, firmware.bin)", "Choose your own BIOS files (ZIP or bios7.bin, bios9.bin, firmware.bin)"),
+            Filter = Txt.L("BIOS-Dateien", "BIOS files") + " (*.zip;*.bin)|*.zip;*.bin",
             Multiselect = true,
         };
         if (dlg.ShowDialog(owner) != true) return;
@@ -200,15 +204,17 @@ public partial class EmulatorsPage : UserControl, IHubPage
         }
         catch (Exception ex)
         {
-            MessageBox.Show(owner, "Die Dateien konnten nicht gelesen werden: " + ex.Message, "BIOS", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(owner, Txt.L("Die Dateien konnten nicht gelesen werden: ", "The files couldn't be read: ") + ex.Message, "BIOS", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
         string text = taken.Count == 0
-            ? "Keine passenden Dateien gefunden. Gesucht: bios7.bin (16 KB), bios9.bin (4 KB), firmware.bin (128–512 KB)."
-            : Bios.Installed ? "Eingerichtet – melonDS startet jetzt auch verschlüsselte ROMs."
-            : "Übernommen: " + string.Join(", ", taken) + ". Es fehlen noch: " + string.Join(", ", Bios.Missing) + ".";
+            ? Txt.L("Keine passenden Dateien gefunden. Gesucht: bios7.bin (16 KB), bios9.bin (4 KB), firmware.bin (128–512 KB).",
+                    "No matching files found. Looking for: bios7.bin (16 KB), bios9.bin (4 KB), firmware.bin (128–512 KB).")
+            : Bios.Installed ? Txt.L("Eingerichtet – melonDS startet jetzt auch verschlüsselte ROMs.", "Set up – melonDS now starts encrypted ROMs too.")
+            : Txt.L("Übernommen: ", "Taken: ") + string.Join(", ", taken) + Txt.L(". Es fehlen noch: ", ". Still missing: ") + string.Join(", ", Bios.Missing) + ".";
         if (Bios.Installed && !HubSetup.ApplyBiosToMelonDS())
-            text += Environment.NewLine + Environment.NewLine + "melonDS läuft gerade – beim nächsten Start von MonHub (mit geschlossenem melonDS) wird es eingetragen.";
+            text += Environment.NewLine + Environment.NewLine + Txt.L("melonDS läuft gerade – beim nächsten Start von MonHub (mit geschlossenem melonDS) wird es eingetragen.",
+                "melonDS is running right now – it gets set up the next time MonHub starts (with melonDS closed).");
         MessageBox.Show(owner, text, "BIOS", MessageBoxButton.OK, MessageBoxImage.Information);
         Refresh();
     }
@@ -218,7 +224,7 @@ public partial class EmulatorsPage : UserControl, IHubPage
         var owner = Window.GetWindow(this);
         if (HubSetup.IsRunning("melonDS"))
         {
-            MessageBox.Show(owner, "Bitte schließ zuerst melonDS.", "BIOS", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(owner, Txt.L("Bitte schließ zuerst melonDS.", "Please close melonDS first."), "BIOS", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         Bios.Remove();
@@ -233,11 +239,13 @@ public partial class EmulatorsPage : UserControl, IHubPage
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { count = 0; } // folder busy or locked: count later
         return count switch
         {
-            0 => "Bereit · noch keine Spielstände",
-            1 => "Bereit · 1 Spielstand",
-            _ => $"Bereit · {count} Spielstände",
+            0 => Txt.L("Bereit · noch keine Spielstände", "Ready · no saves yet"),
+            1 => Txt.L("Bereit · 1 Spielstand", "Ready · 1 save"),
+            _ => Txt.L($"Bereit · {count} Spielstände", $"Ready · {count} saves"),
         };
     }
+
+    static string Missing => Txt.L("Nicht gefunden – bitte MonHub neu installieren.", "Not found – please reinstall MonHub.");
 
     void MgbaOpen_Click(object sender, RoutedEventArgs e) => Launcher.Start(Window.GetWindow(this), HubPaths.MGBAExe);
     void MgbaSaves_Click(object sender, RoutedEventArgs e) => Shell.OpenFolder(HubPaths.MGBASaves);

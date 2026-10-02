@@ -10,7 +10,7 @@ public class FangameView(Fangame game)
 {
     public Fangame Game { get; } = game;
     public ImageSource? Icon { get; } = IconHelper.Get(game.Path);
-    public string Status => File.Exists(Game.Path) ? Path.GetFileName(Game.Path) : "⚠ Datei nicht gefunden";
+    public string Status => File.Exists(Game.Path) ? Path.GetFileName(Game.Path) : Txt.L("⚠ Datei nicht gefunden", "⚠ File not found");
 }
 
 /// <summary>"Fangames": games made by fans and hacks with their own program – added once, started with one click.</summary>
@@ -40,7 +40,8 @@ public partial class FangamesPage : UserControl, IHubPage
     void Remove_Click(object sender, RoutedEventArgs e)
     {
         if (GameOf(sender) is not { } game) return;
-        if (MessageBox.Show(Window.GetWindow(this), $"„{game.Name}“ aus MonHub entfernen?\n(Das Spiel selbst wird nicht gelöscht.)", "Fangame entfernen",
+        if (MessageBox.Show(Window.GetWindow(this), Txt.L($"„{game.Name}“ aus MonHub entfernen?\n(Das Spiel selbst wird nicht gelöscht.)",
+                    $"Remove “{game.Name}” from MonHub?\n(The game itself is not deleted.)"), Txt.L("Fangame entfernen", "Remove fangame"),
                 MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
         HubConfig.Current.Fangames.Remove(game);
         HubConfig.Current.Save();

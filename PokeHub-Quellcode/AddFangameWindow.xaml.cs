@@ -23,8 +23,8 @@ public partial class AddFangameWindow : Window
     {
         var dlg = new OpenFileDialog
         {
-            Title = "Start-Datei des Fangames wählen",
-            Filter = "Programme (*.exe)|*.exe|ROMs (*.nds;*.gba;*.gbc;*.gb)|*.nds;*.gba;*.gbc;*.gb|Alle Dateien (*.*)|*.*",
+            Title = Txt.L("Start-Datei des Fangames wählen", "Choose the fangame's start file"),
+            Filter = Txt.L("Programme", "Programs") + " (*.exe)|*.exe|ROMs (*.nds;*.gba;*.gbc;*.gb)|*.nds;*.gba;*.gbc;*.gb|" + Txt.L("Alle Dateien", "All files") + " (*.*)|*.*",
             InitialDirectory = Directory.Exists(HubPaths.Fangames) ? HubPaths.Fangames : null,
         };
         if (dlg.ShowDialog(this) == true) TxtPath.Text = dlg.FileName;
@@ -47,14 +47,15 @@ public partial class AddFangameWindow : Window
     void TxtName_TextChanged(object sender, TextChangedEventArgs e)
     {
         _nameTouched = TxtName.IsKeyboardFocused;
-        TxtPreviewName.Text = GameName.Length > 0 ? GameName : "Vorschau";
+        TxtPreviewName.Text = GameName.Length > 0 ? GameName : Txt.L("Vorschau", "Preview");
         Validate();
     }
 
     void Validate()
     {
         if (BtnOk == null) return;
-        string? problem = GamePath.Length == 0 ? "" : !File.Exists(GamePath) ? "Diese Datei gibt es nicht." : GameName.Length == 0 ? "Bitte einen Namen eingeben." : null;
+        string? problem = GamePath.Length == 0 ? "" : !File.Exists(GamePath) ? Txt.L("Diese Datei gibt es nicht.", "This file doesn't exist.")
+            : GameName.Length == 0 ? Txt.L("Bitte einen Namen eingeben.", "Please enter a name.") : null;
         TxtError.Text = problem ?? "";
         BtnOk.IsEnabled = problem == null;
     }
