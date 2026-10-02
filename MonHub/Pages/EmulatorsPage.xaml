@@ -77,7 +77,7 @@
                         <TextBlock Text="{local:L 'STEUERUNG &amp; TEMPO', 'CONTROLS &amp; SPEED'}" Style="{DynamicResource Hub.Label}"/>
                     </DockPanel>
                     <TextBlock Style="{DynamicResource Hub.Muted}" FontSize="12" Margin="0,4,0,12"
-                               Text="{local:L 'Gilt für melonDS, mGBA und Azahar. Klick auf ein Feld und drück dann die neue Taste – auf der Tastatur oder am Controller (Esc bricht ab). Steuerkreuz: Pfeiltasten bzw. Stick und Steuerkreuz. DeSmuME hat eigene Einstellungen (Config → Control Config).', 'Applies to melonDS, mGBA and Azahar. Click a field, then press the new key – on the keyboard or the controller (Esc cancels). D-pad: arrow keys, or stick and D-pad. DeSmuME has its own settings (Config → Control Config).'}"/>
+                               Text="{local:L 'Gilt für melonDS, mGBA und Azahar. Klick auf ein Feld und drück dann die neue Taste – auf der Tastatur oder am Controller: Knopf, Steuerkreuz oder Stick (Esc bricht ab, Rechtsklick leert ein Feld). Laufen ist am 3DS das Schiebepad, bei DS und GBA das Steuerkreuz. Steuerkreuz (3DS) ist das echte Steuerkreuz des 3DS – in X/Y die Rollschuhe; wer damit laufen will, legt das Controller-Steuerkreuz auf Laufen. DeSmuME hat eigene Einstellungen (Config → Control Config).', 'Applies to melonDS, mGBA and Azahar. Click a field, then press the new key – on the keyboard or the controller: button, d-pad or stick (Esc cancels, right click empties a field). Move is the circle pad on the 3DS and the d-pad on the DS and GBA. D-pad (3DS) is the 3DS’s own d-pad – the roller skates in X/Y; to walk with it, put the controller’s d-pad on Move. DeSmuME has its own settings (Config → Control Config).'}"/>
                     <ItemsControl x:Name="BindingList" Focusable="False">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -88,11 +88,11 @@
                             <DataTemplate DataType="{x:Type local:BindingRow}">
                                 <DockPanel Width="310" Margin="0,0,16,8">
                                     <TextBlock Text="{Binding Label}" Style="{DynamicResource Hub.Body}" Width="130" VerticalAlignment="Center"/>
-                                    <Button Style="{DynamicResource Hub.Key}" Padding="8,4" MinWidth="84" Margin="0,0,6,0" Click="Key_Click" Tag="{Binding Id}"
+                                    <Button Style="{DynamicResource Hub.Key}" Padding="8,4" MinWidth="84" Margin="0,0,6,0" Click="Key_Click" MouseRightButtonUp="KeyClear_Click" Tag="{Binding Id}"
                                             ToolTip="{local:L 'Tastatur: klicken, dann Taste drücken', 'Keyboard: click, then press a key'}">
                                         <TextBlock Text="{Binding KeyText}"/>
                                     </Button>
-                                    <Button Style="{DynamicResource Hub.Key}" Padding="8,4" MinWidth="72" Click="Pad_Click" Tag="{Binding Id}"
+                                    <Button Style="{DynamicResource Hub.Key}" Padding="8,4" MinWidth="84" Click="Pad_Click" MouseRightButtonUp="PadClear_Click" Tag="{Binding Id}"
                                             ToolTip="{local:L 'Controller: klicken, dann Knopf drücken', 'Controller: click, then press a button'}" HorizontalAlignment="Left">
                                         <TextBlock Text="{Binding PadText}"/>
                                     </Button>
@@ -169,7 +169,7 @@
                     <TextBlock Style="{DynamicResource Hub.Body}" Margin="0,12,0,0"
                                Text="{local:L 'Für 3DS – X/Y, Omega Rubin/Alpha Saphir, Sonne/Mond, Ultrasonne/Ultramond (Gen 6–7). Jedes Spiel und jeder Run bekommt eine eigene SD-Karte in „Spielstände\\Azahar“, damit sich Runs desselben Spiels nicht den Spielstand teilen.', 'For 3DS – X/Y, Omega Ruby/Alpha Sapphire, Sun/Moon, Ultra Sun/Ultra Moon (Gen 6–7). Every game and every run gets its own SD card in “Spielstände\\Azahar”, so runs of the same game don’t share a save.'}"/>
                     <TextBlock Style="{DynamicResource Hub.Muted}" FontSize="12" Margin="0,6,0,0"
-                               Text="{local:L 'Nur entschlüsselte Spiele (.3ds, .cci, .cxi). Tasten und Controller wie oben (Pfeiltasten bzw. linker Stick = Schiebepad, „Tempo an/aus“ = Turbo). Ist beim Start ein Controller angeschlossen, nimmt Azahar ihn – sonst die Tastatur. Rare Candy: 999 Sonderbonbons in der Medizin-Tasche.', 'Decrypted games only (.3ds, .cci, .cxi). Keys and controller as above (arrow keys or left stick = Circle Pad, “Speed on/off” = turbo). If a controller is connected at start, Azahar uses it – otherwise the keyboard. Rare Candy: 999 Rare Candies in the Medicine pocket.'}"/>
+                               Text="{local:L 'Nur entschlüsselte Spiele (.3ds, .cci, .cxi). Tasten und Controller wie oben („Laufen“ = Schiebepad, „Steuerkreuz (3DS)“ = Steuerkreuz, „Tempo an/aus“ = Turbo). Ist beim Start ein Controller angeschlossen, nimmt Azahar ihn – sonst die Tastatur. Rare Candy: 999 Sonderbonbons in der Medizin-Tasche.', 'Decrypted games only (.3ds, .cci, .cxi). Keys and controller as above (“Move” = Circle Pad, “D-pad (3DS)” = d-pad, “Speed on/off” = turbo). If a controller is connected at start, Azahar uses it – otherwise the keyboard. Rare Candy: 999 Rare Candies in the Medicine pocket.'}"/>
                     <CheckBox x:Name="Chk60Fps" Margin="0,10,0,0" Checked="Fps_Changed" Unchecked="Fps_Changed" Foreground="{DynamicResource Hub.Ink}">
                         <TextBlock TextWrapping="Wrap" Text="{local:L '60 FPS statt 30 – flüssiger, aber das ganze Spiel läuft doppelt so schnell. R halten = normales Tempo. Gilt ab dem nächsten Spielstart.', '60 FPS instead of 30 – smoother, but the whole game runs twice as fast. Hold R = normal speed. Applies from the next game start.'}"/>
                     </CheckBox>

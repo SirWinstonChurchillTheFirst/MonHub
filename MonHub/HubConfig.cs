@@ -72,6 +72,7 @@ public class HubConfig
             {
                 Current = JsonSerializer.Deserialize<HubConfig>(File.ReadAllText(HubPaths.HubConfig), Options) ?? new();
                 if (Current.Theme == Legacy.RedThemeId) Current.Theme = "red"; // saved with the new id next time
+                Current.Controls?.FillMissing();
                 return Current;
             }
         }

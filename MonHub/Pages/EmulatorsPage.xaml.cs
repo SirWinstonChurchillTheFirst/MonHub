@@ -26,7 +26,19 @@ public partial class EmulatorsPage : UserControl, IHubPage
         InitializeComponent();
         CmbFast.ItemsSource = FastSpeeds.Select(Speed).ToList();
         CmbToggle.ItemsSource = ToggleSpeeds.Select(Speed).ToList();
-        PreviewKeyDown += CaptureKey;
+        // the key goes to the window: clicking a field rebuilds the list, so the clicked button – and with it the
+        // keyboard focus – is gone, and the next key would not pass through this page anymore
+        Window? window = null;
+        Loaded += (_, _) =>
+        {
+            window = Window.GetWindow(this);
+            if (window != null) window.PreviewKeyDown += CaptureKey;
+        };
+        Unloaded += (_, _) =>
+        {
+            if (window != null) window.PreviewKeyDown -= CaptureKey;
+            _listenKey = null;
+        };
         SizeChanged += (_, e) => Arrange(e.NewSize.Width);
     }
 
@@ -77,6 +89,32 @@ public partial class EmulatorsPage : UserControl, IHubPage
         Keys = new(c.Keys), Pad = new(c.Pad), FastForward = c.FastForward, Toggle = c.Toggle,
     };
 
+    /// <summary>One input does one thing: taken by another field, it is cleared there.</summary>
+    static void Assign<T>(Dictionary<string, T> map, string action, T value, T none)
+    {
+        foreach (var other in map.Where(e => e.Key != action && EqualityComparer<T>.Default.Equals(e.Value, value)).Select(e => e.Key).ToList())
+            map[other] = none;
+        map[action] = value;
+    }
+
+    /// <summary>Right click: the field is emptied (the input then does nothing).</summary>
+    void KeyClear_Click(object sender, MouseButtonEventArgs e)
+    {
+        _edit.Keys[(string)((FrameworkElement)sender).Tag] = -1;
+        _dirty = true;
+        e.Handled = true;
+        ShowControls();
+    }
+
+    void PadClear_Click(object sender, MouseButtonEventArgs e)
+    {
+        StopPad();
+        _edit.Pad[(string)((FrameworkElement)sender).Tag] = "";
+        _dirty = true;
+        e.Handled = true;
+        ShowControls();
+    }
+
     void ShowControls()
     {
         BindingList.ItemsSource = ControlSettings.Actions.Select(a => new BindingRow(a.Id, a.Label,
@@ -106,13 +144,13 @@ public partial class EmulatorsPage : UserControl, IHubPage
     /// <summary>The next key after clicking a keyboard field (the page sees it before the button does).</summary>
     void CaptureKey(object sender, KeyEventArgs e)
     {
-        if (_listenKey == null) return;
+        if (_listenKey == null || !IsVisible) return; // another page is shown: the key is for it
         e.Handled = true;
         var key = e.Key == Key.System ? e.SystemKey : e.Key;
         if (key != Key.Escape)
         {
-            if (ControlSettings.QtCode(key) is not { } code) return; // arrows, F11 … stay reserved – keep listening
-            _edit.Keys[_listenKey] = code;
+            if (ControlSettings.QtCode(key) is not { } code) return; // F11, Windows … stay reserved – keep listening
+            Assign(_edit.Keys, _listenKey, code, -1);
             _dirty = true;
         }
         _listenKey = null;
@@ -129,7 +167,7 @@ public partial class EmulatorsPage : UserControl, IHubPage
             return;
         }
         _listenPad = (string)((FrameworkElement)sender).Tag;
-        _padAtStart = ControlSettings.PressedPad(); // a button still held from before doesn't count
+        _padAtStart = ControlSettings.PressedPad(); // a button still held (or a stick still pushed) from before doesn't count
         _padUntil = DateTime.Now.AddSeconds(6);
         _padTimer ??= new DispatcherTimer(TimeSpan.FromMilliseconds(40), DispatcherPriority.Input, (_, _) => PollPad(), Dispatcher);
         _padTimer.Start();
@@ -143,7 +181,7 @@ public partial class EmulatorsPage : UserControl, IHubPage
         _padAtStart = null;
         if (pressed != null && _listenPad != null)
         {
-            _edit.Pad[_listenPad] = pressed;
+            Assign(_edit.Pad, _listenPad, pressed, "");
             _dirty = true;
             StopPad();
         }
