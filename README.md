@@ -43,6 +43,65 @@ into one folder (`%USERPROFILE%\MonHub`); ROMs and saves are kept on updates and
 The installer isn't signed, so Windows may show “Windows protected your PC” on the first start: click *More info* →
 *Run anyway*.
 
+## FAQ
+
+**Windows or my antivirus blocks the installer / says it's dangerous. Is it a virus?**
+No. The installer isn't signed with a paid code-signing certificate and isn't downloaded often yet, so Windows
+SmartScreen doesn't “know” it – that's what triggers “Windows protected your PC” (*More info* → *Run anyway*). Some
+antivirus programs are also suspicious of installers that bundle emulators and a Java runtime. Everything MonHub does is
+in this repository's source code, and the installer is built from it. To be sure your download wasn't tampered with,
+compare its checksum with the one in the release notes: `Get-FileHash .\MonHub-Setup.exe` in PowerShell. If your
+antivirus still quarantines it, please report it to the antivirus vendor as a false positive – don't switch your
+antivirus off.
+
+**Where do I get the games (ROMs)?**
+Not from MonHub, and not from us – MonHub contains no games, and we don't link to ROM sites. Use copies of games you
+own: dump your own cartridges or game cards (for example with a cartridge reader, or on a homebrew-enabled console).
+Please don't ask for ROMs in the issues.
+
+**Do I need a BIOS, firmware or 3DS keys?**
+No. DS games run without a BIOS (encrypted US versions open in DeSmuME automatically); if you have dumps from your own
+DS you can add them under *Emulators*. 3DS games must already be **decrypted** (.3ds/.cci/.cxi from your own console) –
+MonHub doesn't decrypt anything and includes no keys.
+
+**Which games work?**
+The main series from Gen 1 to 7: Red/Blue/Yellow, Gold/Silver/Crystal, Ruby/Sapphire/Emerald, FireRed/LeafGreen,
+Diamond/Pearl/Platinum, HeartGold/SoulSilver, Black/White 1+2, X/Y, Omega Ruby/Alpha Sapphire, Sun/Moon and Ultra
+Sun/Ultra Moon – English and German versions are tested best. ROM hacks aren't supported by the randomizer, but you can
+add them (or any fangame) under *Fangames*.
+
+**Is MonHub free? Do donations unlock anything?**
+It's free and stays free. Donations are a thank-you, nothing more – there are no paid features and nothing is behind a
+paywall.
+
+**Does it run on Mac or Linux?**
+No, Windows 10/11 (64-bit) only.
+
+**Where are my saves? Are they safe when I update or uninstall?**
+In the `Spielstände` folder inside the MonHub folder (*Options* → *Open folder*). Updates and uninstalling keep your
+ROMs, saves, runs and fangames. Making a backup of that folder now and then never hurts.
+
+**Can I keep playing my saves from another emulator?**
+Yes: *Games* → *Folders & import* → *Import from emulator* copies ROMs and saves over (your old files stay untouched).
+
+**A 3DS game runs way too fast.**
+That's the 60 FPS cheat (smoother, but these games run at double speed with it). Hold **R** for normal speed, or switch
+it off under *Emulators*.
+
+**Can I use a controller?**
+Yes, Xbox-style controllers work out of the box; change the buttons under *Emulators* → *Controls & speed*.
+
+**The randomizer failed. What now?**
+Open *Details (log)* on the *New run* page – it usually says which option the game doesn't support. Try another preset,
+and if it keeps failing, open an issue with the log (but without the ROM).
+
+**How do I update?**
+Download the new `MonHub-Setup.exe` from the releases and run it – it installs over the old version and keeps
+everything.
+
+**How do I switch the language?**
+*Options* → *Language* (English or German). MonHub restarts briefly.
+
 ## Build it yourself
 
 Requirements: Windows, .NET 10 SDK, JDK 17 (`javac`, `jar`, `jlink`), Python 3 with Pillow, Inno Setup 6, 7-Zip.
