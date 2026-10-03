@@ -86,6 +86,39 @@ public class ControlsTests
     }
 
     [Fact]
+    public void Azahar_StickOnDpad_IsNotHeldAtRest()
+    {
+        // the 3DS d-pad on the right stick: Azahar takes "-" as "pressed BELOW the threshold", so up and left need
+        // a negative one – with +0.5 the resting stick (0) held them down for good
+        var c = new ControlSettings();
+        foreach (var (dir, pad) in new[] { ("Up", "rsu"), ("Down", "rsd"), ("Left", "rsl"), ("Right", "rsr") })
+            c.Pad["Pad" + dir] = pad;
+        var lines = new List<string>();
+        c.ApplyToAzahar(lines, keyboard: false);
+        Assert.EndsWith(@"axis:3,direction:-,threshold:-0.500000""", Value(lines, @"profiles\2\button_up"));
+        Assert.EndsWith(@"axis:3,direction:+,threshold:0.500000""", Value(lines, @"profiles\2\button_down"));
+        Assert.EndsWith(@"axis:2,direction:-,threshold:-0.500000""", Value(lines, @"profiles\2\button_left"));
+        Assert.EndsWith(@"axis:2,direction:+,threshold:0.500000""", Value(lines, @"profiles\2\button_right"));
+        // every "-" direction MonHub writes for Azahar has a negative threshold
+        Assert.DoesNotContain(lines, l => l.Contains("direction:-,threshold:0.5") || l.Contains("direction$0-$1threshold$00.5"));
+    }
+
+    [Fact]
+    public void Azahar_StickDirectionsOnMove_AreNotHeldAtRest()
+    {
+        // "Move" from single stick directions in another order than a whole stick: built from four inputs
+        var c = new ControlSettings();
+        c.Pad["MoveUp"] = "rsu"; c.Pad["MoveDown"] = "lsd"; c.Pad["MoveLeft"] = "lsl"; c.Pad["MoveRight"] = "lsr";
+        var lines = new List<string>();
+        c.ApplyToAzahar(lines, keyboard: false);
+        var circle = Value(lines, @"profiles\2\circle_pad");
+        Assert.Contains("engine:analog_from_button", circle);
+        Assert.Contains("axis$03$1direction$0-$1threshold$0-0.500000", circle);  // up: right stick, negative
+        Assert.Contains("axis$00$1direction$0-$1threshold$0-0.500000", circle);  // left: left stick, negative
+        Assert.Contains("axis$01$1direction$0+$1threshold$00.500000", circle);   // down: positive
+    }
+
+    [Fact]
     public void MGBA_DirectionsFromMoveAndDpad()
     {
         var lines = new List<string> { "[gba.input.QT_K]", "[gba.input.SDLB]" };
@@ -94,5 +127,29 @@ public class ControlsTests
         Assert.Contains("axisUpAxis=-1", lines);
         Assert.Contains("axisRightAxis=+0", lines);
         Assert.Contains($"keyUp={0x01000013}", lines);
+    }
+
+    [Fact]
+    public void SixtyFps_IsOff_AndTheOldDefaultIsLeftBehind()
+    {
+        Assert.False(new HubConfig().AzaharSixtyFps);
+        var old = System.Text.Json.JsonSerializer.Deserialize<HubConfig>("{\"Azahar60Fps\": true}")!;
+        Assert.False(old.AzaharSixtyFps);
+    }
+
+    [Fact]
+    public void MGBA_TwoSticks_MoveStickWins()
+    {
+        var c = new ControlSettings();
+        foreach (var (dir, d) in new[] { ("Up", "u"), ("Down", "d"), ("Left", "l"), ("Right", "r") })
+        {
+            c.Pad["Move" + dir] = "ls" + d;
+            c.Pad["Pad" + dir] = "rs" + d;
+        }
+        var lines = new List<string> { "[gba.input.QT_K]", "[gba.input.SDLB]" };
+        c.ApplyToMGBAConfig(lines);
+        Assert.Contains("axisUpAxis=-1", lines);
+        Assert.Contains("axisRightAxis=+0", lines);
+        Assert.DoesNotContain(lines, l => l.StartsWith("axisUpAxis=-3") || l.StartsWith("axisRightAxis=+2"));
     }
 }

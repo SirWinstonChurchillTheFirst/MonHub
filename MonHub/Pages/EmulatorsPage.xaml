@@ -171,7 +171,7 @@
                     <TextBlock Style="{DynamicResource Hub.Muted}" FontSize="12" Margin="0,6,0,0"
                                Text="{local:L 'Nur entschlüsselte Spiele (.3ds, .cci, .cxi). Tasten und Controller wie oben („Laufen“ = Schiebepad, „Steuerkreuz (3DS)“ = Steuerkreuz, „Tempo an/aus“ = Turbo). Ist beim Start ein Controller angeschlossen, nimmt Azahar ihn – sonst die Tastatur. Rare Candy: 999 Sonderbonbons in der Medizin-Tasche.', 'Decrypted games only (.3ds, .cci, .cxi). Keys and controller as above (“Move” = Circle Pad, “D-pad (3DS)” = d-pad, “Speed on/off” = turbo). If a controller is connected at start, Azahar uses it – otherwise the keyboard. Rare Candy: 999 Rare Candies in the Medicine pocket.'}"/>
                     <CheckBox x:Name="Chk60Fps" Margin="0,10,0,0" Checked="Fps_Changed" Unchecked="Fps_Changed" Foreground="{DynamicResource Hub.Ink}">
-                        <TextBlock TextWrapping="Wrap" Text="{local:L '60 FPS statt 30 – flüssiger, aber das ganze Spiel läuft doppelt so schnell. R halten = normales Tempo. Gilt ab dem nächsten Spielstart.', '60 FPS instead of 30 – smoother, but the whole game runs twice as fast. Hold R = normal speed. Applies from the next game start.'}"/>
+                        <TextBlock TextWrapping="Wrap" Text="{local:L '60 FPS statt 30 – flüssiger, aber das ganze Spiel läuft doppelt so schnell, und in Menüs springt der Cursor leicht zwei Einträge weiter. R halten = normales Tempo. Gilt ab dem nächsten Spielstart.', '60 FPS instead of 30 – smoother, but the whole game runs twice as fast, and in menus the cursor easily jumps two entries. Hold R = normal speed. Applies from the next game start.'}"/>
                     </CheckBox>
                 </StackPanel>
             </ContentControl>

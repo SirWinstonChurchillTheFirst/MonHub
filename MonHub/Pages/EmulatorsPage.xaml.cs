@@ -61,7 +61,7 @@ public partial class EmulatorsPage : UserControl, IHubPage
         AzaharIcon.Source = IconHelper.Get(HubPaths.AzaharExe);
         BtnAzaharOpen.IsEnabled = HubPaths.AzaharExe != null;
         _loadingSpeeds = true;
-        Chk60Fps.IsChecked = HubConfig.Current.Azahar60Fps;
+        Chk60Fps.IsChecked = HubConfig.Current.AzaharSixtyFps;
         _loadingSpeeds = false;
         TxtAzaharStatus.Text = HubPaths.AzaharExe != null ? Status(HubPaths.AzaharSaves, "main", recursive: true) : Missing;
         MelonBadge.Visibility = melon && main == GameLibrary.MelonDS ? Visibility.Visible : Visibility.Collapsed;
@@ -290,7 +290,7 @@ public partial class EmulatorsPage : UserControl, IHubPage
     void Fps_Changed(object sender, RoutedEventArgs e)
     {
         if (_loadingSpeeds) return;
-        HubConfig.Current.Azahar60Fps = Chk60Fps.IsChecked == true;
+        HubConfig.Current.AzaharSixtyFps = Chk60Fps.IsChecked == true;
         HubConfig.Current.Save();
     }
 

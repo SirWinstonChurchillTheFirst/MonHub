@@ -53,8 +53,13 @@ public class HubConfig
     /// <summary>"Vielleicht später": ask again on the next start.</summary>
     public bool TourLater { get; set; }
 
-    /// <summary>3DS games with the 60-FPS cheat (they then run twice as fast; R held = 30 FPS). Switch under "Emulatoren".</summary>
-    public bool Azahar60Fps { get; set; } = true;
+    /// <summary>
+    /// 3DS games with the 60-FPS cheat (they then run twice as fast; R held = 30 FPS). Switch under "Emulatoren".
+    /// Off unless chosen: at double speed a short press already counts as held, so menus jump two entries – in a
+    /// Yes/No box the cursor lands where it started. (Up to 2.8.0 this was "Azahar60Fps" and on by default; the new
+    /// name leaves that old default behind.)
+    /// </summary>
+    public bool AzaharSixtyFps { get; set; }
 
     /// <summary>ROM file names (without folder) marked as favourite in the game list.</summary>
     public List<string> Favorites { get; set; } = new();

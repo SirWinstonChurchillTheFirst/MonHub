@@ -174,7 +174,7 @@ public static class Azahar3ds
         var parts = new List<string>();
         var own = CheatFileOf(rom);
         if (File.Exists(own)) parts.Add(File.ReadAllText(own).TrimEnd());
-        if (HubConfig.Current.Azahar60Fps && SixtyFpsCode(info.GameCode) is { } fps) parts.Add($"{FpsName}\n*citra_enabled\n{fps}");
+        if (HubConfig.Current.AzaharSixtyFps && SixtyFpsCode(info.GameCode) is { } fps) parts.Add($"{FpsName}\n*citra_enabled\n{fps}");
         if (parts.Count > 0)
         {
             Directory.CreateDirectory(cheats);

@@ -267,16 +267,22 @@ public class ControlSettings
             HubSetup.RemoveIni(lines, "gba.input.SDLB", $"axis{dir}Value");
         }
         foreach (var dir in Directions)
+        {
+            bool hasStick = false;
             foreach (var pad in DsDirection(dir))
             {
                 if (StickOf(pad) is { } stick)
                 {
+                    // one stick per direction, as in melonDS: "Move" comes first and wins
+                    if (hasStick) continue;
+                    hasStick = true;
                     HubSetup.SetIni(lines, "gba.input.SDLB", $"axis{dir}Axis", (stick.Positive ? "+" : "-") + stick.Axis);
                     HubSetup.SetIni(lines, "gba.input.SDLB", $"axis{dir}Value", stick.Positive ? "12288" : "-12288");
                 }
                 else if (HatOf(pad) is { } hat) HubSetup.SetIni(lines, "gba.input.SDLB", "hat0" + hatName[hat], gbaKey[dir]);
                 else if (pad.StartsWith('b')) HubSetup.SetIni(lines, "gba.input.SDLB", "key" + dir, pad[1..]);
             }
+        }
         var invariant = System.Globalization.CultureInfo.InvariantCulture;
         HubSetup.SetIni(lines, "ports.qt", "fastForwardHeldRatio", FastForward.ToString(invariant));
         HubSetup.SetIni(lines, "ports.qt", "fastForwardRatio", Toggle.ToString(invariant));
@@ -354,7 +360,9 @@ public class ControlSettings
         "dd" => $"{AllControllers},button:12",
         "dl" => $"{AllControllers},button:13",
         "dr" => $"{AllControllers},button:14",
-        _ when StickOf(pad) is { } stick => $"{AllControllers},axis:{stick.Axis},direction:{(stick.Positive ? "+" : "-")},threshold:0.500000",
+        // Azahar: "+" = pressed above the threshold, "-" = pressed BELOW it – so up/left need a negative one
+        // (with +0.5 a resting stick at 0 counts as held: the d-pad was stuck up-left)
+        _ when StickOf(pad) is { } stick => $"{AllControllers},axis:{stick.Axis},direction:{(stick.Positive ? "+" : "-")},threshold:{(stick.Positive ? "" : "-")}0.500000",
         // joystick numbering (A B X Y LB RB View Menu LS RS) → SDL game controller buttons
         _ when pad.StartsWith('b') && int.TryParse(pad.AsSpan(1), out int b) && b is >= 0 and <= 9
             => $"{AllControllers},button:{new[] { 0, 1, 2, 3, 9, 10, 4, 6, 7, 8 }[b]}",
