@@ -1,0 +1,19 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MonHub.App"
+             Name="MonHub"
+             RequestedThemeVariant="Dark">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Design system; the theme dictionary (Themes\<id>.axaml) is added after it at startup by HubThemes.Apply -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Themes/Base.axaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+    <Application.Styles>
+        <!-- the stock controls MonHub does not draw itself; their colours are set from the theme (HubThemes) -->
+        <SimpleTheme/>
+        <StyleInclude Source="/Themes/Styles.axaml"/>
+    </Application.Styles>
+</Application>

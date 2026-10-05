@@ -1,4 +1,3 @@
-using System.Windows;
 
 namespace RandoApp;
 
@@ -10,10 +9,35 @@ public static class WindowFit
 {
     const double Margin = 16;
 
+    /// <summary>The primary screen without the taskbar, in the units windows are measured in (null: not known yet).</summary>
+    public static Size? WorkArea(Window? w = null)
+    {
+        var screens = (w ?? Compat.MainWindow)?.Screens;
+        if (screens?.Primary is not { } screen) return null;
+        return new Size(screen.WorkingArea.Width / screen.Scaling, screen.WorkingArea.Height / screen.Scaling);
+    }
+
+    /// <summary>The primary screen: its work area (without the taskbar) and its full width, in logical pixels.</summary>
+    public static (Rect WorkArea, int Width) PrimaryScreen()
+    {
+        try
+        {
+            var screens = (Compat.MainWindow ?? new Window()).Screens;
+            if (screens.Primary is { } s)
+                return (new Rect(s.WorkingArea.X / s.Scaling, s.WorkingArea.Y / s.Scaling, s.WorkingArea.Width / s.Scaling, s.WorkingArea.Height / s.Scaling),
+                    (int)(s.Bounds.Width / s.Scaling));
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or NotSupportedException)
+        {
+            // no screen to ask (tests): a common size
+        }
+        return (new Rect(0, 0, 1920, 1040), 1920);
+    }
+
     /// <summary>Call right after InitializeComponent (before the window is shown).</summary>
     public static void Apply(Window w)
     {
-        var area = SystemParameters.WorkArea; // primary screen without the taskbar, in WPF units
+        if (WorkArea(w) is not { } area) return;
         double maxW = Math.Max(320, area.Width - Margin);
         double maxH = Math.Max(240, area.Height - Margin);
 

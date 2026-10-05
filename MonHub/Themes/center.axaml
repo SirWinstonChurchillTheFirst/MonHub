@@ -1,0 +1,204 @@
+<!--
+    Pokémon-Center: light and friendly. Cream floor tiles with the big Poké Ball emblem in the floor, white counters with
+    rose edges and a soft hard shadow, pill-shaped buttons and menu entries, the healing machine at the top of the menu
+    (the six balls light up one after another now and then). The trainer card lies a bit crooked on the counter.
+-->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:local="clr-namespace:MonHub">
+
+    <!-- floor tiles -->
+    <DrawingBrush x:Key="Hub.Bg" TileMode="Tile" Stretch="None" SourceRect="0,0,72,72" DestinationRect="0,0,72,72">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#FBF3EC" Geometry="M0,0 H72 V72 H0 Z"/>
+                <GeometryDrawing Brush="#F7EBE1" Geometry="M0,0 H36 V36 H0 Z M36,36 H72 V72 H36 Z"/>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <SolidColorBrush x:Key="Hub.Rail" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.RailLine" Color="#F2D3D8"/>
+    <SolidColorBrush x:Key="Hub.RailInk" Color="#3E2A2F"/>
+    <SolidColorBrush x:Key="Hub.RailInkMuted" Color="#9A8287"/>
+    <SolidColorBrush x:Key="Hub.RailHover" Color="#FFF0F2"/>
+    <SolidColorBrush x:Key="Hub.RailSelected" Color="#E0485C"/>
+    <SolidColorBrush x:Key="Hub.RailSelectedInk" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.RailCursor" Color="#E0485C"/>
+    <Thickness x:Key="Hub.RailBorder">0,0,2,0</Thickness>
+    <sys:Double x:Key="Hub.RailWidth">230</sys:Double>
+
+    <SolidColorBrush x:Key="Hub.Surface" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.SurfaceAlt" Color="#FFF6F3"/>
+    <SolidColorBrush x:Key="Hub.SurfaceHover" Color="#FFFCFB"/>
+    <SolidColorBrush x:Key="Hub.SurfaceSelected" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.Ink" Color="#3E2A2F"/>
+    <SolidColorBrush x:Key="Hub.InkStrong" Color="#2A181D"/>
+    <SolidColorBrush x:Key="Hub.InkMuted" Color="#927A80"/>
+    <SolidColorBrush x:Key="Hub.Line" Color="#F2D0D6"/>
+    <SolidColorBrush x:Key="Hub.LineStrong" Color="#E8B8C1"/>
+    <SolidColorBrush x:Key="Hub.InsetLine" Color="#F6DDE1"/>
+    <SolidColorBrush x:Key="Hub.Selection" Color="#E0485C"/>
+
+    <SolidColorBrush x:Key="Hub.Accent" Color="#E0485C"/>
+    <SolidColorBrush x:Key="Hub.AccentEdge" Color="#B02D42"/>
+    <SolidColorBrush x:Key="Hub.AccentInk" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.KeyFace" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.KeyEdge" Color="#EBC3CA"/>
+    <SolidColorBrush x:Key="Hub.KeyInk" Color="#3E2A2F"/>
+    <SolidColorBrush x:Key="Hub.KeyLine" Color="#F0CCD3"/>
+    <SolidColorBrush x:Key="Hub.HoverOverlay" Color="#0FE0485C"/>
+    <SolidColorBrush x:Key="Hub.PressOverlay" Color="#1FE0485C"/>
+    <SolidColorBrush x:Key="Hub.Good" Color="#2E9E57"/>
+    <SolidColorBrush x:Key="Hub.Danger" Color="#C8321E"/>
+    <SolidColorBrush x:Key="Hub.DangerSoft" Color="#1AC8321E"/>
+    <SolidColorBrush x:Key="Hub.DangerFace" Color="#D93A3A"/>
+    <SolidColorBrush x:Key="Hub.DangerEdge" Color="#A42424"/>
+    <SolidColorBrush x:Key="Hub.DangerInk" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.Dialog" Color="#FBF3EC"/>
+    <SolidColorBrush x:Key="Hub.Shadow" Color="#2EC7475B"/>
+    <SolidColorBrush x:Key="Hub.SlotFill" Color="#FFF6F3"/>
+    <SolidColorBrush x:Key="Hub.SlotLine" Color="#F2D0D6"/>
+    <SolidColorBrush x:Key="Hub.BadgeOn" Color="#E8A617"/>
+    <SolidColorBrush x:Key="Hub.BadgeOff" Color="#F2DDE0"/>
+    <SolidColorBrush x:Key="Hub.ChipOn" Color="#E0485C"/>
+    <SolidColorBrush x:Key="Hub.ChipOnInk" Color="#FFFFFF"/>
+
+    <CornerRadius x:Key="Hub.RadiusPanel">18</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusInner">12</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusControl">20</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusChip">16</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusCard">14</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusCheck">6</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusSlot">12</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusNav">20</CornerRadius>
+    <Thickness x:Key="Hub.PanelBorder">2</Thickness>
+    <Thickness x:Key="Hub.CardBorder">2</Thickness>
+    <Thickness x:Key="Hub.ShadowOffset">0,4,0,-4</Thickness>
+    <Thickness x:Key="Hub.KeyDepth">0,0,0,3</Thickness>
+    <Thickness x:Key="Hub.NavMargin">12,2</Thickness>
+    <sys:Boolean x:Key="Hub.IndicatorVisible">False</sys:Boolean>
+
+    <FontFamily x:Key="Hub.FontDisplay">Segoe UI Variable Display, Segoe UI, Segoe UI Symbol</FontFamily>
+    <FontFamily x:Key="Hub.FontValue">Segoe UI Variable Display, Segoe UI, Segoe UI Symbol</FontFamily>
+    <FontWeight x:Key="Hub.WeightTitle">Bold</FontWeight>
+    <FontWeight x:Key="Hub.WeightNav">SemiBold</FontWeight>
+    <sys:Double x:Key="Hub.SizeTitle">28</sys:Double>
+    <sys:Double x:Key="Hub.CardTilt">1.2</sys:Double>
+
+    <!-- a big heart in the floor -->
+    <ControlTemplate x:Key="Hub.Backdrop">
+        <Grid ClipToBounds="True">
+            <Image Source="avares://MonHub/Assets/Icons/heart.png" RenderOptions.BitmapInterpolationMode="None" Width="640" Height="640" Opacity="0.06" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                   Margin="0,0,-210,-250" RenderTransformOrigin="50%,50%">
+                <Image.RenderTransform>
+                    <RotateTransform Angle="-14"/>
+                </Image.RenderTransform>
+            </Image>
+        </Grid>
+    </ControlTemplate>
+
+    <!-- red roof, the healing machine, name -->
+    <ControlTemplate x:Key="Hub.RailIdentity">
+        <StackPanel>
+            <Border Height="10" Background="#E0485C"/>
+            <Border Height="4" Background="#F7B7C1"/>
+            <StackPanel Margin="20,16,16,14">
+                <Border Background="#FFF6F3" BorderBrush="#E0485C" BorderThickness="2" CornerRadius="14,14,6,6" Padding="8,6,8,4" HorizontalAlignment="Left">
+                    <StackPanel>
+                        <UniformGrid Rows="2" Columns="3">
+                            <local:SpriteView Key="icon/heart" Width="32" Height="32">
+                                <local:Ambient.Animation>
+                                    <Animation x:SetterTargetType="local:SpriteView" Duration="0:0:9" IterationCount="INFINITE">
+                                        <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="11.01%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="11.11%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                        <KeyFrame Cue="39.9%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                        <KeyFrame Cue="40%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="100%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                    </Animation>
+                                </local:Ambient.Animation>
+                            </local:SpriteView>
+                            <local:SpriteView Key="icon/heart" Width="32" Height="32">
+                                <local:Ambient.Animation>
+                                    <Animation x:SetterTargetType="local:SpriteView" Duration="0:0:9" IterationCount="INFINITE">
+                                        <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="14.34%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="14.44%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                        <KeyFrame Cue="39.9%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                        <KeyFrame Cue="40%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="100%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                    </Animation>
+                                </local:Ambient.Animation>
+                            </local:SpriteView>
+                            <local:SpriteView Key="icon/heart" Width="32" Height="32">
+                                <local:Ambient.Animation>
+                                    <Animation x:SetterTargetType="local:SpriteView" Duration="0:0:9" IterationCount="INFINITE">
+                                        <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="17.68%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="17.78%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                        <KeyFrame Cue="39.9%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                        <KeyFrame Cue="40%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="100%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                    </Animation>
+                                </local:Ambient.Animation>
+                            </local:SpriteView>
+                            <local:SpriteView Key="icon/heart" Width="32" Height="32">
+                                <local:Ambient.Animation>
+                                    <Animation x:SetterTargetType="local:SpriteView" Duration="0:0:9" IterationCount="INFINITE">
+                                        <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="21.01%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="21.11%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                        <KeyFrame Cue="39.9%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                        <KeyFrame Cue="40%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="100%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                    </Animation>
+                                </local:Ambient.Animation>
+                            </local:SpriteView>
+                            <local:SpriteView Key="icon/heart" Width="32" Height="32">
+                                <local:Ambient.Animation>
+                                    <Animation x:SetterTargetType="local:SpriteView" Duration="0:0:9" IterationCount="INFINITE">
+                                        <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="24.34%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="24.44%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                        <KeyFrame Cue="39.9%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                        <KeyFrame Cue="40%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="100%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                    </Animation>
+                                </local:Ambient.Animation>
+                            </local:SpriteView>
+                            <local:SpriteView Key="icon/heart" Width="32" Height="32">
+                                <local:Ambient.Animation>
+                                    <Animation x:SetterTargetType="local:SpriteView" Duration="0:0:9" IterationCount="INFINITE">
+                                        <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="27.68%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="27.78%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                        <KeyFrame Cue="39.9%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                        <KeyFrame Cue="40%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                        <KeyFrame Cue="100%"><Setter Property="Opacity" Value="0.35"/></KeyFrame>
+                                    </Animation>
+                                </local:Ambient.Animation>
+                            </local:SpriteView>
+                        </UniformGrid>
+                        <Border Height="5" CornerRadius="2.5" Background="#E0485C" Margin="2,4,2,0"/>
+                    </StackPanel>
+                </Border>
+                <TextBlock Text="MonHub" FontFamily="{DynamicResource Hub.FontDisplay}" FontSize="23" FontWeight="Bold" Foreground="#2A181D" Margin="0,12,0,0"/>
+                <TextBlock Text="{local:L 'Heilstation · rund um die Uhr geöffnet', 'Healing station · open around the clock'}" FontSize="11.5" Foreground="#9A8287" TextWrapping="Wrap"/>
+            </StackPanel>
+        </StackPanel>
+    </ControlTemplate>
+
+    <!-- at the foot of the menu: Chansey at the counter -->
+    <ControlTemplate x:Key="Hub.RailDeco">
+        <Border Margin="18,0,18,12" Padding="10,8" CornerRadius="14,14,6,6" Background="#FFF6F3" BorderBrush="#F7B7C1" BorderThickness="2">
+            <DockPanel>
+                <local:SpriteView Key="species/0113" Width="46" Height="46" DockPanel.Dock="Left" Margin="0,0,8,0" Decorative="True"
+                                  Stretch="Uniform" VerticalAlignment="Center"/>
+                <TextBlock Text="{local:L 'Dein Team ist wieder topfit!', 'Your team is fighting fit again!'}" TextWrapping="Wrap" VerticalAlignment="Center"
+                           FontFamily="{DynamicResource Hub.FontLabel}" FontSize="11.5" Foreground="#9A4A57"/>
+            </DockPanel>
+        </Border>
+    </ControlTemplate>
+</ResourceDictionary>

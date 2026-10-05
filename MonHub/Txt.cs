@@ -1,8 +1,6 @@
 using System.Globalization;
 using System.IO;
 using System.Text.Json;
-using System.Windows;
-using System.Windows.Markup;
 
 namespace MonHub;
 
@@ -27,7 +25,24 @@ public static class Txt
     /// <summary>Fixes the language for this start (tests and screenshots).</summary>
     public static void Use(bool english) => _english = english;
 
-    public static string L(string de, string en) => English ? en : de;
+    public static string L(string de, string en) => LinuxWords ? ForLinux(English ? en : de) : English ? en : de;
+
+    static readonly bool LinuxWords = !OperatingSystem.IsWindows();
+
+    /// <summary>
+    /// The few texts that differ on Linux: it has a "trash", not a "Recycle Bin" (German calls both "Papierkorb"), and
+    /// no DeSmuME.
+    /// </summary>
+    static string ForLinux(string text)
+    {
+        if (text.Contains("Recycle Bin")) text = text.Replace("Recycle Bin", "trash");
+        if (text.Contains("Spielstände\\")) text = text.Replace("Spielstände\\", "Spielstände/");
+        if (!text.Contains("DeSmuME")) return text;
+        return text.Replace("melonDS oder DeSmuME", "melonDS").Replace("melonDS or DeSmuME", "melonDS")
+            .Replace("; ohne laufen die in DeSmuME.", "; ohne starten sie nicht.").Replace("; without them those run in DeSmuME.", "; without them they don't start.")
+            .Replace(" DeSmuME hat eigene Einstellungen (Config → Control Config).", "")
+            .Replace(" DeSmuME has its own settings (Config → Control Config).", "");
+    }
 
     /// <summary>The language picked in MonHub, else the one picked in Setup (System\App\install.ini), else none.</summary>
     static string? ReadChoice() => FromSettings() ?? FromSetup();
@@ -67,14 +82,11 @@ public static class Txt
         var culture = CultureInfo.GetCultureInfo(English ? "en-US" : "de-DE");
         CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICulture = culture;
         CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = culture;
-        FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement),
-            new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(culture.IetfLanguageTag)));
     }
 }
 
 /// <summary>A text in XAML: <c>{local:L 'Deutsch', 'English'}</c>.</summary>
-[MarkupExtensionReturnType(typeof(string))]
-public class LExtension(string de, string en) : MarkupExtension
+public class LExtension(string de, string en) : Avalonia.Markup.Xaml.MarkupExtension
 {
     public override object ProvideValue(IServiceProvider serviceProvider) => Txt.L(de, en);
 }

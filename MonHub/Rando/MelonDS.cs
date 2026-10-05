@@ -15,12 +15,12 @@ public class MelonDSInstall : IEmulator
     public string Name => "melonDS";
     public string Folder { get; }
     public string? Exe { get; }
-    string ConfigFile => Path.Combine(Folder, "melonDS.toml");
+    string ConfigFile => Path.Combine(HubPaths.MelonDSConfigDir(Folder), "melonDS.toml");
 
     public MelonDSInstall(string folder)
     {
         Folder = folder;
-        Exe = Directory.GetFiles(folder, "melonDS*.exe").FirstOrDefault();
+        Exe = Os.FindProgram(folder, "melonDS");
     }
 
     /// <summary>A value from the [Instance0] section of melonDS.toml ("" if missing).</summary>
@@ -70,7 +70,7 @@ public class MelonDSInstall : IEmulator
     string? EnsureCheatsEnabled()
     {
         if (!File.Exists(ConfigFile) || InstanceSetting("EnableCheats") == "true") return null;
-        if (Process.GetProcessesByName("melonDS").Length > 0)
+        if (HubSetup.IsRunning("melonDS"))
             return Txt.L("In melonDS sind Cheats noch ausgeschaltet – melonDS schließen und nochmal randomisieren, oder in melonDS unter „System“ die Cheats einschalten.",
                 "Cheats are still switched off in melonDS – close melonDS and randomize again, or switch cheats on in melonDS under “System”.");
 

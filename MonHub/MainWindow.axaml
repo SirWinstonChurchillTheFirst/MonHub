@@ -1,0 +1,126 @@
+<local:HubWindow x:Class="MonHub.MainWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MonHub"
+        Title="MonHub" Width="1200" Height="800" MinWidth="860" MinHeight="580"
+        WindowStartupLocation="CenterScreen" Background="{DynamicResource Hub.Bg}"
+        Icon="/Assets/Portraits/0137-Normal.png"
+        FontFamily="{DynamicResource Hub.FontBody}" FontSize="13" Foreground="{DynamicResource Hub.Ink}"
+        UseLayoutRounding="True">
+    <!--
+        The shell: theme decoration behind everything, MonHub's own title bar, the menu (left, or right in the Game Boy
+        theme), the pages on the theme's "screen". Pages are created on first use and kept, so switching back is instant.
+    -->
+    <local:HubWindow.Resources>
+        <StreamGeometry x:Key="Glyph.Minimize">M0,5 H10</StreamGeometry>
+        <StreamGeometry x:Key="Glyph.Maximize">M0.5,0.5 H9.5 V9.5 H0.5 Z</StreamGeometry>
+        <StreamGeometry x:Key="Glyph.Restore">M0.5,2.5 H7.5 V9.5 H0.5 Z M2.5,2.5 V0.5 H9.5 V7.5 H7.5</StreamGeometry>
+    </local:HubWindow.Resources>
+    <Grid x:Name="Root" RowDefinitions="34,*">
+        <TemplatedControl Grid.RowSpan="2" Template="{DynamicResource Hub.Backdrop}" IsHitTestVisible="False" Focusable="False"/>
+
+        <Grid Grid.RowSpan="2" ColumnDefinitions="Auto,*,Auto">
+            <!-- the menu -->
+            <Border x:Name="Rail" Grid.Column="{DynamicResource Hub.RailColumn}" Width="{DynamicResource Hub.RailWidth}"
+                    Background="{DynamicResource Hub.Rail}" BorderBrush="{DynamicResource Hub.RailLine}" BorderThickness="{DynamicResource Hub.RailBorder}"
+                    Margin="{DynamicResource Hub.RailMargin}" Padding="{DynamicResource Hub.RailTitleInset}" CornerRadius="{DynamicResource Hub.RailRadius}">
+                <Border BorderBrush="{DynamicResource Hub.RailInnerLine}" BorderThickness="{DynamicResource Hub.RailInnerBorder}"
+                        Margin="{DynamicResource Hub.RailInnerGap}" CornerRadius="{DynamicResource Hub.RadiusInner}">
+                    <Grid RowDefinitions="Auto,*,Auto,Auto">
+                        <TemplatedControl Template="{DynamicResource Hub.RailIdentity}" Focusable="False" IsHitTestVisible="False"/>
+
+                        <StackPanel x:Name="Nav" Grid.Row="1" KeyboardNavigation.TabNavigation="Cycle" Margin="0,4,0,0">
+                            <RadioButton Theme="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="start" IsCheckedChanged="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <local:SpriteView Key="icon/play" Width="32" Height="32" Margin="-5,-6,7,-6" IsVisible="{DynamicResource Hub.NavIcons}"/>
+                                    <TextBlock Tag="{local:L 'Weiter', 'Continue'}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton Theme="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="games" IsCheckedChanged="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <local:SpriteView Key="icon/cartridge" Width="32" Height="32" Margin="-5,-6,7,-6" IsVisible="{DynamicResource Hub.NavIcons}"/>
+                                    <TextBlock Tag="{local:L 'Spiele', 'Games'}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton Theme="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="run" IsCheckedChanged="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <local:SpriteView Key="icon/dice" Width="32" Height="32" Margin="-5,-6,7,-6" IsVisible="{DynamicResource Hub.NavIcons}"/>
+                                    <TextBlock Tag="{local:L 'Neuer Run', 'New run'}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton Theme="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="nuzlocke" IsCheckedChanged="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <local:SpriteView Key="icon/journal" Width="32" Height="32" Margin="-5,-6,7,-6" IsVisible="{DynamicResource Hub.NavIcons}"/>
+                                    <TextBlock Tag="{local:L 'Nuzlocke', 'Nuzlocke'}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton Theme="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="dex" IsCheckedChanged="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <local:SpriteView Key="icon/magnifier" Width="32" Height="32" Margin="-5,-6,7,-6" IsVisible="{DynamicResource Hub.NavIcons}"/>
+                                    <TextBlock Tag="{local:L 'Dex', 'Dex'}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton Theme="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="fangames" IsCheckedChanged="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <local:SpriteView Key="icon/star" Width="32" Height="32" Margin="-5,-6,7,-6" IsVisible="{DynamicResource Hub.NavIcons}"/>
+                                    <TextBlock Tag="{local:L 'Fangames', 'Fangames'}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton Theme="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="emulators" IsCheckedChanged="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <local:SpriteView Key="icon/console" Width="32" Height="32" Margin="-5,-6,7,-6" IsVisible="{DynamicResource Hub.NavIcons}"/>
+                                    <TextBlock Tag="{local:L 'Emulatoren', 'Emulators'}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton Theme="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="options" IsCheckedChanged="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <local:SpriteView Key="icon/gear" Width="32" Height="32" Margin="-5,-6,7,-6" IsVisible="{DynamicResource Hub.NavIcons}"/>
+                                    <TextBlock Tag="{local:L 'Optionen', 'Options'}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
+                        </StackPanel>
+
+                        <TemplatedControl x:Name="RailDeco" Grid.Row="2" Template="{DynamicResource Hub.RailDeco}" Focusable="False" IsHitTestVisible="False"/>
+
+                        <DockPanel Grid.Row="3" Margin="16,2,14,12">
+                            <TextBlock x:Name="TxtVersion" DockPanel.Dock="Right" Foreground="{DynamicResource Hub.RailInkMuted}" FontSize="11"
+                                       FontFamily="{DynamicResource Hub.FontLabel}" VerticalAlignment="Center"/>
+                            <Button Theme="{DynamicResource Hub.RailLink}" Click="Help_Click" HorizontalAlignment="Left">
+                                <TextBlock x:Name="TxtHelp" Tag="{local:L 'So geht\'s', 'How it works'}"/>
+                            </Button>
+                        </DockPanel>
+                    </Grid>
+                </Border>
+            </Border>
+
+            <!-- the pages -->
+            <ContentControl Grid.Column="1" Theme="{DynamicResource Hub.ScreenFrame}" Margin="0,34,0,0">
+                <Grid x:Name="PageHost"/>
+            </ContentControl>
+        </Grid>
+
+        <!-- the title bar over the top edge: drag to move, double-click to maximize -->
+        <Border x:Name="TitleBar" Background="Transparent"/>
+        <StackPanel x:Name="CaptionButtons" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <Button x:Name="BtnMinimize" Theme="{StaticResource Chrome.Button}" Click="Minimize_Click" ToolTip.Tip="{local:L 'Minimieren', 'Minimize'}"
+                    Tag="{StaticResource Glyph.Minimize}"/>
+            <Button x:Name="BtnMaximize" Theme="{StaticResource Chrome.Button}" Click="Maximize_Click" Tag="{StaticResource Glyph.Maximize}"/>
+            <Button x:Name="BtnClose" Theme="{StaticResource Chrome.Close}" Click="Close_Click" ToolTip.Tip="{local:L 'Schließen', 'Close'}"/>
+        </StackPanel>
+
+        <!-- Porygon's tour, on top of everything but the title bar (closing and moving the window keep working) -->
+        <local:TourOverlay x:Name="TourLayer" Grid.Row="1" IsVisible="False"/>
+
+        <!-- Linux: the edges resize the window -->
+        <Panel x:Name="ResizeGrips" Grid.RowSpan="2">
+            <Border Tag="North" Height="5" VerticalAlignment="Top" Margin="10,0" Background="Transparent" Cursor="SizeNorthSouth"/>
+            <Border Tag="South" Height="5" VerticalAlignment="Bottom" Margin="10,0" Background="Transparent" Cursor="SizeNorthSouth"/>
+            <Border Tag="West" Width="5" HorizontalAlignment="Left" Margin="0,10" Background="Transparent" Cursor="SizeWestEast"/>
+            <Border Tag="East" Width="5" HorizontalAlignment="Right" Margin="0,10" Background="Transparent" Cursor="SizeWestEast"/>
+            <Border Tag="NorthWest" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" Cursor="TopLeftCorner"/>
+            <Border Tag="NorthEast" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" Cursor="TopRightCorner"/>
+            <Border Tag="SouthWest" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Background="Transparent" Cursor="BottomLeftCorner"/>
+            <Border Tag="SouthEast" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Transparent" Cursor="BottomRightCorner"/>
+        </Panel>
+    </Grid>
+</local:HubWindow>

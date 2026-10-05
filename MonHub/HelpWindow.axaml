@@ -1,0 +1,89 @@
+<local:HubWindow x:Class="MonHub.HelpWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MonHub"
+        Title="{local:L 'So geht\'s', 'How it works'}" Theme="{StaticResource Hub.DialogWindow}" Width="640" SizeToContent="Height" CanResize="False"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="{DynamicResource Hub.Dialog}"
+        Icon="/Assets/Portraits/0137-Normal.png">
+    <local:HubWindow.Styles>
+        <!-- step number: a small ball-like badge -->
+        <Style Selector="Border.stepnumber">
+            <Setter Property="Width" Value="34"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="CornerRadius" Value="17"/>
+            <Setter Property="Background" Value="{DynamicResource Hub.Accent}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Hub.AccentEdge}"/>
+            <Setter Property="BorderThickness" Value="0,0,0,3"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Margin" Value="0,2,16,0"/>
+        </Style>
+        <Style Selector="TextBlock.stepdigit">
+            <Setter Property="FontFamily" Value="{DynamicResource Hub.FontDisplay}"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{DynamicResource Hub.AccentInk}"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </local:HubWindow.Styles>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="28,24,28,24">
+            <DockPanel Margin="0,0,0,20">
+                <local:SpriteView Key="0025/idle" DockPanel.Dock="Right" Height="56" VerticalAlignment="Bottom"/>
+                <StackPanel VerticalAlignment="Bottom">
+                    <TextBlock Text="{local:L 'SO GEHT\'S', 'HOW IT WORKS'}" Classes="label"/>
+                    <TextBlock Text="{local:L 'In 4 Schritten zum ersten Run', 'Your first run in 4 steps'}" Classes="title" FontSize="24" Margin="0,4,0,0"/>
+                </StackPanel>
+            </DockPanel>
+
+            <ContentControl Theme="{DynamicResource Hub.Panel}">
+                <StackPanel>
+                    <DockPanel Margin="0,0,0,16">
+                        <Border Classes="stepnumber"><TextBlock Text="1" Classes="stepdigit"/></Border>
+                        <StackPanel>
+                            <TextBlock Text="{local:L 'Spiele holen', 'Get your games'}" Classes="heading"/>
+                            <TextBlock Classes="muted" Margin="0,3,0,0"
+                                       Text="{local:L 'Unter „Spiele“ → „Ordner &amp; Import“ den ROM-Ordner öffnen und deine Pokémon-Spiele (.nds, .gba, .gb …) hineinkopieren – oder sie samt Spielständen von deinem bisherigen Emulator importieren. ROMs sind nicht dabei, die musst du selbst haben.', 'Under “Games” → “Folders &amp; import”, open the ROM folder and copy your Pokémon games (.nds, .gba, .gb …) into it – or import them together with your saves from the emulator you used so far. ROMs are not included; you need your own.'}"/>
+                        </StackPanel>
+                    </DockPanel>
+                    <DockPanel Margin="0,0,0,16">
+                        <Border Classes="stepnumber"><TextBlock Text="2" Classes="stepdigit"/></Border>
+                        <StackPanel>
+                            <TextBlock Text="{local:L '„Neuer Run“ im Menü', '“New run” in the menu'}" Classes="heading"/>
+                            <TextBlock Classes="muted" Margin="0,3,0,0"
+                                       Text="{local:L 'Dort dein Original auswählen – Ordner, Emulator und Einstellungen sind schon fertig eingerichtet.', 'Pick your original there – folders, emulator and settings are already set up.'}"/>
+                        </StackPanel>
+                    </DockPanel>
+                    <DockPanel Margin="0,0,0,16">
+                        <Border Classes="stepnumber"><TextBlock Text="3" Classes="stepdigit"/></Border>
+                        <StackPanel>
+                            <TextBlock Text="{local:L '„Mischen &amp; spielen“ drücken', 'Press “Mix &amp; play”'}" Classes="heading"/>
+                            <TextBlock Classes="muted" Margin="0,3,0,0"
+                                       Text="{local:L 'Das Spiel wird neu gemischt und startet sofort. Später geht es hier unter „Weiter“ weiter – mit dem Spiel, das du zuletzt gespeichert hast, im richtigen Emulator.', 'The game is randomized and starts right away. Later you carry on under “Continue” – with the game you saved last, in the right emulator.'}"/>
+                        </StackPanel>
+                    </DockPanel>
+                    <DockPanel>
+                        <Border Classes="stepnumber"><TextBlock Text="4" Classes="stepdigit"/></Border>
+                        <StackPanel>
+                            <TextBlock Text="{local:L 'Sonderbonbons abholen (optional)', 'Grab Rare Candies (optional)'}" Classes="heading"/>
+                            <TextBlock Classes="muted" Margin="0,3,0,0"
+                                       Text="{local:L 'Mit dem Rare-Candy-Cheat: im Spiel L + R drücken (Diamant, Perl, Platin, HeartGold, SoulSilver) bzw. Select (Schwarz/Weiß 1+2) – dann liegen 999 Sonderbonbons in der Medizin-Tasche.', 'With the Rare Candy cheat: press L + R in the game (Diamond, Pearl, Platinum, HeartGold, SoulSilver) or Select (Black/White 1+2) – then 999 Rare Candies are in your Medicine pocket.'}"/>
+                        </StackPanel>
+                    </DockPanel>
+                </StackPanel>
+            </ContentControl>
+
+            <ContentControl Theme="{DynamicResource Hub.Inset}" Margin="0,16,0,0">
+                <TextBlock Classes="body">
+                    <Run Text="{local:L 'Speichern', 'Saving'}" FontWeight="Bold"/><Run Text="{local:L ' macht das Spiel selbst – also im Spiel speichern! Die Spielstände liegen im Ordner „Spielstände“.', ' is done by the game itself – so save in the game! The saves are in the “Spielstände” folder.'}"/>
+                    <LineBreak/>
+                    <Run Text="{local:L 'Tasten', 'Keys'}" FontWeight="Bold"/><Run Text="{local:L ' für melonDS stehen unter „Emulatoren“.', ' for melonDS are under “Emulators”.'}"/>
+                    <LineBreak/>
+                    <Run Text="{local:L 'Aufräumen', 'Tidying up'}" FontWeight="Bold"/><Run Text="{local:L ' unter „Spiele“: „Spiel löschen“ nimmt ROM, Spielstände, Cheats und Spoiler mit, alles landet im Papierkorb. Spielstände ohne Spiel räumst du dort mit dem Gengar-Knopf auf.', ' under “Games”: “Delete game” takes the ROM, saves, cheats and spoiler along – everything goes to the Recycle Bin. Saves without a game are cleaned up there with the Gengar button.'}"/>
+                </TextBlock>
+            </ContentControl>
+
+            <Button Theme="{DynamicResource Hub.PrimaryKey}" IsDefault="True" IsCancel="True" Click="Close_Click" HorizontalAlignment="Right" Margin="0,18,0,0" Content="{local:L 'Los geht\'s!', 'Let’s go!'}"></Button>
+        </StackPanel>
+    </ScrollViewer>
+</local:HubWindow>

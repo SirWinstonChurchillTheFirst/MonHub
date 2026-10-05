@@ -50,7 +50,7 @@ jar cf (Join-Path $hubSrc "java\RandoHelper.jar") -C $classes .
 Remove-Item -Recurse -Force $classes
 
 # 1. MonHub self-contained (friends don't need .NET installed)
-dotnet publish (Join-Path $hubSrc "MonHub.csproj") -c Release --self-contained true -o $app
+dotnet publish (Join-Path $hubSrc "MonHub.csproj") -c Release -r win-x64 --self-contained true -o $app
 Remove-Item -Recurse -Force (Join-Path $hubSrc "bin"), (Join-Path $hubSrc "obj") -ErrorAction SilentlyContinue
 
 # licences: MonHub itself and the randomizer (GPL-3.0), the pixel fonts inside MonHub.exe (SIL OFL), the picture credits

@@ -1,0 +1,22 @@
+MonHub für Linux
+================
+
+1. Diesen Ordner entpacken, wohin du willst (dein Persönlicher Ordner passt).
+2. install.sh einmal ausführen:
+     - im Dateimanager: Rechtsklick auf install.sh -> "Als Programm ausführen" (oder "Im Terminal ausführen")
+     - oder im Terminal: ./install.sh
+   Das entpackt die Emulatoren und legt MonHub ins Anwendungsmenü.
+3. MonHub aus dem Anwendungsmenü starten.
+
+Alles bleibt in diesem Ordner: deine Spiele kommen nach "ROMs", Spielstände landen in "Spielstände".
+ROMs sind nicht dabei - die musst du selbst haben.
+
+Wenn du den Ordner verschiebst, install.sh noch einmal ausführen (der Menüeintrag zeigt auf den Ordner).
+MonHub entfernen: uninstall.sh ausführen, dann den Ordner löschen (ROMs und Spielstände vorher herauskopieren).
+
+Dabei sind: melonDS (DS), mGBA (Game Boy, GBA), Azahar (3DS) und eine Java-Laufzeit für den Randomizer.
+DeSmuME gibt es nur für Windows und ist in der Linux-Version nicht dabei.
+
+Braucht ein 64-Bit-Linux (x86-64) mit Desktop. Für 3DS-Spiele ist eine Grafikkarte mit Vulkan oder OpenGL 4.3 nötig.
+
+Inoffizielles Fanprojekt, nicht verbunden mit Nintendo, Creatures, GAME FREAK oder The Pokémon Company.

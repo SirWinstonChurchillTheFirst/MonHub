@@ -1,0 +1,224 @@
+<UserControl x:Class="MonHub.LibraryPage"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MonHub">
+    <Grid Margin="30,8,30,22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- header: title + search -->
+        <DockPanel>
+            <Grid DockPanel.Dock="Right" Width="250" VerticalAlignment="Bottom" Margin="16,0,0,4">
+                <TextBox x:Name="TxtSearch" Theme="{DynamicResource Hub.Search}" TextChanged="Search_TextChanged"/>
+                <Path Data="M6,0.75 A5.25,5.25 0 1 1 5.99,0.75 M9.8,9.8 L13.5,13.5" Stroke="{DynamicResource Hub.InkMuted}" StrokeThickness="1.5"
+                      StrokeLineCap="Round" Width="14" Height="14" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                <TextBlock x:Name="SearchHint" Text="{local:L 'Spiel suchen …', 'Search games …'}" Margin="31,0,0,0" VerticalAlignment="Center"
+                           Classes="muted" IsHitTestVisible="False"/>
+            </Grid>
+            <StackPanel>
+                <TextBlock Text="{local:L 'SPIELE', 'GAMES'}" Classes="label"/>
+                <TextBlock Text="{local:L 'Deine Sammlung', 'Your collection'}" Classes="title" Margin="0,4,0,2"/>
+                <TextBlock x:Name="TxtCounts" Classes="muted"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- filters, folders, saves without a game -->
+        <DockPanel Grid.Row="1" Margin="0,16,0,6">
+            <Button x:Name="BtnFolders" DockPanel.Dock="Right" Theme="{DynamicResource Hub.Ghost}" Click="Folders_Click" ToolTip.Tip="{local:L 'Ordner öffnen, Spiele importieren', 'Open folders, import games'}" VerticalAlignment="Top">
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="{local:L 'Von Emulator importieren …', 'Import from emulator …'}" Click="Import_Click" FontWeight="Bold"/>
+                        <Separator/>
+                        <MenuItem Header="{local:L 'ROMs-Ordner', 'ROMs folder'}" Click="OpenRoms_Click"/>
+                        <MenuItem Header="{local:L 'Randomisierte ROMs', 'Randomized ROMs'}" Click="OpenRuns_Click"/>
+                        <MenuItem Header="{local:L 'Spielstände', 'Saves'}" Click="OpenSaves_Click"/>
+                    </ContextMenu>
+                </Button.ContextMenu>
+                <TextBlock Text="{local:L 'Ordner &amp; Import ▾', 'Folders &amp; import ▾'}"/>
+            </Button>
+            <Button x:Name="BtnOrphans" DockPanel.Dock="Right" Theme="{DynamicResource Hub.Ghost}" Click="Orphans_Click" IsVisible="False" VerticalAlignment="Top"
+                    ToolTip.Tip="{local:L 'Spielstände, zu denen es kein Spiel mehr gibt – ansehen und aufräumen', 'Saves whose game is gone – view and tidy up'}">
+                <StackPanel Orientation="Horizontal">
+                    <local:SpriteView Key="0094/idle" Height="24" Decorative="True"/>
+                    <TextBlock x:Name="TxtOrphans" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <!-- wraps into a second line in a narrow window -->
+            <WrapPanel>
+                <RadioButton x:Name="FilterAll" Theme="{DynamicResource Hub.Chip}" GroupName="LibFilter" Margin="0,0,6,6" IsChecked="True" IsCheckedChanged="Filter_Changed">
+                    <TextBlock x:Name="TxtFilterAll" Text="{local:L 'Alle', 'All'}"/>
+                </RadioButton>
+                <RadioButton x:Name="FilterFavorites" Theme="{DynamicResource Hub.Chip}" GroupName="LibFilter" Margin="0,0,6,6" IsCheckedChanged="Filter_Changed">
+                    <TextBlock x:Name="TxtFilterFavorites" Text="{local:L '★ Favoriten', '★ Favorites'}"/>
+                </RadioButton>
+                <RadioButton x:Name="FilterSaved" Theme="{DynamicResource Hub.Chip}" GroupName="LibFilter" Margin="0,0,6,6" IsCheckedChanged="Filter_Changed">
+                    <TextBlock x:Name="TxtFilterSaved" Text="{local:L 'Mit Spielstand', 'With save'}"/>
+                </RadioButton>
+                <RadioButton x:Name="FilterRuns" Theme="{DynamicResource Hub.Chip}" GroupName="LibFilter" Margin="0,0,6,6" IsCheckedChanged="Filter_Changed">
+                    <TextBlock x:Name="TxtFilterRuns" Text="Runs"/>
+                </RadioButton>
+                <RadioButton x:Name="FilterOriginals" Theme="{DynamicResource Hub.Chip}" GroupName="LibFilter" Margin="0,0,6,6" IsCheckedChanged="Filter_Changed">
+                    <TextBlock x:Name="TxtFilterOriginals" Text="{local:L 'Originale', 'Originals'}"/>
+                </RadioButton>
+            </WrapPanel>
+        </DockPanel>
+
+        <Grid Grid.Row="2" x:Name="Body">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="330"/>
+                <ColumnDefinition Width="18"/>
+                <ColumnDefinition Width="330"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="0"/>
+            </Grid.RowDefinitions>
+
+            <!-- the games -->
+            <Grid>
+                <ListBox x:Name="GameList" Background="Transparent" BorderThickness="0" Padding="0"
+                         ItemContainerTheme="{DynamicResource Hub.Card}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         SelectionChanged="Game_SelectionChanged" DoubleTapped="Game_DoubleClick">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="local:GameCard">
+                            <Grid x:Name="Row" Height="68" Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="72"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="36"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Margin="6" CornerRadius="{DynamicResource Hub.RadiusSlot}" Background="{Binding AccentSoft}">
+                                    <local:SpriteView Classes="hoverplay" Key="{Binding Sprite}" MaxWidth="56" MaxHeight="50"
+                                                      Stretch="Uniform" StretchDirection="DownOnly"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,10,0">
+                                    <TextBlock Text="{Binding Name}" Classes="body" FontWeight="SemiBold" FontSize="14"
+                                               TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                        <Border Background="{Binding AccentSolid}" CornerRadius="3" Padding="6,1" Margin="0,0,6,0" IsVisible="{Binding VersionVisibility}">
+                                            <TextBlock Text="{Binding Version}" FontFamily="{DynamicResource Hub.FontLabel}" FontSize="{DynamicResource Hub.SizeTag}" Foreground="{Binding AccentInk}"/>
+                                        </Border>
+                                        <TextBlock Text="{Binding KindText}" Classes="label" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding SystemText}" Classes="label" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" VerticalAlignment="Center" IsVisible="{Binding SaveVisibility}" Margin="0,0,6,0">
+                                    <TextBlock Text="{Binding SaveTime}" Classes="body" FontSize="12.5" HorizontalAlignment="Right" TextWrapping="NoWrap"/>
+                                    <TextBlock Text="{Binding TrainerLine}" Classes="muted" FontSize="11.5" HorizontalAlignment="Right" TextWrapping="NoWrap"/>
+                                </StackPanel>
+                                <Button Grid.Column="3" Theme="{DynamicResource Hub.Ghost}" Padding="6,2" Click="Favorite_Click"
+                                        ToolTip.Tip="{local:L 'Favorit', 'Favorite'}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding FavoriteGlyph}" FontSize="16" Foreground="{DynamicResource Hub.BadgeOn}"/>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="{local:L 'Spielen', 'Play'}" Click="Play_Click" FontWeight="Bold"/>
+                            <MenuItem Header="{local:L 'Favorit an/aus', 'Favorite on/off'}" Click="FavoriteSelected_Click"/>
+                            <MenuItem Header="{local:L 'Im Ordner zeigen', 'Show in folder'}" Click="ShowFile_Click"/>
+                            <Separator/>
+                            <MenuItem x:Name="MenuDeleteSaves" Header="{local:L 'Spielstand löschen …', 'Delete save …'}" Click="DeleteSaves_Click"/>
+                            <MenuItem Header="{local:L 'Spiel löschen …', 'Delete game …'}" Click="DeleteGame_Click"/>
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+                </ListBox>
+                <StackPanel x:Name="EmptyPanel" IsVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <local:SpriteView Key="0143/sleep" Height="80" HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="TxtEmpty" Classes="muted" TextAlignment="Center" MaxWidth="380" Margin="0,12,0,12"/>
+                    <WrapPanel x:Name="EmptyActions" HorizontalAlignment="Center">
+                        <Button Theme="{DynamicResource Hub.Key}" Click="Import_Click" Margin="0,0,8,0" Content="{local:L 'Importieren', 'Import'}"></Button>
+                        <Button Theme="{DynamicResource Hub.Key}" Click="OpenRoms_Click" Content="{local:L 'ROM-Ordner öffnen', 'Open ROM folder'}"></Button>
+                    </WrapPanel>
+                </StackPanel>
+            </Grid>
+
+            <!-- the selected game -->
+            <ScrollViewer x:Name="DetailScroll" Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ContentControl x:Name="Detail" Theme="{DynamicResource Hub.Panel}">
+                    <StackPanel>
+                        <Border CornerRadius="{DynamicResource Hub.RadiusInner}" Background="{Binding AccentGlow}" Height="138">
+                            <Grid>
+                                <local:SpriteView Key="{Binding Sprite}" MaxHeight="112" MaxWidth="170" Stretch="Uniform" Margin="0,6,0,14"/>
+                                <Border Background="{Binding AccentSolid}" CornerRadius="3" Padding="7,2" Margin="8" HorizontalAlignment="Left"
+                                        VerticalAlignment="Bottom" IsVisible="{Binding VersionVisibility}">
+                                    <TextBlock Text="{Binding Version}" FontFamily="{DynamicResource Hub.FontLabel}" FontSize="{DynamicResource Hub.SizeTag}" Foreground="{Binding AccentInk}"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        <TextBlock Text="{Binding Name}" Classes="heading" Margin="0,12,0,2" TextWrapping="Wrap"/>
+                        <TextBlock Classes="muted">
+                            <Run Text="{Binding KindText, Mode=OneWay}"/><Run Text=" · "/><Run Text="{Binding SystemText, Mode=OneWay}"/>
+                        </TextBlock>
+
+                        <!-- save -->
+                        <ContentControl Theme="{DynamicResource Hub.Inset}" Margin="0,12,0,0" IsVisible="{Binding TrainerVisibility}">
+                            <StackPanel>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding SaveTime}" Classes="muted" FontSize="12"/>
+                                    <TextBlock Text="{local:L 'SPIELSTAND', 'SAVE'}" Classes="label" Foreground="{DynamicResource Hub.Accent}"/>
+                                </DockPanel>
+                                <TextBlock Text="{Binding TrainerLine}" Classes="value" Margin="0,6,0,8"/>
+                                <ItemsControl ItemsSource="{Binding Team}" ItemTemplate="{DynamicResource Hub.TeamMiniTemplate}" Focusable="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ContentControl>
+
+                        <!-- where it opens -->
+                        <TextBlock Text="{local:L 'ÖFFNEN MIT', 'OPEN WITH'}" Classes="label" Margin="0,16,0,6"/>
+                        <WrapPanel>
+                            <RadioButton x:Name="RbMelonDS" Theme="{DynamicResource Hub.Chip}" GroupName="LibEmu" IsCheckedChanged="Emulator_Changed" Margin="0,0,6,6">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image x:Name="MelonIcon" Width="16" Height="16"/>
+                                    <TextBlock Text="melonDS" Margin="6,0,0,0"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="RbDeSmuME" Theme="{DynamicResource Hub.Chip}" GroupName="LibEmu" IsCheckedChanged="Emulator_Changed" Margin="0,0,6,6">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image x:Name="DesmumeIcon" Width="16" Height="16"/>
+                                    <TextBlock Text="DeSmuME" Margin="6,0,0,0"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="RbMGBA" Theme="{DynamicResource Hub.Chip}" GroupName="LibEmu" IsCheckedChanged="Emulator_Changed" Margin="0,0,6,6">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image x:Name="MgbaIcon" Width="16" Height="16"/>
+                                    <TextBlock Text="mGBA" Margin="6,0,0,0"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="RbAzahar" Theme="{DynamicResource Hub.Chip}" GroupName="LibEmu" IsCheckedChanged="Emulator_Changed" Margin="0,0,6,6">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image x:Name="AzaharIcon" Width="16" Height="16"/>
+                                    <TextBlock Text="Azahar" Margin="6,0,0,0"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="RbDefault" Theme="{DynamicResource Hub.Chip}" GroupName="LibEmu" IsCheckedChanged="Emulator_Changed" Margin="0,0,6,6">
+                                <TextBlock Text="{local:L 'Standardprogramm', 'Default program'}"/>
+                            </RadioButton>
+                        </WrapPanel>
+                        <CheckBox x:Name="ChkTransfer" Margin="0,4,0,0" IsVisible="False" IsCheckedChanged="Transfer_Toggled"
+                                  Foreground="{DynamicResource Hub.Ink}"/>
+                        <TextBlock x:Name="TxtHint" Classes="muted" FontSize="12" Margin="0,6,0,0"/>
+
+                        <Button x:Name="BtnPlay" Theme="{DynamicResource Hub.PrimaryKey}" Click="Play_Click" HorizontalAlignment="Stretch" Margin="0,16,0,10">
+                            <TextBlock Text="{local:L '▶  Spielen', '▶  Play'}"/>
+                        </Button>
+
+                        <WrapPanel>
+                            <Button x:Name="BtnShowFile" Theme="{DynamicResource Hub.Ghost}" Click="ShowFile_Click" Content="{local:L 'Im Ordner zeigen', 'Show in folder'}"></Button>
+                            <Button x:Name="BtnDeleteSaves" Theme="{DynamicResource Hub.Ghost}" Classes="danger" Click="DeleteSaves_Click" Content="{local:L 'Spielstand löschen …', 'Delete save …'}"></Button>
+                            <Button x:Name="BtnDeleteGame" Theme="{DynamicResource Hub.Ghost}" Classes="danger" Click="DeleteGame_Click" Content="{local:L 'Spiel löschen …', 'Delete game …'}"></Button>
+                        </WrapPanel>
+                    </StackPanel>
+                </ContentControl>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

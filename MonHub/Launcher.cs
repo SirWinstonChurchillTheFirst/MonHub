@@ -1,28 +1,21 @@
 using System.Diagnostics;
 using System.IO;
-using System.Windows;
 
 namespace MonHub;
 
 /// <summary>Starts programs and games – a problem shows up as a message instead of a crash.</summary>
 public static class Launcher
 {
-    public static bool Start(Window owner, string? file, string? args = null, string? workingDir = null)
+    public static bool Start(Window? owner, string? file, string? args = null, string? workingDir = null)
     {
         if (file == null || !File.Exists(file))
         {
             MessageBox.Show(owner, Txt.L($"Nicht gefunden:\n{file}", $"Not found:\n{file}"), "MonHub", MessageBoxButton.OK, MessageBoxImage.Warning);
             return false;
         }
-        var psi = new ProcessStartInfo(file)
-        {
-            UseShellExecute = true,
-            WorkingDirectory = workingDir ?? Path.GetDirectoryName(file)!,
-        };
-        if (args != null) psi.Arguments = args;
         try
         {
-            Process.Start(psi);
+            Os.Start(file, args, workingDir ?? Path.GetDirectoryName(file)!);
             return true;
         }
         catch (Exception ex)
@@ -33,7 +26,7 @@ public static class Launcher
     }
 
     /// <summary>A game: DS games in the given emulator, everything else with the program Windows uses for the file.</summary>
-    public static bool StartGame(Window owner, string rom, string? emulator)
+    public static bool StartGame(Window? owner, string rom, string? emulator)
     {
         // 3DS: Azahar, pointed at this game's own SD card (saves) and cheats first
         if (Rom3ds.IsFile(rom))
@@ -56,6 +49,16 @@ public static class Launcher
         // melonDS would only show a white screen with an encrypted ROM – DeSmuME decrypts it itself
         if (emulator == GameLibrary.MelonDS && HubPaths.DeSmuMEExe != null && !Bios.Installed && RomCheck.HasEncryptedSecureArea(rom))
             emulator = GameLibrary.DeSmuME;
+        // … and where there is no DeSmuME (Linux), say what is missing instead of showing that white screen
+        if (emulator == GameLibrary.MelonDS && HubPaths.DeSmuMEExe == null && !Bios.Installed && RomCheck.HasEncryptedSecureArea(rom))
+        {
+            MessageBox.Show(owner, Txt.L(
+                "Dieses DS-Spiel ist noch verschlüsselt (wie viele US-Versionen). melonDS startet es nur mit deinen eigenen DS-BIOS-Dateien – " +
+                "spiel sie unter „Emulatoren“ → „BIOS einspielen …“ ein. MonHub bringt kein BIOS mit.",
+                "This DS game is still encrypted (like many US versions). melonDS only starts it with your own DS BIOS files – " +
+                "add them under “Emulators” → “Add BIOS …”. MonHub doesn't include a BIOS."), "MonHub", MessageBoxButton.OK, MessageBoxImage.Information);
+            return false;
+        }
         if (emulator == GameLibrary.DeSmuME) CarryCheatToDeSmuME(rom);
         // Game Boy, Game Boy Color and GBA: in mGBA
         if (emulator == null && HubPaths.MGBAExe != null && Path.GetExtension(rom).ToLowerInvariant() is ".gba" or ".gb" or ".gbc")
@@ -89,7 +92,10 @@ public static class Launcher
     }
 
     /// <summary>Only MonHub's own copy counts – an emulator the player runs from somewhere else doesn't touch these saves.</summary>
-    public static bool IsRunning(string emulator) => IsProgramRunning(GameLibrary.ExeFor(emulator));
+    public static bool IsRunning(string emulator) => Os.Windows
+        ? IsProgramRunning(GameLibrary.ExeFor(emulator))
+        // Linux: the start file is "AppRun" for all of them – go by the program's own name
+        : GameLibrary.ExeFor(emulator) != null && HubSetup.IsRunning(emulator);
 
     /// <summary>Whether this exact program (by path) is running.</summary>
     public static bool IsProgramRunning(string? exe)
@@ -117,7 +123,7 @@ public static class Launcher
     /// An open emulator would write its save back when it closes – so deleting waits until both are closed.
     /// Shows the reason and returns true while one is still open.
     /// </summary>
-    public static bool EmulatorsOpen(Window owner, string title)
+    public static bool EmulatorsOpen(Window? owner, string title)
     {
         // mGBA too: it keeps the save in memory and writes it back – a deleted GBA save would come back
         if (!IsRunning(GameLibrary.MelonDS) && !IsRunning(GameLibrary.DeSmuME) && !IsRunning(GameLibrary.Azahar) && !IsRunning(GameLibrary.MGBA)) return false;

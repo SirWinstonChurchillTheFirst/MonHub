@@ -20,14 +20,14 @@ public class ControlsTests
     }
 
     [Theory]
-    [InlineData(System.Windows.Input.Key.Up, 0x01000013)]
-    [InlineData(System.Windows.Input.Key.Right, 0x01000014)]
-    [InlineData(System.Windows.Input.Key.K, 'K')]
-    [InlineData(System.Windows.Input.Key.Home, 0x01000010)]
-    public void Keys_IncludingArrows_CanBeBound(System.Windows.Input.Key key, int qt) => Assert.Equal(qt, ControlSettings.QtCode(key));
+    [InlineData(Avalonia.Input.Key.Up, 0x01000013)]
+    [InlineData(Avalonia.Input.Key.Right, 0x01000014)]
+    [InlineData(Avalonia.Input.Key.K, 'K')]
+    [InlineData(Avalonia.Input.Key.Home, 0x01000010)]
+    public void Keys_IncludingArrows_CanBeBound(Avalonia.Input.Key key, int qt) => Assert.Equal(qt, ControlSettings.QtCode(key));
 
     [Fact]
-    public void Escape_IsNeverBound() => Assert.Null(ControlSettings.QtCode(System.Windows.Input.Key.Escape));
+    public void Escape_IsNeverBound() => Assert.Null(ControlSettings.QtCode(Avalonia.Input.Key.Escape));
 
     [Fact]
     public void OldSettings_GetTheNewInputs()

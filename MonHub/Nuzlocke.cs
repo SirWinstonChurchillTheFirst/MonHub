@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using System.Windows;
 
 namespace MonHub;
 
@@ -104,7 +103,7 @@ public static class NuzlockeData
     {
         if (_routes == null)
         {
-            var stream = Application.GetResourceStream(new Uri("pack://application:,,,/Assets/Nuzlocke/routes.json"))!.Stream;
+            using var stream = Avalonia.Platform.AssetLoader.Open(new Uri(RandoApp.Sprites.AssetRoot + "Nuzlocke/routes.json"));
             _routes = JsonSerializer.Deserialize<Dictionary<string, List<RouteEntry>>>(stream) ?? new();
         }
         return _routes.TryGetValue(version, out var list) ? list.Select(r => (r.id, Txt.English ? r.en ?? r.name : r.name)) : [("starter", "Starter")];
@@ -151,14 +150,16 @@ public class CatchView(NuzlockeCatch data, Action changed, bool soulLink) : INot
     public NuzlockeCatch Data { get; } = data;
 
     /// <summary>With Soul Link the strike is per route, not per player.</summary>
-    public Visibility ToggleVisibility => soulLink ? Visibility.Collapsed : Visibility.Visible;
+    public bool ToggleVisibility => !(soulLink);
 
     public SpeciesChoice? Choice
     {
         get => SpeciesChoice.All.FirstOrDefault(s => s.Dex == Data.Species);
         set
         {
-            Data.Species = value?.Dex ?? 0;
+            // null = a name half typed: nothing chosen yet (taking a Pokémon out is picking "–")
+            if (value == null || value.Dex == Data.Species) return;
+            Data.Species = value.Dex;
             Changed();
         }
     }
@@ -193,7 +194,7 @@ public class RouteView : INotifyPropertyChanged
     {
         Route = route;
         Cells = cells;
-        RouteToggleVisibility = soulLink ? Visibility.Visible : Visibility.Collapsed;
+        RouteToggleVisibility = soulLink;
         foreach (var cell in cells)
             cell.PropertyChanged += (_, e) =>
             {
@@ -206,8 +207,8 @@ public class RouteView : INotifyPropertyChanged
     public NuzlockeRoute Route { get; }
     public List<CatchView> Cells { get; }
     public string Name => Route.Name;
-    public Visibility RemoveVisibility => Route.Custom ? Visibility.Visible : Visibility.Collapsed;
-    public Visibility RouteToggleVisibility { get; }
+    public bool RemoveVisibility => Route.Custom;
+    public bool RouteToggleVisibility { get; }
     public bool Open => Cells.Any(c => c.Data.Species == 0 && !c.Data.Gone);
 
     /// <summary>The whole route struck (Soul Link: one button for all players' linked Pokémon).</summary>

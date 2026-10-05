@@ -14,11 +14,11 @@ public static partial class Species
     public static void Register() => RandoApp.Sprites.MoreSprites = key =>
     {
         if (key.StartsWith("species/", StringComparison.Ordinal) && int.TryParse(key.AsSpan(8), out int dex) && Durations.TryGetValue(dex, out var durations))
-            return ($"pack://application:,,,/Assets/Species/{dex:0000}.png", durations);
+            return ($"avares://MonHub/Assets/Species/{dex:0000}.png", durations);
         if (key.StartsWith("portrait/", StringComparison.Ordinal)) // "portrait/0137/Happy": a PMD face
-            return ($"pack://application:,,,/Assets/Portraits/{key[9..].Replace('/', '-')}.png", [1]);
+            return ($"avares://MonHub/Assets/Portraits/{key[9..].Replace('/', '-')}.png", [1]);
         if (key.StartsWith("icon/", StringComparison.Ordinal)) // MonHub's own pixel icons (tools/build_icons.py)
-            return ($"pack://application:,,,/Assets/Icons/{key[5..]}.png", [1]);
+            return ($"avares://MonHub/Assets/Icons/{key[5..]}.png", [1]);
         return null;
     };
 }

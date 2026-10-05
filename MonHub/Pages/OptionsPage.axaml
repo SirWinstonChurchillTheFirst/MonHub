@@ -1,0 +1,113 @@
+<UserControl x:Class="MonHub.OptionsPage"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MonHub">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="30,8,30,28">
+            <TextBlock Text="{local:L 'OPTIONEN', 'OPTIONS'}" Classes="label"/>
+            <TextBlock Text="{local:L 'Dein MonHub', 'Your MonHub'}" Classes="title" Margin="0,4,0,2"/>
+            <TextBlock Classes="muted" Text="{local:L 'Aussehen, Bewegung, dein Name – und wo alles liegt.', 'Look, motion, language, your name – and where everything is.'}"/>
+
+            <!-- ===== look ===== -->
+            <TextBlock Text="{local:L 'AUSSEHEN', 'LOOK'}" Classes="label" Margin="0,24,0,10"/>
+            <ItemsControl x:Name="ThemeList" Focusable="False">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="local:ThemeChoice">
+                        <Button Theme="{DynamicResource Hub.Tile}" Classes.selected="{Binding IsCurrent}" Width="238" Margin="0,0,14,14" Padding="10" Click="Theme_Click">
+                            <StackPanel>
+                                <!-- a tiny MonHub in the theme's colours -->
+                                <Border Height="78" CornerRadius="3" Background="{Binding Background}" BorderBrush="{Binding Rail}" BorderThickness="1" ClipToBounds="True">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="{Binding LeftRail}"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="{Binding RightRail}"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="{Binding RailColumn}" Background="{Binding Rail}">
+                                            <StackPanel Margin="7,10,7,0">
+                                                <Border Height="4" Background="{Binding RailInk}" Margin="0,0,10,6" Opacity="0.9"/>
+                                                <Border Height="4" Background="{Binding RailInk}" Margin="0,0,4,6" Opacity="0.55"/>
+                                                <Border Height="4" Background="{Binding RailInk}" Margin="0,0,14,6" Opacity="0.55"/>
+                                                <Border Height="4" Background="{Binding RailInk}" Margin="0,0,8,0" Opacity="0.55"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Grid.Column="1" Margin="9,9,9,9" Background="{Binding Surface}" CornerRadius="3" Padding="8,7">
+                                            <StackPanel>
+                                                <Border Height="5" Width="60" Background="{Binding Ink}" HorizontalAlignment="Left" Opacity="0.85"/>
+                                                <Border Height="4" Width="92" Background="{Binding Ink}" HorizontalAlignment="Left" Opacity="0.35" Margin="0,5,0,0"/>
+                                                <Border Height="12" Width="46" Background="{Binding Accent}" HorizontalAlignment="Left" CornerRadius="2" Margin="0,8,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                                <DockPanel Margin="2,10,2,0">
+                                    <TextBlock Text="✓" DockPanel.Dock="Right" FontWeight="Bold" Foreground="{DynamicResource Hub.Selection}" IsVisible="{Binding CurrentVisibility}"/>
+                                    <TextBlock Text="{Binding Theme.Name}" Classes="heading" FontSize="15"/>
+                                </DockPanel>
+                                <TextBlock Text="{Binding Theme.Tagline}" Classes="muted" FontSize="12" Margin="2,2,2,0"/>
+                            </StackPanel>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- ===== motion ===== -->
+            <TextBlock Text="{local:L 'BEWEGUNG', 'MOTION'}" Classes="label" Margin="0,14,0,10"/>
+            <WrapPanel>
+                <RadioButton x:Name="MotionAuto" Theme="{DynamicResource Hub.Chip}" GroupName="Motion" IsCheckedChanged="Motion_Checked" Margin="0,0,6,6" Content="{local:L 'Wie das System', 'Like the system'}"></RadioButton>
+                <RadioButton x:Name="MotionAll" Theme="{DynamicResource Hub.Chip}" GroupName="Motion" IsCheckedChanged="Motion_Checked" Margin="0,0,6,6" Content="{local:L 'Alles', 'Everything'}"></RadioButton>
+                <RadioButton x:Name="MotionCalm" Theme="{DynamicResource Hub.Chip}" GroupName="Motion" IsCheckedChanged="Motion_Checked" Margin="0,0,6,6" Content="{local:L 'Ruhig', 'Calm'}"></RadioButton>
+                <RadioButton x:Name="MotionOff" Theme="{DynamicResource Hub.Chip}" GroupName="Motion" IsCheckedChanged="Motion_Checked" Margin="0,0,6,6" Content="{local:L 'Aus', 'Off'}"></RadioButton>
+            </WrapPanel>
+            <TextBlock x:Name="TxtMotion" Classes="muted" MaxWidth="640" HorizontalAlignment="Left" Margin="0,4,0,0"/>
+
+            <!-- ===== language: labelled in both, so it is found in either ===== -->
+            <StackPanel x:Name="LanguagePanel" HorizontalAlignment="Left">
+                <TextBlock Text="{local:L 'SPRACHE · LANGUAGE', 'LANGUAGE · SPRACHE'}" Classes="label" Margin="0,24,0,10"/>
+                <WrapPanel>
+                    <RadioButton x:Name="LangEnglish" Theme="{DynamicResource Hub.Chip}" GroupName="Language" IsCheckedChanged="Language_Checked" Margin="0,0,6,6" Content="English"/>
+                    <RadioButton x:Name="LangGerman" Theme="{DynamicResource Hub.Chip}" GroupName="Language" IsCheckedChanged="Language_Checked" Margin="0,0,6,6" Content="Deutsch"/>
+                </WrapPanel>
+                <TextBlock Classes="muted" FontSize="12" Margin="0,4,0,0"
+                           Text="{local:L 'MonHub startet dafür kurz neu.', 'MonHub restarts briefly for this.'}"/>
+            </StackPanel>
+
+            <!-- ===== trainer ===== -->
+            <TextBlock Text="TRAINER" Classes="label" Margin="0,24,0,10"/>
+            <Grid Width="300" HorizontalAlignment="Left">
+                <TextBox x:Name="TxtTrainer" Theme="{DynamicResource Hub.Search}" Padding="10,7" MaxLength="16" TextChanged="Trainer_TextChanged"/>
+                <TextBlock x:Name="TrainerHint" Classes="muted" Margin="11,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
+            </Grid>
+            <TextBlock Classes="muted" FontSize="12" Margin="0,6,0,0"
+                       Text="{local:L 'Der Name auf der Startseite. Leer lassen = der Name aus deinem neuesten Spielstand.', 'The name on the start page. Leave it empty = the name from your newest save.'}"/>
+
+            <!-- ===== MonHub ===== -->
+            <TextBlock Text="MONHUB" Classes="label" Margin="0,24,0,10"/>
+            <ContentControl Theme="{DynamicResource Hub.Panel}">
+                <StackPanel>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Theme="{DynamicResource Hub.Key}" Click="OpenRoot_Click" VerticalAlignment="Center" Content="{local:L 'Ordner öffnen', 'Open folder'}"></Button>
+                        <StackPanel Margin="0,0,14,0">
+                            <TextBlock Text="{local:L 'Alles liegt in', 'Everything is in'}" Classes="muted" FontSize="12"/>
+                            <TextBlock x:Name="TxtRoot" Classes="value" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                    </DockPanel>
+                    <Border Classes="divider" Margin="0,14"/>
+                    <WrapPanel>
+                        <Button x:Name="BtnTour" Theme="{DynamicResource Hub.Key}" Click="Tour_Click" Margin="0,0,10,8" Content="{local:L '▶ Tour mit Porygon', '▶ Tour with Porygon'}"></Button>
+                        <Button Theme="{DynamicResource Hub.Key}" Click="Import_Click" Margin="0,0,10,8" Content="{local:L 'Von Emulator importieren …', 'Import from emulator …'}"></Button>
+                        <Button Theme="{DynamicResource Hub.Ghost}" Click="Help_Click" Margin="0,0,4,8" Content="{local:L 'So geht\'s', 'How it works'}"></Button>
+                        <Button Theme="{DynamicResource Hub.Ghost}" Click="Readme_Click" Margin="0,0,4,8" Content="{local:L 'Liesmich', 'Readme'}"></Button>
+                    </WrapPanel>
+                </StackPanel>
+            </ContentControl>
+
+            <TextBlock x:Name="TxtCredits" Classes="muted" FontSize="11.5" Margin="0,18,0,0" MaxWidth="700" HorizontalAlignment="Left"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -2,7 +2,7 @@
 
 **Your game hub for randomizers, emulators and fangames – all in one window.**
 
-MonHub is a Windows app for anyone who wants to replay their own monster-catching games freshly randomized, without
+MonHub is an app for **Windows and Linux** for anyone who wants to replay their own monster-catching games freshly randomized, without
 fiddling with emulators, folders or settings: install once, import your ROMs, press “Mix & play”.
 MonHub speaks **English** and **German** (switch under *Options*).
 
@@ -17,7 +17,7 @@ MonHub speaks **English** and **German** (switch under *Options*).
 - **New run:** pick an original, randomize, play – powered by the Universal Pokemon Randomizer ZX, with presets and a
   built-in editor for every option. Optional Rare Candy cheat. Four presets come with it: *Nuzlock with Items*
   (default), *Easy Wild and Starters*, *Hard Trainers* and *Chaos Everything*.
-- **Emulators, ready to go:** melonDS / DeSmuME (DS), mGBA (Game Boy, Game Boy Color, GBA), Azahar (3DS) – shared key
+- **Emulators, ready to go:** melonDS / DeSmuME (DS; DeSmuME on Windows only), mGBA (Game Boy, Game Boy Color, GBA), Azahar (3DS) – shared key
   and controller mapping, a 60 FPS switch for 3DS games.
 - **Continue:** your latest save with trainer, play time, badges and team – read straight from the save files of every
   generation (Gen 1–7).
@@ -37,11 +37,34 @@ MonHub speaks **English** and **German** (switch under *Options*).
 
 ## Install
 
-Download `MonHub-Setup.exe` from the [releases](../../releases) and run it – no admin rights needed. Everything goes
-into one folder (`%USERPROFILE%\MonHub`); ROMs and saves are kept on updates and when uninstalling.
+Both downloads are on the [releases](../../releases) page. ROMs are not included – you need your own.
 
-The installer isn't signed, so Windows may show “Windows protected your PC” on the first start: click *More info* →
-*Run anyway*.
+### Windows
+
+1. Download `MonHub-Setup.exe` and run it – no admin rights needed.
+2. The installer isn't signed, so Windows may show “Windows protected your PC”: click *More info* → *Run anyway*.
+3. Pick the language and the folder (default: `%USERPROFILE%\MonHub`), finish, start MonHub from the Start menu.
+
+Everything goes into that one folder. **Updating:** run the new `MonHub-Setup.exe` over the old install – ROMs, saves
+and settings stay. They also stay when you uninstall.
+
+### Linux
+
+For a 64-bit (x86-64) Linux with a desktop; tested on Ubuntu 26.04 (GNOME) and Arch (KDE Plasma).
+
+1. Download `MonHub-linux-x64.tar.gz` and unpack it where you want MonHub to live, e.g. your home folder:
+   `tar xzf MonHub-linux-x64.tar.gz`
+2. Run the installer once – in the file manager (right click `install.sh` → *Run as a program*) or in a terminal:
+   `cd MonHub && ./install.sh`
+   It unpacks the emulators and puts MonHub into your applications menu. Nothing is written outside the folder except
+   that menu entry, and no root rights are needed.
+3. Start MonHub from the applications menu.
+
+melonDS, mGBA, Azahar and a Java runtime come with it; DeSmuME is Windows-only. **Updating:** unpack the new archive
+over the old folder and run `install.sh` again – ROMs, saves and settings stay. If you move the folder, run
+`install.sh` again. **Removing:** run `uninstall.sh`, then delete the folder (copy your ROMs and saves out first).
+
+3DS games need a graphics card with Vulkan or OpenGL 4.3.
 
 ## FAQ
 
@@ -74,8 +97,8 @@ add them (or any fangame) under *Fangames*.
 It's free and stays free. Donations are a thank-you, nothing more – there are no paid features and nothing is behind a
 paywall.
 
-**Does it run on Mac or Linux?**
-No, Windows 10/11 (64-bit) only.
+**Does it run on Linux, macOS or my phone?**
+Windows 10/11 (64-bit) and 64-bit Linux (see *Install*). There is no macOS or phone version.
 
 **Where are my saves? Are they safe when I update or uninstall?**
 In the `Spielstände` folder inside the MonHub folder (*Options* → *Open folder*). Updates and uninstalling keep your
@@ -99,18 +122,32 @@ and if it keeps failing, open an issue with the log (but without the ROM).
 Download the new `MonHub-Setup.exe` from the releases and run it – it installs over the old version and keeps
 everything.
 
+**Linux: a DS game doesn't start and MonHub asks for a BIOS.**
+Some DS dumps (many US versions) are still encrypted. On Windows MonHub starts those in DeSmuME; on Linux there is no
+DeSmuME, so melonDS needs your own DS BIOS files: *Emulators* → *Add BIOS …*. MonHub doesn't include a BIOS.
+
+**Linux: my controller isn't found.**
+MonHub reads controllers through `/dev/input/js*`. Plug the controller in (or connect it by Bluetooth) before you click
+a controller field; if your distribution doesn't load the `joydev` module, run `sudo modprobe joydev`.
+
 **How do I switch the language?**
 *Options* → *Language* (English or German). MonHub restarts briefly.
 
 ## Build it yourself
 
-Requirements: Windows, .NET 10 SDK, JDK 17 (`javac`, `jar`, `jlink`), Python 3 with Pillow, Inno Setup 6, 7-Zip.
+MonHub is one code base for both systems (C#, [Avalonia](https://avaloniaui.net)).
+
+Requirements: .NET 10 SDK, JDK 17 (`javac`, `jar`, `jlink`), Python 3 with Pillow; for the Windows installer also
+Inno Setup 6 and 7-Zip.
 
 1. Download [Universal Pokemon Randomizer ZX 4.6.1](https://github.com/Ajarmar/universal-pokemon-randomizer-zx/releases)
    and put its `.jar` into the repository's root folder (it is found by its checksum, the file name doesn't matter).
-2. Run `MonHub/installer/build.ps1`. The first time it downloads the pictures from PMD Sprite Collab and the fonts,
-   then melonDS, DeSmuME, mGBA and Azahar from their official releases (each checked against a fixed SHA-256 sum),
-   and builds `Installer/MonHub-Setup.exe`.
+2. **Windows installer:** run `MonHub/installer/build.ps1`. The first time it downloads the pictures from PMD Sprite
+   Collab and the fonts, then melonDS, DeSmuME, mGBA and Azahar from their official releases (each checked against a
+   fixed SHA-256 sum), and builds `Installer/MonHub-Setup.exe`.
+3. **Linux package:** run `python MonHub/installer/build-linux.py` (works on Windows and Linux, after step 2 or with
+   the pictures already downloaded). It fetches the Linux builds of melonDS, mGBA and Azahar and a Java runtime, each
+   checked against a fixed SHA-256 sum, and builds `Installer/MonHub-linux-x64.tar.gz`.
 
 Tests: `dotnet test MonHub.Tests` (among others the save reader for every generation, checked against PKHeX, and both
 languages).

@@ -61,7 +61,15 @@ public static class HubSetup
     /// <summary>melonDS: saves into Spielstände\melonDS, ROM dialog starts in ROMs, cheats on (for the Rare Candy cheat).</summary>
     static void EnsureMelonDS()
     {
-        var toml = Path.Combine(HubPaths.MelonDS, "melonDS.toml");
+        var toml = HubPaths.MelonDSToml;
+        // Linux: the archive brings the starting settings as a separate file, so unpacking an update over an
+        // install never replaces the player's own melonDS settings
+        var starter = Path.Combine(HubPaths.MelonDS, "melonDS.default.toml");
+        if (!File.Exists(toml) && File.Exists(starter))
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(toml)!);
+            File.Copy(starter, toml);
+        }
         if (!File.Exists(toml)) return;
         if (IsRunning("melonDS"))
         {
@@ -84,7 +92,7 @@ public static class HubSetup
     /// False while melonDS runs (it would write its old settings back when closing).</summary>
     public static bool ApplyBiosToMelonDS()
     {
-        var toml = Path.Combine(HubPaths.MelonDS, "melonDS.toml");
+        var toml = HubPaths.MelonDSToml;
         if (!File.Exists(toml) || IsRunning("melonDS")) return false;
         var lines = File.ReadAllLines(toml).ToList();
         ApplyBios(lines, force: true);
@@ -110,8 +118,8 @@ public static class HubSetup
     /// </summary>
     static string MaximizedQtGeometry()
     {
-        var area = System.Windows.SystemParameters.WorkArea; // WPF units = Qt's logical pixels
-        int left = (int)area.Left, top = (int)area.Top, width = (int)area.Width, height = (int)area.Height;
+        var (area, screenWidth) = RandoApp.WindowFit.PrimaryScreen(); // logical pixels, as Qt counts them
+        int left = (int)area.X, top = (int)area.Y, width = (int)area.Width, height = (int)area.Height;
         // size when un-maximized: both DS screens side by side at 2×, centered
         int normalW = Math.Min(1040, width - 80), normalH = Math.Min(460, height - 80);
         int normalX = left + (width - normalW) / 2, normalY = top + (height - normalH) / 2;
@@ -126,7 +134,7 @@ public static class HubSetup
         Int(0);                                   // screen number
         data.WriteByte(2);                        // maximized (Qt::WindowMaximized)
         data.WriteByte(0);                        // not full screen
-        Int((int)System.Windows.SystemParameters.PrimaryScreenWidth); // Qt ignores the geometry if the screen width differs a lot
+        Int(screenWidth); // Qt ignores the geometry if the screen width differs a lot
         Rect(normalX, normalY, normalW, normalH); // geometry
         return Convert.ToBase64String(data.ToArray());
     }
@@ -160,9 +168,13 @@ public static class HubSetup
             _pending = true; // mGBA writes its config back on exit
             return;
         }
-        var portable = Path.Combine(HubPaths.MGBA, "portable.ini");
-        if (!File.Exists(portable)) File.WriteAllText(portable, "");
-        var ini = Path.Combine(HubPaths.MGBA, "config.ini");
+        if (Os.Windows)
+        {
+            var portable = Path.Combine(HubPaths.MGBA, "portable.ini");
+            if (!File.Exists(portable)) File.WriteAllText(portable, "");
+        }
+        Directory.CreateDirectory(HubPaths.MGBAConfigDir);
+        var ini = Path.Combine(HubPaths.MGBAConfigDir, "config.ini");
         var lines = File.Exists(ini) ? File.ReadAllLines(ini).ToList() : new List<string>();
         SetIni(lines, "ports.qt", "savegamePath", HubPaths.MGBASaves);
         SetIni(lines, "ports.qt", "savestatePath", Path.Combine(HubPaths.MGBASaves, "Savestates"));
@@ -171,7 +183,7 @@ public static class HubSetup
         SafeFile.WriteAllLines(ini, lines);
         if (HubConfig.Current.Controls is { } controls)
         {
-            var qt = Path.Combine(HubPaths.MGBA, "qt.ini");
+            var qt = Path.Combine(HubPaths.MGBAConfigDir, "qt.ini");
             var qtLines = File.Exists(qt) ? File.ReadAllLines(qt).ToList() : new List<string>();
             controls.ApplyToMGBAShortcuts(qtLines);
             SafeFile.WriteAllLines(qt, qtLines);
@@ -231,8 +243,23 @@ public static class HubSetup
     /// Whether a program whose name starts like that is running. The process list is taken once and reused for a second:
     /// listing all processes takes a while, and one catch-up asks for four emulators in a row.
     /// </summary>
-    public static bool IsRunning(string processPrefix) =>
-        ProcessNames().Any(name => name.StartsWith(processPrefix, StringComparison.OrdinalIgnoreCase));
+    public static bool IsRunning(string processPrefix) => Os.Windows
+        ? ProcessNames().Any(name => name.StartsWith(processPrefix, StringComparison.OrdinalIgnoreCase))
+        : LinuxRunning(processPrefix);
+
+    /// <summary>
+    /// Linux: the unpacked emulators all start through a file called "AppRun", so the name says nothing – a program
+    /// started from MonHub's own emulator folder (System/Emulatoren/&lt;name&gt;/…) is the one that is meant.
+    /// </summary>
+    static bool LinuxRunning(string emulator)
+    {
+        var folder = Directory.Exists(HubPaths.Emulators)
+            ? Directory.GetDirectories(HubPaths.Emulators).FirstOrDefault(d => Path.GetFileName(d).StartsWith(emulator, StringComparison.OrdinalIgnoreCase))
+            : null;
+        if (folder == null) return false;
+        var marker = folder + Path.DirectorySeparatorChar;
+        return ProcessNames().Any(command => command.Contains(marker, StringComparison.Ordinal));
+    }
 
     static string[] ProcessNames()
     {
@@ -240,6 +267,25 @@ public static class HubSetup
         {
             if (DateTime.UtcNow - _processes.At < TimeSpan.FromSeconds(1)) return _processes.Names;
             var names = new List<string>();
+            if (!Os.Windows)
+            {
+                // the command lines of all programs (the pieces are separated by a zero)
+                try
+                {
+                    foreach (var dir in Directory.EnumerateDirectories("/proc"))
+                    {
+                        if (!char.IsDigit(Path.GetFileName(dir)[0])) continue;
+                        try { names.Add(File.ReadAllText(Path.Combine(dir, "cmdline")).Replace('\0', ' ')); }
+                        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { /* gone meanwhile, or not ours */ }
+                    }
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                    // no /proc: nothing counts as running
+                }
+                _processes = (DateTime.UtcNow, names.ToArray());
+                return _processes.Names;
+            }
             foreach (var process in Process.GetProcesses())
             {
                 try { names.Add(process.ProcessName); }

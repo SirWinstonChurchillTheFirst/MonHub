@@ -1,0 +1,231 @@
+<!--
+    Game Boy: the window is the green screen. Only the four shades of the original LCD (sprites are recoloured too),
+    a faint dot matrix, text boxes with double lines, pixel type, no shadows. The menu is the in-game START menu on
+    the right: a text box, entries in capitals, a blinking pixel ▶ at the current one and a hollow one where the
+    mouse is.
+      #0F380F darkest · #306230 dark · #8BAC0F light · #9BBC0F lightest
+-->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:local="clr-namespace:MonHub">
+
+    <!-- dot matrix: a slightly darker line every 4 pixels -->
+    <DrawingBrush x:Key="Hub.Bg" TileMode="Tile" Stretch="None" SourceRect="0,0,4,4" DestinationRect="0,0,4,4">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#8BAC0F" Geometry="M0,0 H4 V4 H0 Z"/>
+                <GeometryDrawing Brush="#84A40E" Geometry="M3,0 H4 V4 H3 Z M0,3 H3 V4 H0 Z"/>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <SolidColorBrush x:Key="Hub.Rail" Color="#9BBC0F"/>
+    <SolidColorBrush x:Key="Hub.RailLine" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.RailInnerLine" Color="#306230"/>
+    <SolidColorBrush x:Key="Hub.RailInk" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.RailInkMuted" Color="#306230"/>
+    <SolidColorBrush x:Key="Hub.RailHover" Color="Transparent"/>
+    <SolidColorBrush x:Key="Hub.RailSelected" Color="Transparent"/>
+    <SolidColorBrush x:Key="Hub.RailSelectedInk" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.RailCursor" Color="#0F380F"/>
+    <sys:Int32 x:Key="Hub.RailColumn">2</sys:Int32>
+    <sys:Double x:Key="Hub.RailWidth">226</sys:Double>
+    <Thickness x:Key="Hub.RailBorder">3</Thickness>
+    <Thickness x:Key="Hub.RailMargin">0,40,16,16</Thickness>
+    <!-- the framed menu box starts below the title bar instead -->
+    <Thickness x:Key="Hub.RailTitleInset">0</Thickness>
+    <CornerRadius x:Key="Hub.RailRadius">4</CornerRadius>
+    <Thickness x:Key="Hub.RailInnerBorder">1</Thickness>
+    <Thickness x:Key="Hub.RailInnerGap">3</Thickness>
+    <sys:Boolean x:Key="Hub.NavIcons">False</sys:Boolean>
+    <sys:Boolean x:Key="Hub.NavCaps">True</sys:Boolean>
+    <Thickness x:Key="Hub.ScreenMargin">4,0,0,0</Thickness>
+
+    <SolidColorBrush x:Key="Hub.Surface" Color="#9BBC0F"/>
+    <SolidColorBrush x:Key="Hub.SurfaceAlt" Color="#8BAC0F"/>
+    <SolidColorBrush x:Key="Hub.SurfaceHover" Color="#8BAC0F"/>
+    <SolidColorBrush x:Key="Hub.SurfaceSelected" Color="#9BBC0F"/>
+    <SolidColorBrush x:Key="Hub.Ink" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.InkStrong" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.InkMuted" Color="#306230"/>
+    <SolidColorBrush x:Key="Hub.Line" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.LineStrong" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.InnerLine" Color="#306230"/>
+    <SolidColorBrush x:Key="Hub.InsetLine" Color="#306230"/>
+    <SolidColorBrush x:Key="Hub.Selection" Color="#0F380F"/>
+
+    <SolidColorBrush x:Key="Hub.Accent" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.AccentEdge" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.AccentInk" Color="#9BBC0F"/>
+    <SolidColorBrush x:Key="Hub.KeyFace" Color="#9BBC0F"/>
+    <SolidColorBrush x:Key="Hub.KeyEdge" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.KeyInk" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.KeyLine" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.HoverOverlay" Color="#40306230"/>
+    <SolidColorBrush x:Key="Hub.PressOverlay" Color="#70306230"/>
+    <SolidColorBrush x:Key="Hub.Good" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.Danger" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.DangerSoft" Color="#8BAC0F"/>
+    <SolidColorBrush x:Key="Hub.DangerFace" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.DangerEdge" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.DangerInk" Color="#9BBC0F"/>
+    <SolidColorBrush x:Key="Hub.Dialog" Color="#8BAC0F"/>
+    <SolidColorBrush x:Key="Hub.SlotFill" Color="#9BBC0F"/>
+    <SolidColorBrush x:Key="Hub.SlotLine" Color="#306230"/>
+    <SolidColorBrush x:Key="Hub.BadgeOn" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.BadgeOff" Color="#9BBC0F"/>
+    <SolidColorBrush x:Key="Hub.ChipOn" Color="#0F380F"/>
+    <SolidColorBrush x:Key="Hub.ChipOnInk" Color="#9BBC0F"/>
+
+    <CornerRadius x:Key="Hub.RadiusPanel">4</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusInner">1</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusControl">3</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusChip">2</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusCard">3</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusCheck">1</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusSlot">2</CornerRadius>
+    <Thickness x:Key="Hub.PanelBorder">3</Thickness>
+    <Thickness x:Key="Hub.InnerBorder">1</Thickness>
+    <Thickness x:Key="Hub.InnerGap">3</Thickness>
+    <Thickness x:Key="Hub.CardBorder">2</Thickness>
+    <Thickness x:Key="Hub.SelectionBorder">3</Thickness>
+    <sys:Boolean x:Key="Hub.ShadowVisible">False</sys:Boolean>
+    <Thickness x:Key="Hub.KeyDepth">0,0,0,3</Thickness>
+    <Thickness x:Key="Hub.KeyBorder">2</Thickness>
+
+    <FontFamily x:Key="Hub.FontDisplay">avares://MonHub/Assets/Fonts#Press Start 2P</FontFamily>
+    <FontFamily x:Key="Hub.FontLabel">avares://MonHub/Assets/Fonts#Press Start 2P</FontFamily>
+    <FontFamily x:Key="Hub.FontBody">avares://MonHub/Assets/Fonts#Pixelify Sans</FontFamily>
+    <FontFamily x:Key="Hub.FontNav">avares://MonHub/Assets/Fonts#Press Start 2P</FontFamily>
+    <FontFamily x:Key="Hub.FontValue">avares://MonHub/Assets/Fonts#Pixelify Sans</FontFamily>
+    <sys:Double x:Key="Hub.SizeTitle">18</sys:Double>
+    <sys:Double x:Key="Hub.SizeHeading">13</sys:Double>
+    <sys:Double x:Key="Hub.SizeLabel">8</sys:Double>
+    <sys:Double x:Key="Hub.SizeNav">12</sys:Double>
+    <sys:Double x:Key="Hub.SizeValue">16</sys:Double>
+    <sys:Double x:Key="Hub.SizeTag">8</sys:Double>
+    <FontWeight x:Key="Hub.WeightTitle">Normal</FontWeight>
+    <FontWeight x:Key="Hub.WeightLabel">Normal</FontWeight>
+
+    <!-- START menu entry: blinking ▶ at the current page, hollow ▷ under the mouse -->
+    <ControlTheme x:Key="Hub.Nav" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="#0F380F"/>
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontNav}"/>
+        <Setter Property="FontSize" Value="{DynamicResource Hub.SizeNav}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="Transparent" Padding="6,10" Margin="10,0">
+                    <Grid ColumnDefinitions="20,*">
+                        <Path Name="Hollow" Data="M0,0 H2 V2 H4 V4 H6 V6 H8 V8 H6 V10 H4 V12 H2 V14 H0 Z" Stroke="#306230" StrokeThickness="1.5" VerticalAlignment="Center"/>
+                        <Path Name="Cursor" Data="M0,0 H2 V2 H4 V4 H6 V6 H8 V8 H6 V10 H4 V12 H2 V14 H0 Z" Fill="#0F380F" VerticalAlignment="Center">
+                            <local:Ambient.Animation>
+                                <Animation x:SetterTargetType="Path" Duration="0:0:1.2" IterationCount="INFINITE">
+                                    <KeyFrame Cue="0%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                    <KeyFrame Cue="66.57%"><Setter Property="Opacity" Value="1"/></KeyFrame>
+                                    <KeyFrame Cue="66.67%"><Setter Property="Opacity" Value="0"/></KeyFrame>
+                                    <KeyFrame Cue="100%"><Setter Property="Opacity" Value="0"/></KeyFrame>
+                                </Animation>
+                            </local:Ambient.Animation>
+                        </Path>
+                        <ContentPresenter Name="PART_ContentPresenter" Grid.Column="1" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^ /template/ Path#Hollow">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="^ /template/ Path#Cursor">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="^:pointerover /template/ Path#Hollow">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+        <Style Selector="^:focus-visible /template/ Path#Hollow">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+        <Style Selector="^:checked /template/ Path#Cursor">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+        <Style Selector="^:checked /template/ Path#Hollow">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="Hub.NavAction" TargetType="Button">
+        <Setter Property="Foreground" Value="#0F380F"/>
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontNav}"/>
+        <Setter Property="FontSize" Value="{DynamicResource Hub.SizeNav}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="Transparent" Padding="6,10" Margin="10,0">
+                    <Grid ColumnDefinitions="20,*">
+                        <Path Name="Hollow" Data="M0,0 H2 V2 H4 V4 H6 V6 H8 V8 H6 V10 H4 V12 H2 V14 H0 Z" Stroke="#306230" StrokeThickness="1.5" VerticalAlignment="Center"/>
+                        <ContentPresenter Name="PART_ContentPresenter" Grid.Column="1" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^ /template/ Path#Hollow">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="^:pointerover /template/ Path#Hollow">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+        <Style Selector="^:pressed /template/ Path#Hollow">
+            <Setter Property="Fill" Value="#0F380F"/>
+        </Style>
+    </ControlTheme>
+
+    <!-- a game in the list: a text box; the selected one gets the ▶ in front and a heavier frame -->
+    <ControlTheme x:Key="Hub.Card" TargetType="ListBoxItem">
+        <Setter Property="Margin" Value="22,0,4,8"/>
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Background" Value="#9BBC0F"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid>
+                    <Border Name="Bd" Background="{TemplateBinding Background}" BorderBrush="#0F380F" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
+                        <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                    </Border>
+                    <Path Name="Cursor" Data="M0,0 H2 V2 H4 V4 H6 V6 H8 V8 H6 V10 H4 V12 H2 V14 H0 Z" Fill="#0F380F" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-18,0,0,0"/>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^ /template/ Path#Cursor">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="#8BAC0F"/>
+        </Style>
+        <Style Selector="^:selected">
+            <Setter Property="BorderThickness" Value="3"/>
+            <Setter Property="Background" Value="#9BBC0F"/>
+        </Style>
+        <Style Selector="^:selected /template/ Path#Cursor">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+    </ControlTheme>
+
+    <ControlTemplate x:Key="Hub.RailIdentity">
+        <StackPanel Margin="16,14,14,8">
+            <StackPanel Orientation="Horizontal">
+                <local:SpriteView Key="icon/console" Width="32" Height="32" Margin="-4,0,6,0"/>
+                <TextBlock Text="MONHUB" FontFamily="{DynamicResource Hub.FontDisplay}" FontSize="12" Foreground="#0F380F" VerticalAlignment="Center"/>
+            </StackPanel>
+            <Rectangle Height="2" Fill="#306230" Margin="0,10,0,4"/>
+        </StackPanel>
+    </ControlTemplate>
+</ResourceDictionary>

@@ -1,0 +1,31 @@
+<local:HubWindow x:Class="RandoApp.SettingsEditorWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MonHub"
+        Title="{local:L 'Randomizer-Settings bearbeiten', 'Edit randomizer settings'}" Theme="{StaticResource Hub.DialogWindow}" Width="760" Height="820" MinHeight="500" MinWidth="600"
+        Background="{DynamicResource Hub.Dialog}" Icon="{StaticResource AppIconImage}" WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Padding="20,16,20,8">
+            <StackPanel>
+                <TextBlock Text="{local:L 'EINSTELLUNGEN', 'SETTINGS'}" Classes="label"/>
+                <TextBlock x:Name="TxtFile" Classes="title" FontSize="22" Margin="0,4,0,0"/>
+                <TextBlock x:Name="TxtMadeWith" Classes="muted" TextWrapping="Wrap" Margin="0,2,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <Border DockPanel.Dock="Bottom" Padding="20,12" BorderBrush="{DynamicResource Hub.Line}" BorderThickness="0,1,0,0">
+            <DockPanel>
+                <TextBlock x:Name="TxtChanges" DockPanel.Dock="Left" VerticalAlignment="Center" Classes="muted"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="{local:L 'Abbrechen', 'Cancel'}" IsCancel="True" Theme="{DynamicResource Hub.Ghost}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <Button x:Name="BtnSaveAs" Content="{local:L 'Als neue Datei speichern…', 'Save as new file…'}" Click="BtnSaveAs_Click" Theme="{DynamicResource Hub.Key}" Margin="0,0,8,0"/>
+                    <Button x:Name="BtnOverwrite" Content="{local:L 'Überschreiben', 'Overwrite'}" Click="BtnOverwrite_Click" Theme="{DynamicResource Hub.PrimaryKey}"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel x:Name="Groups" Margin="20,4,20,20"/>
+        </ScrollViewer>
+    </DockPanel>
+</local:HubWindow>

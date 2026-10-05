@@ -1,8 +1,7 @@
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 
 namespace RandoApp;
 
@@ -21,6 +20,9 @@ public static partial class Sprites
 
     static readonly Dictionary<string, BitmapSource[]> Cache = new();
 
+    /// <summary>Where MonHub's pictures live inside the program.</summary>
+    public const string AssetRoot = "avares://MonHub/Assets/";
+
     /// <summary>More sprites from the host app (MonHub: every Pokémon, item icons): key → strip URI + frame durations.</summary>
     public static Func<string, (string Uri, int[] Durations)?>? MoreSprites { get; set; }
 
@@ -37,7 +39,7 @@ public static partial class Sprites
     }
 
     static (string Uri, int[] Durations)? Source(string key) =>
-        All.TryGetValue(key, out var anim) ? ($"pack://application:,,,/Assets/Sprites/{anim.File}", anim.Durations) : MoreSprites?.Invoke(key);
+        All.TryGetValue(key, out var anim) ? ($"{AssetRoot}Sprites/{anim.File}", anim.Durations) : MoreSprites?.Invoke(key);
 
     public static BitmapSource[]? Frames(string? key)
     {
@@ -45,16 +47,42 @@ public static partial class Sprites
         var cacheKey = Tint == SpriteTint.None ? key : $"{Tint}|{key}";
         if (Cache.TryGetValue(cacheKey, out var cached)) return cached;
 
-        var strip = new BitmapImage(new Uri(source.Uri));
-        int count = source.Durations.Length, w = strip.PixelWidth / count, h = strip.PixelHeight;
-        var frames = Enumerable.Range(0, count).Select(i =>
+        BitmapSource[] frames;
+        try
         {
-            BitmapSource frame = new CroppedBitmap(strip, new Int32Rect(i * w, 0, w, h));
-            if (Tint == SpriteTint.GameBoy) frame = GameBoyColours(frame);
-            frame.Freeze();
-            return frame;
-        }).ToArray();
+            using var stream = AssetLoader.Open(new Uri(source.Uri));
+            using var strip = WriteableBitmap.Decode(stream);
+            frames = Cut(strip, source.Durations.Length, Tint == SpriteTint.GameBoy);
+        }
+        catch (Exception ex) when (ex is FileNotFoundException or InvalidOperationException or ArgumentException)
+        {
+            return null; // no such picture: the place stays empty
+        }
         Cache[cacheKey] = frames;
+        return frames;
+    }
+
+    /// <summary>The strip's frames as pictures of their own (a frame change then only swaps the image's source).</summary>
+    static BitmapSource[] Cut(WriteableBitmap strip, int count, bool gameBoy)
+    {
+        using var all = strip.Lock();
+        int w = all.Size.Width / count, h = all.Size.Height;
+        var frames = new BitmapSource[count];
+        var row = new byte[w * 4];
+        // red and blue swap places between the two pixel layouts – the Game Boy shades need to know which is which
+        bool bgra = all.Format == PixelFormat.Bgra8888;
+        for (int i = 0; i < count; i++)
+        {
+            var frame = new WriteableBitmap(new PixelSize(w, h), new Vector(96, 96), all.Format, strip.AlphaFormat);
+            using (var target = frame.Lock())
+                for (int y = 0; y < h; y++)
+                {
+                    Marshal.Copy(all.Address + y * all.RowBytes + i * w * 4, row, 0, row.Length);
+                    if (gameBoy) GameBoyColours(row, bgra);
+                    Marshal.Copy(row, 0, target.Address + y * target.RowBytes, row.Length);
+                }
+            frames[i] = frame;
+        }
         return frames;
     }
 
@@ -66,28 +94,28 @@ public static partial class Sprites
     internal static int[]? Durations(string? key) => key != null ? Source(key)?.Durations : null;
 
     /// <summary>The four shades of the original Game Boy screen, by brightness – done once per frame, then cached.</summary>
-    static BitmapSource GameBoyColours(BitmapSource source)
+    static void GameBoyColours(byte[] px, bool bgra)
     {
-        var bgra = new FormatConvertedBitmap(source, PixelFormats.Bgra32, null, 0);
-        int w = bgra.PixelWidth, h = bgra.PixelHeight, stride = w * 4;
-        var px = new byte[stride * h];
-        bgra.CopyPixels(px, stride, 0);
-        ReadOnlySpan<uint> shades = [0xFF0F380F, 0xFF306230, 0xFF8BAC0F, 0xFF9BBC0F]; // dark → light
+        ReadOnlySpan<uint> shades = [0x0F380F, 0x306230, 0x8BAC0F, 0x9BBC0F]; // dark → light, as RRGGBB
         for (int i = 0; i < px.Length; i += 4)
         {
-            if (px[i + 3] < 128)
+            int a = px[i + 3];
+            if (a < 128)
             {
                 px[i] = px[i + 1] = px[i + 2] = px[i + 3] = 0;
                 continue;
             }
-            int light = (px[i + 2] * 299 + px[i + 1] * 587 + px[i] * 114) / 1000;
+            // stored colours may be multiplied by their alpha – undo that for the brightness
+            int c0 = Math.Min(255, px[i] * 255 / a), g = Math.Min(255, px[i + 1] * 255 / a), c2 = Math.Min(255, px[i + 2] * 255 / a);
+            int r = bgra ? c2 : c0, b = bgra ? c0 : c2;
+            int light = (r * 299 + g * 587 + b * 114) / 1000;
             uint c = shades[Math.Min(3, light / 64)];
-            px[i] = (byte)c;
-            px[i + 1] = (byte)(c >> 8);
-            px[i + 2] = (byte)(c >> 16);
+            byte sr = (byte)(c >> 16), sg = (byte)(c >> 8), sb = (byte)c;
+            px[i] = bgra ? sb : sr;
+            px[i + 1] = sg;
+            px[i + 2] = bgra ? sr : sb;
             px[i + 3] = 0xFF;
         }
-        return BitmapSource.Create(w, h, 96, 96, PixelFormats.Bgra32, null, px, stride);
     }
 
     /// <summary>A crisp, self-animating image of the sprite (see <see cref="SpriteAnimator"/> for when it moves).</summary>
@@ -105,7 +133,7 @@ public static partial class Sprites
 /// </summary>
 public static class Motion
 {
-    static bool _enabled = SystemParameters.ClientAreaAnimation;
+    static bool _enabled = Compat.SystemAnimations;
 
     public static bool Enabled
     {
@@ -122,16 +150,17 @@ public static class Motion
 }
 
 /// <summary>
-/// Plays a sprite animation on one Image – element-local, so a frame change only touches that image
-/// (no application resource swap, which would walk the element tree of every open window).
-/// It only runs while it can be seen and the window has the player's attention: loaded, visible, window not minimized,
-/// not blocked by a dialog and active. Otherwise it rests on its current frame and costs nothing.
+/// Plays a sprite animation on one Image – element-local, so a frame change only touches that image.
+/// It only runs while it can be seen and the window has the player's attention: on screen, visible, window not minimized,
+/// not blocked by a dialog and active. Otherwise it rests on its current frame and costs next to nothing.
 /// Timers run at background priority, so clicks and keys are always handled first.
 /// </summary>
 public sealed class SpriteAnimator
 {
-    static readonly DependencyProperty AnimatorProperty =
-        DependencyProperty.RegisterAttached("Animator", typeof(SpriteAnimator), typeof(SpriteAnimator));
+    static readonly ConditionalWeakTable<Image, SpriteAnimator> Animators = new();
+
+    /// <summary>How often a sprite that can't be seen right now (its page is hidden) looks whether it is back.</summary>
+    static readonly TimeSpan Resting = TimeSpan.FromMilliseconds(400);
 
     readonly Image _image;
     Window? _window;
@@ -140,24 +169,22 @@ public sealed class SpriteAnimator
     int _index;
     DispatcherTimer? _timer;
     string? _key;
+    bool _attached;
 
     SpriteAnimator(Image image)
     {
         _image = image;
-        RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
-        image.Loaded += (_, _) => Attach();
-        image.Unloaded += (_, _) => Detach();
-        image.IsVisibleChanged += (_, _) => Update();
+        RenderOptions.SetBitmapInterpolationMode(image, BitmapInterpolationMode.None);
+        image.AttachedToVisualTree += (_, _) => Attach();
+        image.DetachedFromVisualTree += (_, _) => Detach();
+        image.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == Visual.IsVisibleProperty) Update();
+        };
     }
 
     /// <summary>The animator of an image (created on first use).</summary>
-    public static SpriteAnimator For(Image image)
-    {
-        if (image.GetValue(AnimatorProperty) is SpriteAnimator existing) return existing;
-        var animator = new SpriteAnimator(image);
-        image.SetValue(AnimatorProperty, animator);
-        return animator;
-    }
+    public static SpriteAnimator For(Image image) => Animators.GetValue(image, i => new SpriteAnimator(i));
 
     /// <summary>Sprite key ("0487/idle"); null clears the image.</summary>
     public string? Key
@@ -197,14 +224,15 @@ public sealed class SpriteAnimator
     void Attach()
     {
         Detach();
-        _window = Window.GetWindow(_image);
+        _attached = true;
+        _window = Compat.WindowOf(_image);
         if (_window != null)
         {
             _window.Activated += OnWindowChanged;
             _window.Deactivated += OnWindowChanged;
-            _window.StateChanged += OnWindowChanged;
-            _window.IsEnabledChanged += OnWindowEnabledChanged;
+            _window.PropertyChanged += OnWindowProperty;
         }
+        HubWindow.BlockedChanged += Update;
         Motion.Changed += Update;
         Sprites.TintChanged += Recolour;
         Recolour();
@@ -213,14 +241,15 @@ public sealed class SpriteAnimator
 
     void Detach()
     {
+        _attached = false;
         if (_window != null)
         {
             _window.Activated -= OnWindowChanged;
             _window.Deactivated -= OnWindowChanged;
-            _window.StateChanged -= OnWindowChanged;
-            _window.IsEnabledChanged -= OnWindowEnabledChanged;
+            _window.PropertyChanged -= OnWindowProperty;
             _window = null;
         }
+        HubWindow.BlockedChanged -= Update;
         Motion.Changed -= Update;
         Sprites.TintChanged -= Recolour;
         Stop();
@@ -235,11 +264,15 @@ public sealed class SpriteAnimator
     }
 
     void OnWindowChanged(object? sender, EventArgs e) => Update();
-    void OnWindowEnabledChanged(object sender, DependencyPropertyChangedEventArgs e) => Update();
+
+    void OnWindowProperty(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Property == Window.WindowStateProperty) Update();
+    }
 
     bool ShouldRun =>
-        Motion.Enabled && !_hold && _frames is { Length: > 1 } && _image.IsLoaded && _image.IsVisible
-        && _window is { IsActive: true, IsEnabled: true } && _window.WindowState != WindowState.Minimized;
+        Motion.Enabled && !_hold && _frames is { Length: > 1 } && _attached && _image.IsVisible
+        && _window is { IsActive: true } && !HubWindow.Blocked(_window) && _window.WindowState != WindowState.Minimized;
 
     void Update()
     {
@@ -253,10 +286,16 @@ public sealed class SpriteAnimator
         _timer = new DispatcherTimer(DispatcherPriority.Background) { Interval = Duration(_index) };
         _timer.Tick += (_, _) =>
         {
-            if (_frames == null) return;
+            if (_frames == null || _timer == null) return;
+            // a hidden page keeps its sprites in the tree: they rest until the page is back
+            if (!_image.IsEffectivelyVisible)
+            {
+                _timer.Interval = Resting;
+                return;
+            }
             _index = (_index + 1) % _frames.Length;
             _image.Source = _frames[_index];
-            _timer!.Interval = Duration(_index);
+            _timer.Interval = Duration(_index);
         };
         _timer.Start();
     }

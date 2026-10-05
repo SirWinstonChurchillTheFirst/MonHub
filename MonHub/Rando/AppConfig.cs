@@ -32,7 +32,7 @@ public class AppConfig
     /// <summary>The Java runtime shipped by the installer (jre\bin\java.exe), else whatever is configured / on PATH.</summary>
     public string ResolveJava()
     {
-        var bundled = Path.Combine(AppContext.BaseDirectory, "jre", "bin", "java.exe");
+        var bundled = Path.Combine(AppContext.BaseDirectory, "jre", "bin", Os.Windows ? "java.exe" : "java");
         if ((string.IsNullOrWhiteSpace(JavaPath) || JavaPath == "java") && File.Exists(bundled)) return bundled;
         return string.IsNullOrWhiteSpace(JavaPath) ? "java" : JavaPath;
     }

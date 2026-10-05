@@ -1,11 +1,11 @@
 using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
 
 namespace MonHub;
 
-/// <summary>Reads the (large) icon of an exe or file so tiles can show the real program icon.</summary>
+/// <summary>
+/// Reads the (large) icon of an exe or file so tiles can show the real program icon. Windows only – on Linux a program
+/// has no icon inside it, the tile then shows MonHub's own picture.
+/// </summary>
 public static class IconHelper
 {
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
@@ -22,7 +22,7 @@ public static class IconHelper
     /// <summary>The program's icon – read once per file version (pages ask again every time they are shown).</summary>
     public static BitmapSource? Get(string? path, int size = 128)
     {
-        if (string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path)) return null;
+        if (!OperatingSystem.IsWindows() || string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path)) return null;
         var key = (path.ToLowerInvariant(), size, System.IO.File.GetLastWriteTimeUtc(path));
         lock (Cache)
             if (Cache.TryGetValue(key, out var known)) return known;
@@ -44,9 +44,12 @@ public static class IconHelper
             else
                 handle = ExtractAssociatedIcon(IntPtr.Zero, new System.Text.StringBuilder(path, 260), out _);
             if (handle == IntPtr.Zero) return null;
-            var bmp = Imaging.CreateBitmapSourceFromHIcon(handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            bmp.Freeze();
-            return bmp;
+            using var icon = System.Drawing.Icon.FromHandle(handle);
+            using var picture = icon.ToBitmap();
+            using var png = new MemoryStream();
+            picture.Save(png, System.Drawing.Imaging.ImageFormat.Png);
+            png.Position = 0;
+            return new Avalonia.Media.Imaging.Bitmap(png);
         }
         catch
         {

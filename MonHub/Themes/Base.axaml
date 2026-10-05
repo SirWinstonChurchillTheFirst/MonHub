@@ -1,0 +1,880 @@
+<!--
+    MonHub design system. Every look here is built from tokens (Hub.*) that each theme sets in Themes\<id>.axaml;
+    a theme can also replace a whole look where its identity needs a different shape (e.g. Game Boy menu entries).
+    All references to tokens and looks are DynamicResource, so switching themes just swaps one dictionary.
+
+    Performance rules: no blur / drop shadow effects (soft shadows force re-rendering the whole area whenever an animated
+    sprite inside changes) – shadows are hard, offset shapes. Patterns are tiled DrawingBrushes.
+
+    How state changes are written: a value that changes with the state (hover, pressed, selected) is set by a
+    "^ /template/ …" style, never as an attribute in the template – an attribute would win over the state.
+-->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:local="clr-namespace:MonHub">
+
+    <!-- ================= Fonts (embedded, SIL Open Font License) ================= -->
+    <FontFamily x:Key="Font.Silkscreen">avares://MonHub/Assets/Fonts#Silkscreen</FontFamily>
+    <FontFamily x:Key="Font.Pixelify">avares://MonHub/Assets/Fonts#Pixelify Sans</FontFamily>
+    <FontFamily x:Key="Font.PressStart">avares://MonHub/Assets/Fonts#Press Start 2P</FontFamily>
+    <FontFamily x:Key="Font.UI">Segoe UI Variable Text, Segoe UI, Inter, Noto Sans, DejaVu Sans</FontFamily>
+    <FontFamily x:Key="Font.UIDisplay">Segoe UI Variable Display, Segoe UI, Inter, Noto Sans, DejaVu Sans</FontFamily>
+
+    <!-- ================= Token defaults (a calm light look; every theme overrides them) ================= -->
+    <SolidColorBrush x:Key="Hub.Bg" Color="#F4F4F2"/>
+    <SolidColorBrush x:Key="Hub.Rail" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.RailLine" Color="#E3E3E0"/>
+    <SolidColorBrush x:Key="Hub.RailInk" Color="#2B2B2B"/>
+    <SolidColorBrush x:Key="Hub.RailInkMuted" Color="#8A8A86"/>
+    <SolidColorBrush x:Key="Hub.RailHover" Color="#F1F1EE"/>
+    <SolidColorBrush x:Key="Hub.RailSelected" Color="#FBE9E6"/>
+    <SolidColorBrush x:Key="Hub.RailSelectedInk" Color="#B42B1C"/>
+    <SolidColorBrush x:Key="Hub.RailCursor" Color="#B42B1C"/>
+    <SolidColorBrush x:Key="Hub.RailInnerLine" Color="Transparent"/>
+
+    <!-- the menu: which side (0 = left, 2 = right), width, frame; retro themes write menu entries in capitals -->
+    <sys:Int32 x:Key="Hub.RailColumn">0</sys:Int32>
+    <sys:Double x:Key="Hub.RailWidth">224</sys:Double>
+    <Thickness x:Key="Hub.RailBorder">0,0,1,0</Thickness>
+    <Thickness x:Key="Hub.RailMargin">0</Thickness>
+    <!-- the menu runs up under MonHub's title bar (34 px); its content starts a little lower -->
+    <Thickness x:Key="Hub.RailTitleInset">0,12,0,0</Thickness>
+    <CornerRadius x:Key="Hub.RailRadius">0</CornerRadius>
+    <Thickness x:Key="Hub.RailInnerBorder">0</Thickness>
+    <Thickness x:Key="Hub.RailInnerGap">0</Thickness>
+    <sys:Boolean x:Key="Hub.NavIcons">True</sys:Boolean>
+    <sys:Boolean x:Key="Hub.NavCaps">False</sys:Boolean>
+
+    <SolidColorBrush x:Key="Hub.ScreenBezel" Color="Transparent"/>
+    <SolidColorBrush x:Key="Hub.Screen" Color="Transparent"/>
+    <SolidColorBrush x:Key="Hub.ScreenOverlay" Color="Transparent"/>
+    <Thickness x:Key="Hub.ScreenBezelThickness">0</Thickness>
+    <Thickness x:Key="Hub.ScreenMargin">0</Thickness>
+    <CornerRadius x:Key="Hub.ScreenRadius">0</CornerRadius>
+    <CornerRadius x:Key="Hub.ScreenInnerRadius">0</CornerRadius>
+
+    <SolidColorBrush x:Key="Hub.Surface" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.SurfaceAlt" Color="#F7F7F5"/>
+    <SolidColorBrush x:Key="Hub.SurfaceHover" Color="#FAFAF8"/>
+    <SolidColorBrush x:Key="Hub.SurfaceSelected" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.Ink" Color="#2B2B2B"/>
+    <SolidColorBrush x:Key="Hub.InkStrong" Color="#141414"/>
+    <SolidColorBrush x:Key="Hub.InkMuted" Color="#7B7B77"/>
+    <SolidColorBrush x:Key="Hub.Line" Color="#E3E3E0"/>
+    <SolidColorBrush x:Key="Hub.LineStrong" Color="#CFCFCB"/>
+    <SolidColorBrush x:Key="Hub.InnerLine" Color="Transparent"/>
+    <SolidColorBrush x:Key="Hub.InsetLine" Color="#ECECE8"/>
+    <SolidColorBrush x:Key="Hub.Selection" Color="#D93A26"/>
+
+    <SolidColorBrush x:Key="Hub.Accent" Color="#D93A26"/>
+    <SolidColorBrush x:Key="Hub.AccentEdge" Color="#A82816"/>
+    <SolidColorBrush x:Key="Hub.AccentInk" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.KeyFace" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Hub.KeyEdge" Color="#D6D6D2"/>
+    <SolidColorBrush x:Key="Hub.KeyInk" Color="#2B2B2B"/>
+    <SolidColorBrush x:Key="Hub.KeyLine" Color="#D6D6D2"/>
+    <SolidColorBrush x:Key="Hub.HoverOverlay" Color="#0A000000"/>
+    <SolidColorBrush x:Key="Hub.PressOverlay" Color="#14000000"/>
+    <SolidColorBrush x:Key="Hub.Good" Color="#2E9E57"/>
+    <SolidColorBrush x:Key="Hub.Danger" Color="#C8321E"/>
+    <SolidColorBrush x:Key="Hub.DangerSoft" Color="#1FC8321E"/>
+    <SolidColorBrush x:Key="Hub.DangerFace" Color="#C8321E"/>
+    <SolidColorBrush x:Key="Hub.DangerEdge" Color="#962414"/>
+    <SolidColorBrush x:Key="Hub.DangerInk" Color="#FFFFFF"/>
+    <!-- background of dialogs (import, help, saves without a game) -->
+    <SolidColorBrush x:Key="Hub.Dialog" Color="#F4F4F2"/>
+    <SolidColorBrush x:Key="Hub.Shadow" Color="#14000000"/>
+    <SolidColorBrush x:Key="Hub.SlotFill" Color="#F7F7F5"/>
+    <SolidColorBrush x:Key="Hub.SlotLine" Color="#E3E3E0"/>
+    <SolidColorBrush x:Key="Hub.BadgeOn" Color="#D9A21B"/>
+    <SolidColorBrush x:Key="Hub.BadgeOff" Color="#E3E3E0"/>
+    <SolidColorBrush x:Key="Hub.ChipOn" Color="#2B2B2B"/>
+    <SolidColorBrush x:Key="Hub.ChipOnInk" Color="#FFFFFF"/>
+
+    <CornerRadius x:Key="Hub.RadiusPanel">10</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusInner">6</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusControl">8</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusChip">14</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusCard">8</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusSlot">6</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusNav">8</CornerRadius>
+    <CornerRadius x:Key="Hub.RadiusCheck">4</CornerRadius>
+    <Thickness x:Key="Hub.PanelBorder">1</Thickness>
+    <Thickness x:Key="Hub.InnerBorder">0</Thickness>
+    <Thickness x:Key="Hub.InnerGap">0</Thickness>
+    <Thickness x:Key="Hub.PanelPadding">18,16</Thickness>
+    <Thickness x:Key="Hub.CardBorder">1</Thickness>
+    <Thickness x:Key="Hub.CardMargin">0,0,4,6</Thickness>
+    <Thickness x:Key="Hub.SelectionBorder">2</Thickness>
+    <Thickness x:Key="Hub.ShadowOffset">0,2,0,-2</Thickness>
+    <sys:Boolean x:Key="Hub.ShadowVisible">True</sys:Boolean>
+    <Thickness x:Key="Hub.KeyDepth">0,0,0,2</Thickness>
+    <Thickness x:Key="Hub.KeyBorder">1</Thickness>
+    <Thickness x:Key="Hub.NavMargin">8,1</Thickness>
+    <!-- the ▶ in front of the current menu entry (retro themes) and while pointing at one: 0 = not shown, 1 = shown -->
+    <sys:Double x:Key="Hub.CursorOpacity">0</sys:Double>
+    <sys:Double x:Key="Hub.CursorHoverOpacity">0</sys:Double>
+    <!-- the bar in front of the current menu entry (modern themes) -->
+    <sys:Boolean x:Key="Hub.IndicatorVisible">True</sys:Boolean>
+    <!-- ▶ in front of the selected game (Game Boy) -->
+    <sys:Boolean x:Key="Hub.CardCursorVisible">False</sys:Boolean>
+    <sys:String x:Key="Hub.CursorText">▶</sys:String>
+
+    <FontFamily x:Key="Hub.FontDisplay">Segoe UI Variable Display, Segoe UI, Inter, Noto Sans, DejaVu Sans</FontFamily>
+    <FontFamily x:Key="Hub.FontLabel">Segoe UI Variable Text, Segoe UI, Inter, Noto Sans, DejaVu Sans</FontFamily>
+    <FontFamily x:Key="Hub.FontBody">Segoe UI Variable Text, Segoe UI, Inter, Noto Sans, DejaVu Sans</FontFamily>
+    <FontFamily x:Key="Hub.FontNav">Segoe UI Variable Text, Segoe UI, Inter, Noto Sans, DejaVu Sans</FontFamily>
+    <FontFamily x:Key="Hub.FontValue">Segoe UI Variable Display, Segoe UI, Inter, Noto Sans, DejaVu Sans</FontFamily>
+    <sys:Double x:Key="Hub.SizeTitle">26</sys:Double>
+    <sys:Double x:Key="Hub.SizeHeading">17</sys:Double>
+    <sys:Double x:Key="Hub.SizeLabel">11</sys:Double>
+    <sys:Double x:Key="Hub.SizeNav">14</sys:Double>
+    <sys:Double x:Key="Hub.SizeValue">15</sys:Double>
+    <!-- small tags on colour (version, "STANDARD") -->
+    <sys:Double x:Key="Hub.SizeTag">10</sys:Double>
+    <FontWeight x:Key="Hub.WeightTitle">SemiBold</FontWeight>
+    <FontWeight x:Key="Hub.WeightLabel">SemiBold</FontWeight>
+    <FontWeight x:Key="Hub.WeightNav">Normal</FontWeight>
+
+    <!-- playful themes lay the trainer card slightly crooked on the table -->
+    <sys:Double x:Key="Hub.CardTilt">0</sys:Double>
+
+    <!-- decoration behind everything, the identity block at the top of the menu and a detail at its bottom
+         (hidden when the window is too low): themes provide their own -->
+    <ControlTemplate x:Key="Hub.Backdrop">
+        <Grid/>
+    </ControlTemplate>
+    <ControlTemplate x:Key="Hub.RailIdentity">
+        <StackPanel Margin="20,22,16,18">
+            <TextBlock Text="MonHub" FontFamily="{DynamicResource Hub.FontDisplay}" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource Hub.RailInk}"/>
+            <TextBlock Text="{local:L 'Dein Spielzentrum', 'Your game hub'}" Foreground="{DynamicResource Hub.RailInkMuted}" FontSize="12"/>
+        </StackPanel>
+    </ControlTemplate>
+    <ControlTemplate x:Key="Hub.RailDeco">
+        <Grid/>
+    </ControlTemplate>
+
+    <!-- ================= Containers ================= -->
+    <!-- Panel: hard offset shadow, frame, optional inner frame (double-line text boxes in retro themes) -->
+    <ControlTheme x:Key="Hub.Panel" TargetType="ContentControl">
+        <Setter Property="Padding" Value="{DynamicResource Hub.PanelPadding}"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid>
+                    <Border Background="{DynamicResource Hub.Shadow}" CornerRadius="{DynamicResource Hub.RadiusPanel}"
+                            Margin="{DynamicResource Hub.ShadowOffset}" IsVisible="{DynamicResource Hub.ShadowVisible}"/>
+                    <Border Background="{DynamicResource Hub.Surface}" BorderBrush="{DynamicResource Hub.Line}"
+                            BorderThickness="{DynamicResource Hub.PanelBorder}" CornerRadius="{DynamicResource Hub.RadiusPanel}">
+                        <Border BorderBrush="{DynamicResource Hub.InnerLine}" BorderThickness="{DynamicResource Hub.InnerBorder}"
+                                Margin="{DynamicResource Hub.InnerGap}" CornerRadius="{DynamicResource Hub.RadiusInner}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                        </Border>
+                    </Border>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <!-- Inset: a recessed area inside a panel (the "continue" box, info blocks) -->
+    <ControlTheme x:Key="Hub.Inset" TargetType="ContentControl">
+        <Setter Property="Padding" Value="14,12"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{DynamicResource Hub.SurfaceAlt}" BorderBrush="{DynamicResource Hub.InsetLine}" BorderThickness="1"
+                        CornerRadius="{DynamicResource Hub.RadiusInner}" Padding="{TemplateBinding Padding}">
+                    <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <!-- The content area (Dex: dark display behind a bezel, with scanlines on top) -->
+    <ControlTheme x:Key="Hub.ScreenFrame" TargetType="ContentControl">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{DynamicResource Hub.ScreenBezel}" Padding="{DynamicResource Hub.ScreenBezelThickness}"
+                        Margin="{DynamicResource Hub.ScreenMargin}" CornerRadius="{DynamicResource Hub.ScreenRadius}">
+                    <Grid>
+                        <Border Background="{DynamicResource Hub.Screen}" CornerRadius="{DynamicResource Hub.ScreenInnerRadius}"/>
+                        <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                        <Border Background="{DynamicResource Hub.ScreenOverlay}" CornerRadius="{DynamicResource Hub.ScreenInnerRadius}" IsHitTestVisible="False"/>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <!-- ================= Buttons ================= -->
+    <!-- A key: face on a darker edge; pressing pushes the face down onto the edge (no animation, no effect) -->
+    <ControlTheme x:Key="Hub.Key" TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource Hub.KeyFace}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Hub.KeyEdge}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.KeyInk}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontBody}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="14,7"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid Name="Root">
+                    <Border Name="Edge" Background="{TemplateBinding BorderBrush}" CornerRadius="{DynamicResource Hub.RadiusControl}"/>
+                    <Border Name="Face" Background="{TemplateBinding Background}" CornerRadius="{DynamicResource Hub.RadiusControl}"
+                            BorderThickness="{DynamicResource Hub.KeyBorder}">
+                        <Grid>
+                            <Border Name="Tint" CornerRadius="{DynamicResource Hub.RadiusControl}"/>
+                            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Margin="{TemplateBinding Padding}" RecognizesAccessKey="True"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^ /template/ Border#Face">
+            <Setter Property="Margin" Value="{DynamicResource Hub.KeyDepth}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Hub.KeyLine}"/>
+        </Style>
+        <Style Selector="^:pointerover /template/ Border#Tint">
+            <Setter Property="Background" Value="{DynamicResource Hub.HoverOverlay}"/>
+        </Style>
+        <Style Selector="^:pressed /template/ Border#Face">
+            <Setter Property="Margin" Value="0,2,0,0"/>
+        </Style>
+        <Style Selector="^:pressed /template/ Border#Tint">
+            <Setter Property="Background" Value="{DynamicResource Hub.PressOverlay}"/>
+        </Style>
+        <Style Selector="^:focus-visible /template/ Border#Face">
+            <Setter Property="BorderBrush" Value="{DynamicResource Hub.Selection}"/>
+        </Style>
+        <Style Selector="^:disabled /template/ Grid#Root">
+            <Setter Property="Opacity" Value="0.4"/>
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="Hub.PrimaryKey" TargetType="Button" BasedOn="{StaticResource Hub.Key}">
+        <Setter Property="Background" Value="{DynamicResource Hub.Accent}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Hub.AccentEdge}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.AccentInk}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontDisplay}"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Padding" Value="22,11"/>
+    </ControlTheme>
+
+    <!-- the confirming button of a message: the accent colour at the size of a normal key -->
+    <ControlTheme x:Key="Hub.PrimaryKeySmall" TargetType="Button" BasedOn="{StaticResource Hub.Key}">
+        <Setter Property="Background" Value="{DynamicResource Hub.Accent}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Hub.AccentEdge}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.AccentInk}"/>
+    </ControlTheme>
+
+    <!-- the one button that deletes something -->
+    <ControlTheme x:Key="Hub.DangerKey" TargetType="Button" BasedOn="{StaticResource Hub.Key}">
+        <Setter Property="Background" Value="{DynamicResource Hub.DangerFace}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Hub.DangerEdge}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.DangerInk}"/>
+        <Setter Property="Padding" Value="18,9"/>
+    </ControlTheme>
+
+    <!-- quiet text action; Classes="danger" turns red on hover -->
+    <ControlTheme x:Key="Hub.Ghost" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource Hub.InkMuted}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontBody}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Padding" Value="10,6"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="Bd" Background="{TemplateBinding Background}" CornerRadius="{DynamicResource Hub.RadiusControl}" Padding="{TemplateBinding Padding}">
+                    <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      VerticalAlignment="Center"/>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Hub.HoverOverlay}"/>
+            <Setter Property="Foreground" Value="{DynamicResource Hub.Ink}"/>
+        </Style>
+        <Style Selector="^.danger:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Hub.DangerSoft}"/>
+            <Setter Property="Foreground" Value="{DynamicResource Hub.Danger}"/>
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Opacity" Value="0.35"/>
+        </Style>
+    </ControlTheme>
+
+    <!-- ================= Menu ================= -->
+    <!-- Menu entry: ▶ cursor (retro themes) or an indicator bar (modern themes) marks the current page -->
+    <ControlTheme x:Key="Hub.Nav" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{DynamicResource Hub.RailInk}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontNav}"/>
+        <Setter Property="FontSize" Value="{DynamicResource Hub.SizeNav}"/>
+        <Setter Property="FontWeight" Value="{DynamicResource Hub.WeightNav}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="Bd" Background="{TemplateBinding Background}" CornerRadius="{DynamicResource Hub.RadiusNav}" Padding="10,7"
+                        Margin="{DynamicResource Hub.NavMargin}">
+                    <Grid ColumnDefinitions="14,*">
+                        <Border Name="Indicator" Width="4" Height="20" CornerRadius="2" Background="{DynamicResource Hub.RailSelectedInk}"
+                                HorizontalAlignment="Left" Margin="-10,0,0,0"/>
+                        <TextBlock Name="Cursor" Text="{DynamicResource Hub.CursorText}" FontFamily="{StaticResource Font.Silkscreen}" FontSize="11"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource Hub.RailCursor}"/>
+                        <ContentPresenter Name="PART_ContentPresenter" Grid.Column="1" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^ /template/ Border#Indicator">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="^ /template/ TextBlock#Cursor">
+            <Setter Property="Opacity" Value="0"/>
+        </Style>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Hub.RailHover}"/>
+        </Style>
+        <Style Selector="^:pointerover /template/ TextBlock#Cursor">
+            <Setter Property="Opacity" Value="{DynamicResource Hub.CursorHoverOpacity}"/>
+        </Style>
+        <Style Selector="^:focus-visible /template/ TextBlock#Cursor">
+            <Setter Property="Opacity" Value="{DynamicResource Hub.CursorOpacity}"/>
+        </Style>
+        <Style Selector="^:checked">
+            <Setter Property="Background" Value="{DynamicResource Hub.RailSelected}"/>
+            <Setter Property="Foreground" Value="{DynamicResource Hub.RailSelectedInk}"/>
+        </Style>
+        <Style Selector="^:checked /template/ Border#Indicator">
+            <Setter Property="IsVisible" Value="{DynamicResource Hub.IndicatorVisible}"/>
+        </Style>
+        <Style Selector="^:checked /template/ TextBlock#Cursor">
+            <Setter Property="Opacity" Value="{DynamicResource Hub.CursorOpacity}"/>
+        </Style>
+    </ControlTheme>
+
+    <!-- A menu action that opens something else – same look as a menu entry, never "selected" -->
+    <ControlTheme x:Key="Hub.NavAction" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource Hub.RailInk}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontNav}"/>
+        <Setter Property="FontSize" Value="{DynamicResource Hub.SizeNav}"/>
+        <Setter Property="FontWeight" Value="{DynamicResource Hub.WeightNav}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="Bd" Background="{TemplateBinding Background}" CornerRadius="{DynamicResource Hub.RadiusNav}" Padding="10,7"
+                        Margin="{DynamicResource Hub.NavMargin}">
+                    <Grid ColumnDefinitions="14,*">
+                        <TextBlock Name="Cursor" Text="{DynamicResource Hub.CursorText}" FontFamily="{StaticResource Font.Silkscreen}" FontSize="11"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource Hub.RailCursor}"/>
+                        <ContentPresenter Name="PART_ContentPresenter" Grid.Column="1" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^ /template/ TextBlock#Cursor">
+            <Setter Property="Opacity" Value="0"/>
+        </Style>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Hub.RailHover}"/>
+        </Style>
+        <Style Selector="^:pointerover /template/ TextBlock#Cursor">
+            <Setter Property="Opacity" Value="{DynamicResource Hub.CursorHoverOpacity}"/>
+        </Style>
+        <Style Selector="^:pressed">
+            <Setter Property="Background" Value="{DynamicResource Hub.RailSelected}"/>
+        </Style>
+    </ControlTheme>
+
+    <!-- small text link at the bottom of the menu -->
+    <ControlTheme x:Key="Hub.RailLink" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource Hub.RailInkMuted}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontBody}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="Transparent" Padding="4,4">
+                    <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      VerticalAlignment="Center"/>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Foreground" Value="{DynamicResource Hub.RailInk}"/>
+        </Style>
+    </ControlTheme>
+
+    <!-- ================= Lists ================= -->
+    <ControlTheme x:Key="Hub.Chip" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{DynamicResource Hub.Ink}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontBody}"/>
+        <Setter Property="FontSize" Value="12.5"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Margin" Value="0,0,6,0"/>
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Hub.LineStrong}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="Bd" CornerRadius="{DynamicResource Hub.RadiusChip}" Padding="12,5" Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
+                    <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      VerticalAlignment="Center"/>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Hub.HoverOverlay}"/>
+        </Style>
+        <Style Selector="^:checked">
+            <Setter Property="Background" Value="{DynamicResource Hub.ChipOn}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Hub.ChipOn}"/>
+            <Setter Property="Foreground" Value="{DynamicResource Hub.ChipOnInk}"/>
+        </Style>
+    </ControlTheme>
+
+    <!-- A row in a list (games, saves): the item draws its own selection -->
+    <ControlTheme x:Key="Hub.Card" TargetType="ListBoxItem">
+        <Setter Property="Margin" Value="{DynamicResource Hub.CardMargin}"/>
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Background" Value="{DynamicResource Hub.Surface}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid>
+                    <Border Background="{DynamicResource Hub.Shadow}" CornerRadius="{DynamicResource Hub.RadiusCard}"
+                            Margin="{DynamicResource Hub.ShadowOffset}" IsVisible="{DynamicResource Hub.ShadowVisible}"/>
+                    <Border Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{DynamicResource Hub.Line}"
+                            BorderThickness="{DynamicResource Hub.CardBorder}" CornerRadius="{DynamicResource Hub.RadiusCard}">
+                        <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                    </Border>
+                    <Border Name="Sel" BorderBrush="{DynamicResource Hub.Selection}" BorderThickness="{DynamicResource Hub.SelectionBorder}"
+                            CornerRadius="{DynamicResource Hub.RadiusCard}" IsHitTestVisible="False"/>
+                    <TextBlock Name="Cursor" Text="{DynamicResource Hub.CursorText}" FontFamily="{StaticResource Font.Silkscreen}" FontSize="11"
+                               Foreground="{DynamicResource Hub.Selection}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-14,0,0,0"
+                               IsHitTestVisible="False"/>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^ /template/ Border#Sel">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="^ /template/ TextBlock#Cursor">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Hub.SurfaceHover}"/>
+        </Style>
+        <Style Selector="^:selected">
+            <Setter Property="Background" Value="{DynamicResource Hub.SurfaceSelected}"/>
+        </Style>
+        <Style Selector="^:selected /template/ Border#Sel">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+        <Style Selector="^:selected /template/ TextBlock#Cursor">
+            <Setter Property="IsVisible" Value="{DynamicResource Hub.CardCursorVisible}"/>
+        </Style>
+    </ControlTheme>
+
+    <!-- A plain row (recent saves on the start page): no card, a line underneath -->
+    <ControlTheme x:Key="Hub.Row" TargetType="ListBoxItem">
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{DynamicResource Hub.Line}" BorderThickness="0,0,0,1" Padding="4,6">
+                    <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Hub.HoverOverlay}"/>
+        </Style>
+    </ControlTheme>
+
+    <!-- A row that is only content (the Nuzlocke tracker's routes): no selection, no hover -->
+    <ControlTheme x:Key="Hub.PlainItem" TargetType="ListBoxItem">
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <!-- A list without a frame of its own: the page or panel around it is the frame -->
+    <ControlTheme x:Key="Hub.List" TargetType="ListBox">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ScrollViewer Name="PART_ScrollViewer"
+                              HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+                              VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}">
+                    <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" Margin="{TemplateBinding Padding}"/>
+                </ScrollViewer>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <!-- One party member: sprite (moves only while pointed at) and level, name in the tooltip -->
+    <DataTemplate x:Key="Hub.TeamSlotTemplate" DataType="local:TeamSlot">
+        <Border Classes="slot teamslot" Width="54" Height="62" Margin="0,0,6,0" ToolTip.Tip="{Binding Tooltip}">
+            <Grid>
+                <local:SpriteView Key="{Binding Sprite}" Decorative="True" MaxWidth="46" MaxHeight="40"
+                                  Stretch="Uniform" StretchDirection="DownOnly" VerticalAlignment="Center" Margin="0,2,0,14"/>
+                <TextBlock Text="{local:L 'Ei', 'Egg'}" IsVisible="{Binding IsEgg}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,14"
+                           Classes="label"/>
+                <TextBlock Text="{Binding LevelText}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,3"
+                           FontFamily="{DynamicResource Hub.FontLabel}" FontSize="10" Foreground="{DynamicResource Hub.InkMuted}"/>
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+    <!-- A smaller party row (lists) -->
+    <DataTemplate x:Key="Hub.TeamMiniTemplate" DataType="local:TeamSlot">
+        <local:SpriteView Key="{Binding Sprite}" Still="True" Width="26" Height="24" Stretch="Uniform" StretchDirection="DownOnly"
+                          Margin="0,0,2,0" ToolTip.Tip="{Binding Tooltip}"/>
+    </DataTemplate>
+
+    <!-- Badge case: one dot per badge, filled when earned -->
+    <DataTemplate x:Key="Hub.BadgeTemplate">
+        <Ellipse Classes="badge" Classes.on="{Binding}" Width="11" Height="11" Margin="0,0,4,0"/>
+    </DataTemplate>
+
+    <!-- Search box without the default chrome -->
+    <ControlTheme x:Key="Hub.Search" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="Padding" Value="30,7,10,7"/>
+    </ControlTheme>
+
+    <!-- A clickable tile (fangames, theme choice); Classes="selected" frames it -->
+    <ControlTheme x:Key="Hub.Tile" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource Hub.Ink}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Padding" Value="14"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="Background" Value="{DynamicResource Hub.Surface}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid>
+                    <Border Background="{DynamicResource Hub.Shadow}" CornerRadius="{DynamicResource Hub.RadiusCard}"
+                            Margin="{DynamicResource Hub.ShadowOffset}" IsVisible="{DynamicResource Hub.ShadowVisible}"/>
+                    <Border Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{DynamicResource Hub.Line}"
+                            BorderThickness="{DynamicResource Hub.CardBorder}" CornerRadius="{DynamicResource Hub.RadiusCard}" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                    <Border Name="Sel" BorderBrush="{DynamicResource Hub.Selection}" BorderThickness="{DynamicResource Hub.SelectionBorder}"
+                            CornerRadius="{DynamicResource Hub.RadiusCard}" IsHitTestVisible="False"/>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^ /template/ Border#Sel">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="^ /template/ Border#Bd">
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Hub.SurfaceHover}"/>
+        </Style>
+        <Style Selector="^:pressed /template/ Border#Bd">
+            <Setter Property="Margin" Value="0,2,0,-2"/>
+        </Style>
+        <Style Selector="^.selected /template/ Border#Sel">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+    </ControlTheme>
+
+    <!-- ================= Standard controls in the theme's look (they apply everywhere, dialogs too) ================= -->
+
+    <!-- text field -->
+    <ControlTheme x:Key="{x:Type TextBox}" TargetType="TextBox">
+        <Setter Property="Foreground" Value="{DynamicResource Hub.Ink}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource Hub.Ink}"/>
+        <Setter Property="SelectionBrush" Value="{DynamicResource Hub.Selection}"/>
+        <Setter Property="SelectionForegroundBrush" Value="{DynamicResource Hub.AccentInk}"/>
+        <Setter Property="Background" Value="{DynamicResource Hub.Surface}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Hub.LineStrong}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontBody}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="8,5"/>
+        <Setter Property="MinHeight" Value="30"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="Cursor" Value="IBeam"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                        CornerRadius="{DynamicResource Hub.RadiusControl}">
+                    <ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+                                  VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}">
+                        <Panel Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <TextBlock Name="PART_Watermark" Text="{TemplateBinding Watermark}" Foreground="{DynamicResource Hub.InkMuted}"
+                                       IsVisible="{TemplateBinding Text, Converter={x:Static StringConverters.IsNullOrEmpty}}"/>
+                            <TextPresenter Name="PART_TextPresenter" Text="{TemplateBinding Text, Mode=TwoWay}"
+                                           CaretIndex="{TemplateBinding CaretIndex}" SelectionStart="{TemplateBinding SelectionStart}"
+                                           SelectionEnd="{TemplateBinding SelectionEnd}" TextAlignment="{TemplateBinding TextAlignment}"
+                                           TextWrapping="{TemplateBinding TextWrapping}" PasswordChar="{TemplateBinding PasswordChar}"
+                                           RevealPassword="{TemplateBinding RevealPassword}" SelectionBrush="{TemplateBinding SelectionBrush}"
+                                           SelectionForegroundBrush="{TemplateBinding SelectionForegroundBrush}" CaretBrush="{TemplateBinding CaretBrush}"/>
+                        </Panel>
+                    </ScrollViewer>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource Hub.Selection}"/>
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Opacity" Value="0.5"/>
+        </Style>
+    </ControlTheme>
+
+    <!-- tick box -->
+    <ControlTheme x:Key="{x:Type CheckBox}" TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{DynamicResource Hub.Ink}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontBody}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid Name="Root" Background="Transparent" ColumnDefinitions="Auto,*">
+                    <Border Name="Box" Width="18" Height="18" VerticalAlignment="Center" BorderThickness="1.5" CornerRadius="{DynamicResource Hub.RadiusCheck}">
+                        <Path Name="Tick" Data="M3,8.5 L6.8,12.3 L14,4.5" Stroke="{DynamicResource Hub.AccentInk}" StrokeThickness="2.2"
+                              StrokeLineCap="Round" StrokeJoin="Round"/>
+                    </Border>
+                    <ContentPresenter Name="PART_ContentPresenter" Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center" RecognizesAccessKey="True"
+                                      Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^ /template/ Border#Box">
+            <Setter Property="BorderBrush" Value="{DynamicResource Hub.LineStrong}"/>
+            <Setter Property="Background" Value="{DynamicResource Hub.Surface}"/>
+        </Style>
+        <Style Selector="^ /template/ Path#Tick">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="^:pointerover /template/ Border#Box">
+            <Setter Property="BorderBrush" Value="{DynamicResource Hub.Selection}"/>
+        </Style>
+        <Style Selector="^:focus-visible /template/ Border#Box">
+            <Setter Property="BorderBrush" Value="{DynamicResource Hub.Selection}"/>
+        </Style>
+        <Style Selector="^:checked /template/ Border#Box">
+            <Setter Property="Background" Value="{DynamicResource Hub.Accent}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Hub.AccentEdge}"/>
+        </Style>
+        <Style Selector="^:checked /template/ Path#Tick">
+            <Setter Property="IsVisible" Value="True"/>
+        </Style>
+        <Style Selector="^:disabled /template/ Grid#Root">
+            <Setter Property="Opacity" Value="0.45"/>
+        </Style>
+    </ControlTheme>
+
+    <!-- fold-out section (log, spoiler, expert options) -->
+    <ControlTheme x:Key="Hub.ExpanderHeader" TargetType="ToggleButton">
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="Bd" Background="{TemplateBinding Background}" Padding="2,5" CornerRadius="{DynamicResource Hub.RadiusControl}">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Name="Arrow" Data="M0,0 L4.5,4.5 L0,9" Stroke="{DynamicResource Hub.InkMuted}" StrokeThickness="1.8"
+                              VerticalAlignment="Center" Margin="2,0,10,0" RenderTransformOrigin="50%,50%"/>
+                        <ContentPresenter Name="PART_ContentPresenter" VerticalAlignment="Center" RecognizesAccessKey="True"
+                                          Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                    </StackPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Hub.HoverOverlay}"/>
+        </Style>
+        <Style Selector="^:checked /template/ Path#Arrow">
+            <Setter Property="RenderTransform" Value="rotate(90deg)"/>
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type Expander}" TargetType="Expander">
+        <Setter Property="Foreground" Value="{DynamicResource Hub.InkMuted}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontBody}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <DockPanel>
+                    <ToggleButton Name="PART_toggle" DockPanel.Dock="Top" Theme="{StaticResource Hub.ExpanderHeader}"
+                                  Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                  IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}"/>
+                    <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      IsVisible="{TemplateBinding IsExpanded}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                </DockPanel>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <!-- the ✗ of the Nuzlocke tracker: a key that turns into a red "struck" mark -->
+    <ControlTheme x:Key="Hub.Strike" TargetType="ToggleButton">
+        <Setter Property="Foreground" Value="{DynamicResource Hub.KeyInk}"/>
+        <Setter Property="Background" Value="{DynamicResource Hub.KeyFace}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Hub.KeyLine}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                        CornerRadius="{DynamicResource Hub.RadiusControl}" Padding="{TemplateBinding Padding}">
+                    <ContentPresenter Name="PART_ContentPresenter" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="BorderBrush" Value="{DynamicResource Hub.Selection}"/>
+        </Style>
+        <Style Selector="^:checked">
+            <Setter Property="Background" Value="{DynamicResource Hub.DangerFace}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Hub.DangerEdge}"/>
+            <Setter Property="Foreground" Value="{DynamicResource Hub.DangerInk}"/>
+        </Style>
+    </ControlTheme>
+
+    <!-- MonHub's title bar buttons (main window and dialogs): the theme's ink, a soft tint on hover.
+         The content is the glyph's outline (a Path geometry), drawn as a thin line. -->
+    <ControlTheme x:Key="Chrome.Button" TargetType="Button">
+        <Setter Property="Width" Value="46"/>
+        <Setter Property="Height" Value="34"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.Ink}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid Background="Transparent">
+                    <Border Name="Tint" Background="{TemplateBinding Foreground}"/>
+                    <Path Name="Glyph" Data="{TemplateBinding Tag}" Stroke="{TemplateBinding Foreground}" StrokeThickness="1"
+                          Width="10" Height="10" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^ /template/ Border#Tint">
+            <Setter Property="Opacity" Value="0"/>
+        </Style>
+        <Style Selector="^:pointerover /template/ Border#Tint">
+            <Setter Property="Opacity" Value="0.14"/>
+        </Style>
+        <Style Selector="^:pressed /template/ Border#Tint">
+            <Setter Property="Opacity" Value="0.24"/>
+        </Style>
+    </ControlTheme>
+    <!-- close: red on hover -->
+    <ControlTheme x:Key="Chrome.Close" TargetType="Button" BasedOn="{StaticResource Chrome.Button}">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid Background="Transparent">
+                    <Border Name="Tint" Background="#C42B1C"/>
+                    <Path Name="Glyph" Data="M0,0 L10,10 M10,0 L0,10" StrokeThickness="1"
+                          Width="10" Height="10" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^ /template/ Path#Glyph">
+            <Setter Property="Stroke" Value="{DynamicResource Hub.Ink}"/>
+        </Style>
+        <Style Selector="^:pointerover /template/ Border#Tint">
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+        <Style Selector="^:pointerover /template/ Path#Glyph">
+            <Setter Property="Stroke" Value="White"/>
+        </Style>
+        <Style Selector="^:pressed /template/ Border#Tint">
+            <Setter Property="Opacity" Value="0.8"/>
+        </Style>
+    </ControlTheme>
+
+    <!--
+        Every MonHub dialog (import, help, settings …) gets MonHub's own title bar like the main window: the title on the
+        left, a close button on the right, drag to move – in the theme's colours. Theme="{StaticResource Hub.DialogWindow}"
+        on the window; the parts are wired up in HubWindow.
+    -->
+    <ControlTheme x:Key="Hub.DialogWindow" TargetType="Window">
+        <Setter Property="Background" Value="{DynamicResource Hub.Dialog}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.Ink}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontBody}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <Border Name="PART_TransparencyFallback" IsHitTestVisible="False"/>
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{DynamicResource Hub.LineStrong}" BorderThickness="1" IsHitTestVisible="False"/>
+                    <VisualLayerManager>
+                        <DockPanel Margin="1">
+                            <Grid DockPanel.Dock="Top" Height="34">
+                                <Border Name="PART_TitleBar" Background="Transparent"/>
+                                <TextBlock Text="{TemplateBinding Title}" Margin="16,0,60,0" VerticalAlignment="Center" FontSize="12"
+                                           Foreground="{DynamicResource Hub.Ink}" Opacity="0.75" TextTrimming="CharacterEllipsis" IsHitTestVisible="False"/>
+                                <Button Name="PART_Close" HorizontalAlignment="Right" VerticalAlignment="Top" Theme="{StaticResource Chrome.Close}"
+                                        ToolTip.Tip="{local:L 'Schließen', 'Close'}"/>
+                            </Grid>
+                            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Margin="{TemplateBinding Padding}"
+                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </DockPanel>
+                    </VisualLayerManager>
+                    <!-- Linux: the edges resize the window -->
+                    <Panel Name="PART_Resize">
+                        <Border Tag="North" Height="5" VerticalAlignment="Top" Margin="10,0" Background="Transparent" Cursor="SizeNorthSouth"/>
+                        <Border Tag="South" Height="5" VerticalAlignment="Bottom" Margin="10,0" Background="Transparent" Cursor="SizeNorthSouth"/>
+                        <Border Tag="West" Width="5" HorizontalAlignment="Left" Margin="0,10" Background="Transparent" Cursor="SizeWestEast"/>
+                        <Border Tag="East" Width="5" HorizontalAlignment="Right" Margin="0,10" Background="Transparent" Cursor="SizeWestEast"/>
+                        <Border Tag="NorthWest" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" Cursor="TopLeftCorner"/>
+                        <Border Tag="NorthEast" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" Cursor="TopRightCorner"/>
+                        <Border Tag="SouthWest" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Background="Transparent" Cursor="BottomLeftCorner"/>
+                        <Border Tag="SouthEast" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Transparent" Cursor="BottomRightCorner"/>
+                    </Panel>
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

@@ -348,7 +348,7 @@ public static class GameLibrary
     /// <summary>ROM paths in melonDS' RecentROM list (one line or several, TOML-escaped) and DeSmuME's "Recent Rom N".</summary>
     static IEnumerable<string> RecentRoms()
     {
-        var toml = SafeLines(Path.Combine(HubPaths.MelonDS, "melonDS.toml"));
+        var toml = SafeLines(HubPaths.MelonDSToml);
         for (int i = 0; i < toml.Length; i++)
         {
             if (!toml[i].TrimStart().StartsWith("RecentROM", StringComparison.Ordinal)) continue;
@@ -392,7 +392,7 @@ public static class GameLibrary
     /// <summary>melonDS' cheat folder when one is set ([Instance0] CheatFilePath), else null = next to the ROM.</summary>
     static string? MelonDSCheatDir()
     {
-        var dir = Setting(Path.Combine(HubPaths.MelonDS, "melonDS.toml"), "Instance0", "CheatFilePath").Replace('/', '\\');
+        var dir = Setting(HubPaths.MelonDSToml, "Instance0", "CheatFilePath").Replace('/', Path.DirectorySeparatorChar);
         if (dir.Length == 0) return null;
         return Path.IsPathRooted(dir) ? dir : Path.GetFullPath(Path.Combine(HubPaths.MelonDS, dir));
     }
@@ -564,6 +564,16 @@ public class OrphanSave(string name)
     /// <summary>Where the save lives – decides the icon colour (melonDS blue, DeSmuME purple …).</summary>
     public string MainPlace => Files.FirstOrDefault(f => !f.IsSavestate)?.Place ?? Files[0].Place;
 
+    /// <summary>The coloured edge of the row, like a save file's label.</summary>
+    public Brush PlaceBrush => Avalonia.Media.Brush.Parse(MainPlace switch
+    {
+        "melonDS" => "#2F8CE0",
+        "DeSmuME" => "#7B5BD6",
+        GbaPlace => "#3FAE5B",
+        RomFolderPlace => "#E0922B",
+        _ => "#7C8BA6",
+    });
+
     public List<string> Tags
     {
         get
@@ -628,7 +638,7 @@ public static class TimeText
     }
 }
 
-/// <summary>Deleting that can be undone: files go to the Windows recycle bin.</summary>
+/// <summary>Deleting that can be undone: files go to the Windows recycle bin, on Linux into the trash.</summary>
 public static class RecycleBin
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -657,6 +667,7 @@ public static class RecycleBin
         static bool There(string path) => File.Exists(path) || Directory.Exists(path);
         var existing = files.Where(There).ToArray();
         if (existing.Length == 0) return true;
+        if (!Os.Windows) return Os.Trash(existing) && existing.All(f => !There(f));
         var op = new SHFILEOPSTRUCT
         {
             wFunc = FO_DELETE,

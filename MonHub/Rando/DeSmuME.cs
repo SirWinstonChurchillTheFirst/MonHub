@@ -127,7 +127,7 @@ public static class Emulators
     public static IEmulator? TryOpen(string? folder)
     {
         if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder)) return null;
-        if (Directory.GetFiles(folder, "melonDS*.exe").Length > 0) return new MelonDSInstall(folder);
+        if (Os.FindProgram(folder, "melonDS") != null) return new MelonDSInstall(folder);
         if (Directory.GetFiles(folder, "DeSmuME*.exe").Length > 0) return new DeSmuMEInstall(folder);
         return null;
     }

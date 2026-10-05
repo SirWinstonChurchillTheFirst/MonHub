@@ -1,0 +1,92 @@
+<local:HubWindow x:Class="MonHub.OrphanWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MonHub"
+        Title="{local:L 'Spielstände ohne Spiel', 'Saves without a game'}" Theme="{StaticResource Hub.DialogWindow}" Width="860" Height="700" MinWidth="640" MinHeight="480"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="{DynamicResource Hub.Dialog}"
+        Icon="{StaticResource AppIconImage}">
+    <local:HubWindow.Resources>
+        <!-- one game name whose ROM is gone: where its saves are, when it was last saved, how big -->
+        <DataTemplate x:Key="OrphanTemplate" DataType="local:OrphanSave">
+            <Grid Height="68" Background="Transparent">
+                <Grid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="{local:L 'Im Ordner zeigen', 'Show in folder'}" Click="ShowFile_Click"/>
+                    </ContextMenu>
+                </Grid.ContextMenu>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="44"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <CheckBox IsHitTestVisible="False" Focusable="False" HorizontalAlignment="Right" VerticalAlignment="Center"
+                          IsChecked="{Binding $parent[ListBoxItem].IsSelected, Mode=OneWay}"/>
+                <!-- where it lives: a coloured edge like a save file's label -->
+                <Border Grid.Column="1" Width="5" Margin="0,12" CornerRadius="2" Background="{Binding PlaceBrush}" HorizontalAlignment="Left"/>
+                <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,12,0">
+                    <TextBlock Text="{Binding Name}" Classes="body" FontSize="14" FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                    <ItemsControl ItemsSource="{Binding Tags}" Margin="0,5,0,0" Focusable="False">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{DynamicResource Hub.SurfaceAlt}" BorderBrush="{DynamicResource Hub.InsetLine}" BorderThickness="1"
+                                        CornerRadius="{DynamicResource Hub.RadiusChip}" Padding="7,1" Margin="0,0,6,0">
+                                    <TextBlock Text="{Binding}" FontFamily="{DynamicResource Hub.FontLabel}" FontSize="{DynamicResource Hub.SizeTag}" Foreground="{DynamicResource Hub.InkMuted}"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+                <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="0,0,18,0">
+                    <TextBlock Text="{Binding TimeText}" Classes="body" HorizontalAlignment="Right" TextWrapping="NoWrap"/>
+                    <TextBlock Text="{Binding SizeText}" Classes="muted" FontSize="12" HorizontalAlignment="Right" Margin="0,2,0,0"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </local:HubWindow.Resources>
+
+    <DockPanel Margin="26,20,26,18">
+        <!-- header -->
+        <DockPanel DockPanel.Dock="Top">
+            <local:SpriteView Key="0094/idle" Height="56" VerticalAlignment="Top" Margin="0,0,16,0"/>
+            <StackPanel>
+                <TextBlock Text="{local:L 'AUFRÄUMEN', 'TIDY UP'}" Classes="label"/>
+                <TextBlock Text="{local:L 'Spielstände ohne Spiel', 'Saves without a game'}" Classes="title" Margin="0,4,0,2"/>
+                <TextBlock Classes="muted"
+                           Text="{local:L 'Zu diesen Spielständen gibt es kein Spiel mehr im MonHub – meist wurde die ROM gelöscht oder umbenannt. Was du löschst, kommt in den Papierkorb.', 'There is no game in MonHub anymore for these saves – usually the ROM was deleted or renamed. Whatever you delete goes to the Recycle Bin.'}"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- select all + totals -->
+        <DockPanel DockPanel.Dock="Top" Margin="22,18,6,10">
+            <TextBlock x:Name="TxtCount" DockPanel.Dock="Right" Classes="muted" VerticalAlignment="Center"/>
+            <CheckBox x:Name="ChkAll" Content="{local:L 'Alle auswählen', 'Select all'}" IsCheckedChanged="All_Toggled" Foreground="{DynamicResource Hub.Ink}"/>
+        </DockPanel>
+
+        <!-- bottom buttons -->
+        <DockPanel DockPanel.Dock="Bottom" Margin="0,14,0,0" LastChildFill="False">
+            <Button x:Name="BtnDelete" DockPanel.Dock="Right" Theme="{DynamicResource Hub.DangerKey}" MinWidth="150" Click="Delete_Click" IsEnabled="False">
+                <TextBlock x:Name="TxtDelete" Text="{local:L 'Löschen', 'Delete'}"/>
+            </Button>
+            <Button DockPanel.Dock="Right" Theme="{DynamicResource Hub.Ghost}" IsCancel="True" Margin="0,0,12,0" VerticalAlignment="Center" Content="{local:L 'Schließen', 'Close'}"></Button>
+        </DockPanel>
+
+        <!-- the saves -->
+        <Grid>
+            <ListBox x:Name="SaveList" Background="Transparent" BorderThickness="0" Padding="0" SelectionMode="Multiple"
+                     ItemTemplate="{StaticResource OrphanTemplate}" ItemContainerTheme="{DynamicResource Hub.Card}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     SelectionChanged="SaveList_SelectionChanged"/>
+            <StackPanel x:Name="EmptyPanel" IsVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <local:SpriteView Key="0025/idle" Height="84" HorizontalAlignment="Center"/>
+                <TextBlock Text="{local:L 'Alles aufgeräumt!', 'All tidy!'}" Classes="heading" FontSize="20" HorizontalAlignment="Center" Margin="0,14,0,0"/>
+                <TextBlock Text="{local:L 'Es gibt keine Spielstände ohne Spiel.', 'There are no saves without a game.'}" Classes="muted" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</local:HubWindow>

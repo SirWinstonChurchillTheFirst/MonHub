@@ -85,7 +85,7 @@ public static class Azahar3ds
     }
 
     /// <summary>The MonHub folder lies so deep that even a short card name leaves no room for the games' data.</summary>
-    static bool TooDeep => HubPaths.AzaharSaves.Length + 1 + 10 + SdCardDepth > MaxPath;
+    static bool TooDeep => Os.Windows && HubPaths.AzaharSaves.Length + 1 + 10 + SdCardDepth > MaxPath; // Linux has no such limit
 
     /// <summary>Where the Pokémon games keep their save ("main") on that SD card.</summary>
     public static string SavePath(string gameName, ulong titleId) => Path.Combine(SdCardOf(gameName), "Nintendo 3DS", Zeros, Zeros,
@@ -234,6 +234,7 @@ public static class Azahar3ds
     /// </summary>
     static bool VulkanAvailable()
     {
+        if (!Os.Windows) return LinuxVulkan();
         try
         {
             if (!File.Exists(Path.Combine(Environment.SystemDirectory, "vulkan-1.dll"))) return false;
@@ -257,6 +258,34 @@ public static class Azahar3ds
         catch
         {
             // no registry access: stay with OpenGL, which every PC can run
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Linux: Vulkan when the PC has a real graphics card (by the kernel driver that runs it) and a Vulkan driver is
+    /// installed. Without one – a virtual machine, a very old chip – Vulkan would be drawn by the processor ("lavapipe"),
+    /// far too slow; OpenGL is the choice then.
+    /// </summary>
+    static bool LinuxVulkan()
+    {
+        string[] real = ["i915", "xe", "amdgpu", "radeon", "nvidia", "nouveau"];
+        try
+        {
+            bool installed = new[] { "/usr/share/vulkan/icd.d", "/etc/vulkan/icd.d", "/usr/local/share/vulkan/icd.d" }
+                .Any(dir => Directory.Exists(dir) && Directory.EnumerateFiles(dir, "*.json").Any());
+            if (!installed) return false;
+            if (Directory.Exists("/proc/driver/nvidia")) return true; // NVIDIA's own driver
+            if (!Directory.Exists("/sys/class/drm")) return false;
+            foreach (var card in Directory.EnumerateDirectories("/sys/class/drm", "card?"))
+            {
+                var driver = new DirectoryInfo(Path.Combine(card, "device", "driver")).LinkTarget;
+                if (driver != null && real.Contains(Path.GetFileName(driver))) return true;
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // can't look: OpenGL
         }
         return false;
     }

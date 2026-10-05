@@ -1,0 +1,144 @@
+<!--
+    Looks that go by class: text (title, heading, label, body, muted, value), small shapes (slot, badge, keycap, divider).
+    Their values come from the theme tokens in Base.axaml / Themes\<id>.axaml.
+-->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MonHub">
+
+    <!-- ================= Text ================= -->
+    <Style Selector="TextBlock.title">
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontDisplay}"/>
+        <Setter Property="FontSize" Value="{DynamicResource Hub.SizeTitle}"/>
+        <Setter Property="FontWeight" Value="{DynamicResource Hub.WeightTitle}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.InkStrong}"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+    </Style>
+    <Style Selector="TextBlock.heading">
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontDisplay}"/>
+        <Setter Property="FontSize" Value="{DynamicResource Hub.SizeHeading}"/>
+        <Setter Property="FontWeight" Value="{DynamicResource Hub.WeightTitle}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.InkStrong}"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+    </Style>
+    <Style Selector="TextBlock.label">
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontLabel}"/>
+        <Setter Property="FontSize" Value="{DynamicResource Hub.SizeLabel}"/>
+        <Setter Property="FontWeight" Value="{DynamicResource Hub.WeightLabel}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.InkMuted}"/>
+    </Style>
+    <Style Selector="TextBlock.body">
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontBody}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.Ink}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    <Style Selector="TextBlock.muted">
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontBody}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.InkMuted}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    <Style Selector="TextBlock.value">
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontValue}"/>
+        <Setter Property="FontSize" Value="{DynamicResource Hub.SizeValue}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.InkStrong}"/>
+    </Style>
+
+    <!-- ================= Small shapes ================= -->
+    <Style Selector="Border.divider">
+        <Setter Property="Height" Value="1"/>
+        <Setter Property="Background" Value="{DynamicResource Hub.Line}"/>
+    </Style>
+
+    <!-- A party slot -->
+    <Style Selector="Border.slot">
+        <Setter Property="Background" Value="{DynamicResource Hub.SlotFill}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Hub.SlotLine}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="{DynamicResource Hub.RadiusSlot}"/>
+    </Style>
+    <!-- a party member: rests on its first frame and moves while pointed at -->
+    <Style Selector="Border.teamslot local|SpriteView">
+        <Setter Property="Still" Value="True"/>
+    </Style>
+    <Style Selector="Border.teamslot:pointerover">
+        <Setter Property="BorderBrush" Value="{DynamicResource Hub.Selection}"/>
+    </Style>
+    <Style Selector="Border.teamslot:pointerover local|SpriteView">
+        <Setter Property="Still" Value="False"/>
+    </Style>
+
+    <!-- the box Pokémon of a list row: rests on its first frame, moves while the row is pointed at or selected -->
+    <Style Selector="ListBoxItem local|SpriteView.hoverplay">
+        <Setter Property="Still" Value="True"/>
+    </Style>
+    <Style Selector="ListBoxItem:pointerover local|SpriteView.hoverplay">
+        <Setter Property="Still" Value="False"/>
+    </Style>
+    <Style Selector="ListBoxItem:selected local|SpriteView.hoverplay">
+        <Setter Property="Still" Value="False"/>
+    </Style>
+
+    <!-- Badge case: one dot per badge, filled when earned -->
+    <Style Selector="Ellipse.badge">
+        <Setter Property="Fill" Value="{DynamicResource Hub.BadgeOff}"/>
+    </Style>
+    <Style Selector="Ellipse.badge.on">
+        <Setter Property="Fill" Value="{DynamicResource Hub.BadgeOn}"/>
+    </Style>
+
+    <!-- A keyboard key for the controls map -->
+    <Style Selector="Border.keycap">
+        <Setter Property="Background" Value="{DynamicResource Hub.KeyFace}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Hub.KeyEdge}"/>
+        <Setter Property="BorderThickness" Value="1,1,1,3"/>
+        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="Padding" Value="8,3"/>
+        <Setter Property="MinWidth" Value="30"/>
+    </Style>
+
+    <!-- ================= Standard controls: the stock look, in the theme's shapes ================= -->
+    <Style Selector="ComboBox">
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontBody}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="MinHeight" Value="30"/>
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="CornerRadius" Value="{DynamicResource Hub.RadiusControl}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="MaxDropDownHeight" Value="320"/>
+    </Style>
+    <Style Selector="ComboBoxItem">
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="AutoCompleteBox">
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontBody}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="MinHeight" Value="30"/>
+        <Setter Property="MaxDropDownHeight" Value="320"/>
+    </Style>
+    <Style Selector="ProgressBar">
+        <Setter Property="MinHeight" Value="6"/>
+        <Setter Property="Height" Value="6"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.Accent}"/>
+        <Setter Property="Background" Value="{DynamicResource Hub.SlotFill}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Hub.Line}"/>
+        <Setter Property="CornerRadius" Value="3"/>
+    </Style>
+    <Style Selector="ToolTip">
+        <Setter Property="FontFamily" Value="{DynamicResource Hub.FontBody}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="CornerRadius" Value="{DynamicResource Hub.RadiusInner}"/>
+        <Setter Property="Padding" Value="8,5"/>
+        <Setter Property="MaxWidth" Value="420"/>
+    </Style>
+    <!-- lists that do not say otherwise: no frame, the theme's ink -->
+    <Style Selector="ListBox">
+        <Setter Property="Theme" Value="{DynamicResource Hub.List}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Hub.Ink}"/>
+    </Style>
+    <Style Selector="ScrollViewer">
+        <Setter Property="AllowAutoHide" Value="False"/>
+    </Style>
+</Styles>

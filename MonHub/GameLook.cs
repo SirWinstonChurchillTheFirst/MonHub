@@ -1,7 +1,3 @@
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace MonHub;
 
@@ -86,41 +82,46 @@ public record GameLook(string Version, string Sprite, Color Accent)
 /// </summary>
 public class SpriteView : Image
 {
-    public static readonly DependencyProperty KeyProperty = DependencyProperty.Register(
-        nameof(Key), typeof(string), typeof(SpriteView),
-        new PropertyMetadata(null, (d, e) => RandoApp.SpriteAnimator.For((SpriteView)d).Key = (string?)e.NewValue));
+    public static readonly StyledProperty<string?> KeyProperty = AvaloniaProperty.Register<SpriteView, string?>(nameof(Key));
 
     /// <summary>True: stays on its first frame (e.g. until the card is hovered).</summary>
-    public static readonly DependencyProperty StillProperty = DependencyProperty.Register(
-        nameof(Still), typeof(bool), typeof(SpriteView), new PropertyMetadata(false, (d, _) => ((SpriteView)d).UpdateHold()));
+    public static readonly StyledProperty<bool> StillProperty = AvaloniaProperty.Register<SpriteView, bool>(nameof(Still));
+
+    /// <summary>True: a detail (team member) – only moves when motion is at the full level, not at "calm".</summary>
+    public static readonly StyledProperty<bool> DecorativeProperty = AvaloniaProperty.Register<SpriteView, bool>(nameof(Decorative));
+
+    static SpriteView()
+    {
+        KeyProperty.Changed.AddClassHandler<SpriteView>((view, e) => RandoApp.SpriteAnimator.For(view).Key = e.NewValue as string);
+        StillProperty.Changed.AddClassHandler<SpriteView>((view, _) => view.UpdateHold());
+        DecorativeProperty.Changed.AddClassHandler<SpriteView>((view, _) => view.UpdateHold());
+    }
 
     public string? Key
     {
-        get => (string?)GetValue(KeyProperty);
+        get => GetValue(KeyProperty);
         set => SetValue(KeyProperty, value);
     }
 
     public bool Still
     {
-        get => (bool)GetValue(StillProperty);
+        get => GetValue(StillProperty);
         set => SetValue(StillProperty, value);
     }
 
-    /// <summary>True: a detail (team member) – only moves when motion is at the full level, not at "calm".</summary>
-    public static readonly DependencyProperty DecorativeProperty = DependencyProperty.Register(
-        nameof(Decorative), typeof(bool), typeof(SpriteView), new PropertyMetadata(false, (d, _) => ((SpriteView)d).UpdateHold()));
-
     public bool Decorative
     {
-        get => (bool)GetValue(DecorativeProperty);
+        get => GetValue(DecorativeProperty);
         set => SetValue(DecorativeProperty, value);
     }
+
+    protected override Type StyleKeyOverride => typeof(Image);
 
     public SpriteView()
     {
         RandoApp.SpriteAnimator.For(this);
-        Loaded += (_, _) => { HubMotion.Changed += UpdateHold; UpdateHold(); };
-        Unloaded += (_, _) => HubMotion.Changed -= UpdateHold;
+        AttachedToVisualTree += (_, _) => { HubMotion.Changed += UpdateHold; UpdateHold(); };
+        DetachedFromVisualTree += (_, _) => HubMotion.Changed -= UpdateHold;
     }
 
     void UpdateHold() => RandoApp.SpriteAnimator.For(this).Hold = Still || (Decorative && !HubMotion.Decorations);

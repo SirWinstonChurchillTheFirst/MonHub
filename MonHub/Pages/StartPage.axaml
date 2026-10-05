@@ -1,0 +1,212 @@
+<UserControl x:Class="MonHub.StartPage"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MonHub">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="30,8,30,28">
+
+            <!-- greeting -->
+            <TextBlock x:Name="TxtKicker" Text="{local:L 'WEITER', 'CONTINUE'}" Classes="label"/>
+            <TextBlock x:Name="TxtGreeting" Classes="title" Margin="0,4,0,2"/>
+            <TextBlock x:Name="TxtSubline" Classes="muted"/>
+
+            <!-- ===== first start: nothing to play yet ===== -->
+            <ContentControl x:Name="Onboarding" Theme="{DynamicResource Hub.Panel}" Margin="0,22,0,0" IsVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <local:SpriteView Key="0143/sleep" Height="96" VerticalAlignment="Top" Margin="0,4,24,0"/>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="{local:L 'Noch ist es ruhig hier.', 'It’s quiet here so far.'}" Classes="heading"/>
+                        <TextBlock Classes="muted" Margin="0,4,0,14"
+                                   Text="{local:L 'Leg deine eigenen ROMs in den MonHub – oder hol sie samt Spielständen von deinem bisherigen Emulator. Danach landet hier dein Abenteuer.', 'Put your own ROMs into MonHub – or bring them over together with your saves from the emulator you used so far. Then your adventure shows up here.'}"/>
+                        <WrapPanel>
+                            <Button Theme="{DynamicResource Hub.PrimaryKey}" Click="Import_Click" Margin="0,0,10,8" Content="{local:L 'Vom Emulator importieren', 'Import from emulator'}"></Button>
+                            <Button Theme="{DynamicResource Hub.Key}" Click="OpenRoms_Click" Margin="0,0,10,8" Content="{local:L 'ROM-Ordner öffnen', 'Open ROM folder'}"></Button>
+                             <Button Theme="{DynamicResource Hub.Key}" Click="NeuerRun_Click" Margin="0,0,10,8" Content="{local:L 'Neuer Run', 'New run'}"></Button>
+                        </WrapPanel>
+                    </StackPanel>
+                </Grid>
+            </ContentControl>
+
+            <!-- ===== continue + trainer card ===== -->
+            <Grid x:Name="Hero" Margin="0,22,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="292"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- the in-game "continue" screen, with the real save -->
+                <ContentControl x:Name="ContinuePanel" Theme="{DynamicResource Hub.Panel}">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="168"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- box Pokémon on the version colour -->
+                            <Border CornerRadius="{DynamicResource Hub.RadiusInner}" Background="{Binding Card.AccentGlow}" MinHeight="156">
+                                <Grid>
+                                    <local:SpriteView Key="{Binding Card.Sprite}" MaxHeight="124" MaxWidth="150" Stretch="Uniform"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,4,0,22"/>
+                                    <Border Background="{Binding Card.AccentSolid}" CornerRadius="3" Padding="7,2" Margin="8"
+                                            HorizontalAlignment="Left" VerticalAlignment="Bottom" IsVisible="{Binding Card.VersionVisibility}">
+                                        <TextBlock Text="{Binding Card.Version}" FontFamily="{DynamicResource Hub.FontLabel}" FontSize="{DynamicResource Hub.SizeTag}" Foreground="{Binding Card.AccentInk}"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            <ContentControl Grid.Column="2" Theme="{DynamicResource Hub.Inset}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Kicker}" Classes="label" Foreground="{DynamicResource Hub.Accent}"/>
+                                    <TextBlock Text="{Binding Card.Name}" Classes="heading" Margin="0,2,0,12" ToolTip.Tip="{Binding Card.Game.Rom}"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Text="{local:L 'SPIELER', 'PLAYER'}" Classes="label" VerticalAlignment="Center" Margin="0,0,24,6"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Player}" Classes="value" HorizontalAlignment="Right" Margin="0,0,0,6"/>
+                                        <TextBlock Grid.Row="1" Text="{local:L 'SPIELZEIT', 'PLAY TIME'}" Classes="label" VerticalAlignment="Center" Margin="0,0,24,6"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Time}" Classes="value" HorizontalAlignment="Right" Margin="0,0,0,6"/>
+                                        <TextBlock Grid.Row="2" Text="{local:L 'ORDEN', 'BADGES'}" Classes="label" VerticalAlignment="Center" Margin="0,0,24,6"/>
+                                        <ItemsControl Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Badges}" ItemTemplate="{DynamicResource Hub.BadgeTemplate}"
+                                                      HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,-4,6" Focusable="False">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                        <TextBlock Grid.Row="3" Text="DEX" Classes="label" VerticalAlignment="Center" Margin="0,0,24,0"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Dex}" Classes="value" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </StackPanel>
+                            </ContentControl>
+                        </Grid>
+
+                        <!-- the team -->
+                        <DockPanel Margin="0,16,0,0">
+                            <TextBlock DockPanel.Dock="Top" Text="TEAM" Classes="label" Margin="0,0,0,6"/>
+                            <TextBlock DockPanel.Dock="Top" Text="{Binding TeamHint}" Classes="muted" IsVisible="{Binding TeamHintVisibility}"/>
+                            <ItemsControl ItemsSource="{Binding Card.Team}" ItemTemplate="{DynamicResource Hub.TeamSlotTemplate}" Focusable="False">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </DockPanel>
+
+                        <!-- go -->
+                        <WrapPanel Margin="0,18,0,0">
+                            <Button x:Name="BtnContinue" Theme="{DynamicResource Hub.PrimaryKey}" Click="Continue_Click" Margin="0,0,14,0">
+                                <TextBlock Text="{Binding ButtonText}"/>
+                            </Button>
+                            <TextBlock Text="{Binding Note}" Classes="muted" VerticalAlignment="Center" TextWrapping="NoWrap" Margin="0,0,14,0"/>
+                            <Button Theme="{DynamicResource Hub.Ghost}" Click="OtherGame_Click" VerticalAlignment="Center" Content="{local:L 'Anderes Spiel …', 'Other game …'}"></Button>
+                        </WrapPanel>
+                    </StackPanel>
+                </ContentControl>
+
+                <!-- trainer card -->
+                <ContentControl x:Name="TrainerPanel" Grid.Column="2" Theme="{DynamicResource Hub.Panel}" VerticalAlignment="Top" Margin="0,14,0,0"
+                                RenderTransformOrigin="50%,50%">
+                    <StackPanel>
+                        <DockPanel>
+                            <local:SpriteView Key="icon/card" DockPanel.Dock="Right" Width="32" Height="32" VerticalAlignment="Top"/>
+                            <TextBlock Text="{local:L 'TRAINERPASS', 'TRAINER CARD'}" Classes="label"/>
+                        </DockPanel>
+                        <TextBlock Text="{Binding Name}" Classes="title" FontSize="22" Margin="0,2,0,0"/>
+                        <TextBlock Text="{Binding IdLine}" Classes="muted" Margin="0,0,0,12"/>
+                        <Border Classes="divider" Margin="0,0,0,10"/>
+                        <ItemsControl ItemsSource="{Binding Rows}" Focusable="False">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel Margin="0,0,0,7">
+                                        <TextBlock DockPanel.Dock="Right" Text="{Binding Value}" Classes="value" FontSize="14"/>
+                                        <TextBlock Text="{Binding Label}" Classes="label" VerticalAlignment="Center"/>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="{Binding Footnote}" Classes="muted" FontSize="11.5" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </ContentControl>
+            </Grid>
+
+            <!-- ===== recent saves ===== -->
+            <StackPanel x:Name="RecentSection" Margin="0,26,0,0">
+                <TextBlock Text="{local:L 'ZULETZT GESPIELT', 'RECENTLY PLAYED'}" Classes="label" Margin="0,0,0,6"/>
+                <ListBox x:Name="RecentList" Background="Transparent" BorderThickness="0" Padding="0"
+                         ItemContainerTheme="{DynamicResource Hub.Row}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="Recent_SelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="local:GameCard">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="52"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="44" Height="40" CornerRadius="{DynamicResource Hub.RadiusSlot}" Background="{Binding AccentSoft}">
+                                    <local:SpriteView Key="{Binding Sprite}" Still="True" MaxWidth="40" MaxHeight="36" Stretch="Uniform" StretchDirection="DownOnly"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,12,0">
+                                    <TextBlock Text="{Binding Name}" Classes="body" FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="{Binding TrainerLine}" Classes="muted" FontSize="12" TextWrapping="NoWrap"/>
+                                </StackPanel>
+                                <ItemsControl Grid.Column="2" ItemsSource="{Binding Team}" ItemTemplate="{DynamicResource Hub.TeamMiniTemplate}"
+                                              VerticalAlignment="Center" Margin="0,0,16,0" Focusable="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <StackPanel Grid.Column="3" VerticalAlignment="Center" MinWidth="96">
+                                    <TextBlock Text="{Binding SaveTime}" Classes="body" HorizontalAlignment="Right" TextWrapping="NoWrap"/>
+                                    <TextBlock Text="{Binding SaveEmulator}" Classes="muted" FontSize="11.5" HorizontalAlignment="Right"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+
+            <!-- ===== new adventure ===== -->
+            <ContentControl Theme="{DynamicResource Hub.Inset}" Margin="0,26,0,0" Padding="18,14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ItemsControl x:Name="StarterRow" VerticalAlignment="Bottom" Margin="0,0,18,0" Focusable="False">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <local:SpriteView Key="{Binding}" Decorative="True" MaxHeight="46" Stretch="Uniform" StretchDirection="DownOnly"
+                                                  VerticalAlignment="Bottom" Margin="0,0,4,0"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{local:L 'Neues Abenteuer', 'New adventure'}" Classes="heading"/>
+                        <TextBlock x:Name="TxtStarterLine" Classes="muted"/>
+                    </StackPanel>
+                    <Button Grid.Column="2" Theme="{DynamicResource Hub.Key}" Click="NeuerRun_Click" VerticalAlignment="Center" Content="{local:L 'Neuer Run', 'New run'}"></Button>
+                </Grid>
+            </ContentControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

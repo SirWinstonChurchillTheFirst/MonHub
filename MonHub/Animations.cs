@@ -1,9 +1,6 @@
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
+using Avalonia.Animation;
+using Avalonia.Animation.Easings;
+using Avalonia.Styling;
 
 namespace MonHub;
 
@@ -15,90 +12,142 @@ public static class HubAnim
 {
     static bool On => HubMotion.Level != MotionLevel.Off;
 
+    /// <summary>
+    /// Plays an animation again and again until it is cancelled. (Avalonia only lets styles loop an animation forever;
+    /// one started from code has to end – so it is one round at a time: forth, or forth and back.)
+    /// </summary>
+    public static async void Loop(Animation animation, Control element, CancellationToken stop)
+    {
+        if (animation.IterationCount.IsInfinite)
+            animation.IterationCount = new IterationCount(animation.PlaybackDirection is PlaybackDirection.Alternate or PlaybackDirection.AlternateReverse ? 2UL : 1UL);
+        try
+        {
+            while (!stop.IsCancellationRequested)
+                await animation.RunAsync(element, stop);
+        }
+        catch (OperationCanceledException)
+        {
+            // stopped: the element is back on its own values
+        }
+    }
+
     // ---------------- buttons ----------------
 
-    static readonly DependencyProperty PressScaleProperty =
-        DependencyProperty.RegisterAttached("PressScale", typeof(ScaleTransform), typeof(HubAnim));
+    /// <summary>The scale a button was given for its press – only that one is animated (never someone else's transform).</summary>
+    static readonly AttachedProperty<ScaleTransform?> PressScaleProperty =
+        AvaloniaProperty.RegisterAttached<Button, ScaleTransform?>("PressScale", typeof(HubAnim));
 
     /// <summary>Every button in MonHub (and its dialogs) squeezes a little while pressed – one handler for all.</summary>
     public static void RegisterButtonPress()
     {
-        EventManager.RegisterClassHandler(typeof(ButtonBase), UIElement.PreviewMouseLeftButtonDownEvent, new MouseButtonEventHandler((s, _) => Press(s, true)), true);
-        EventManager.RegisterClassHandler(typeof(ButtonBase), UIElement.PreviewMouseLeftButtonUpEvent, new MouseButtonEventHandler((s, _) => Press(s, false)), true);
-        EventManager.RegisterClassHandler(typeof(ButtonBase), UIElement.MouseLeaveEvent, new MouseEventHandler((s, _) => Press(s, false)), true);
-        EventManager.RegisterClassHandler(typeof(ButtonBase), UIElement.LostMouseCaptureEvent, new MouseEventHandler((s, _) => Press(s, false)), true);
+        InputElement.PointerPressedEvent.AddClassHandler<Button>((b, e) =>
+        {
+            if (e.GetCurrentPoint(b).Properties.IsLeftButtonPressed) Press(b, true);
+        }, RoutingStrategies.Tunnel, handledEventsToo: true);
+        InputElement.PointerReleasedEvent.AddClassHandler<Button>((b, _) => Press(b, false), RoutingStrategies.Tunnel, handledEventsToo: true);
+        InputElement.PointerExitedEvent.AddClassHandler<Button>((b, _) => Press(b, false), RoutingStrategies.Direct, handledEventsToo: true);
+        InputElement.PointerCaptureLostEvent.AddClassHandler<Button>((b, _) => Press(b, false), RoutingStrategies.Direct, handledEventsToo: true);
     }
 
-    static void Press(object sender, bool down)
+    static void Press(Button button, bool down)
     {
         // real buttons and chips only: no check boxes, scroll bar arrows or the arrow inside a drop-down
-        if (sender is not ButtonBase button || button is CheckBox or RepeatButton || button.TemplatedParent is ComboBox) return;
-        var scale = button.GetValue(PressScaleProperty) as ScaleTransform;
+        if (button is CheckBox or RepeatButton || button.TemplatedParent is ComboBox or ScrollBar or Expander) return;
+        var scale = button.GetValue(PressScaleProperty);
         if (scale == null)
         {
             if (!down || !On || !button.IsEnabled) return;
-            if (button.RenderTransform != Transform.Identity && button.RenderTransform != null) return; // someone else's transform
-            scale = new ScaleTransform(1, 1);
+            if (button.RenderTransform != null) return; // someone else's transform
+            scale = new ScaleTransform(1, 1)
+            {
+                Transitions =
+                [
+                    new DoubleTransition { Property = ScaleTransform.ScaleXProperty, Duration = TimeSpan.FromMilliseconds(70) },
+                    new DoubleTransition { Property = ScaleTransform.ScaleYProperty, Duration = TimeSpan.FromMilliseconds(70) },
+                ],
+            };
             button.SetValue(PressScaleProperty, scale);
-            button.RenderTransformOrigin = new Point(0.5, 0.5);
+            button.RenderTransformOrigin = RelativePoint.Center;
             button.RenderTransform = scale;
         }
         if (!ReferenceEquals(button.RenderTransform, scale)) return;
-        double target = down && On ? (button.ActualWidth > 260 ? 0.98 : 0.94) : 1; // wide buttons move less
-        var anim = new DoubleAnimation(target, TimeSpan.FromMilliseconds(down ? 70 : 220))
+        double target = down && On ? (button.Bounds.Width > 260 ? 0.98 : 0.94) : 1; // wide buttons move less
+        foreach (var transition in scale.Transitions!.OfType<DoubleTransition>())
         {
-            EasingFunction = down ? new QuadraticEase { EasingMode = EasingMode.EaseOut } : new BackEase { Amplitude = 0.6, EasingMode = EasingMode.EaseOut },
-        };
-        scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
-        scale.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
+            transition.Duration = TimeSpan.FromMilliseconds(down ? 70 : 220);
+            transition.Easing = down ? new QuadraticEaseOut() : new BackEaseOut();
+        }
+        scale.ScaleX = scale.ScaleY = target;
     }
 
     // ---------------- the die ----------------
 
+    static readonly AttachedProperty<CancellationTokenSource?> WobbleProperty =
+        AvaloniaProperty.RegisterAttached<Control, CancellationTokenSource?>("Wobble", typeof(HubAnim));
+
     /// <summary>The die rocks while work is going on.</summary>
-    public static void Wobble(RotateTransform rotate, bool on)
+    public static void Wobble(Control element, bool on)
     {
-        if (!on || !On)
+        element.GetValue(WobbleProperty)?.Cancel();
+        element.SetValue(WobbleProperty, null);
+        if (!on || !On) return;
+        var wobble = new Animation
         {
-            rotate.BeginAnimation(RotateTransform.AngleProperty, null);
-            rotate.Angle = 0;
-            return;
-        }
-        var wobble = new DoubleAnimation(-16, 16, TimeSpan.FromMilliseconds(320))
-        {
-            AutoReverse = true,
-            RepeatBehavior = RepeatBehavior.Forever,
-            EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut },
+            Duration = TimeSpan.FromMilliseconds(320),
+            IterationCount = new IterationCount(2),
+            PlaybackDirection = PlaybackDirection.Alternate,
+            Easing = new SineEaseInOut(),
+            Children =
+            {
+                new KeyFrame { Cue = new Cue(0), Setters = { new Setter(RotateTransform.AngleProperty, -16d) } },
+                new KeyFrame { Cue = new Cue(1), Setters = { new Setter(RotateTransform.AngleProperty, 16d) } },
+            },
         };
-        Timeline.SetDesiredFrameRate(wobble, 30);
-        rotate.BeginAnimation(RotateTransform.AngleProperty, wobble);
+        var stop = new CancellationTokenSource();
+        element.SetValue(WobbleProperty, stop);
+        Loop(wobble, element, stop.Token);
     }
 
     /// <summary>Done: the ball clicks shut – a quick squash and bounce.</summary>
-    public static void Click(ScaleTransform scale)
+    public static void Click(Control element)
     {
         if (!On) return;
-        var anim = new DoubleAnimationUsingKeyFrames { Duration = TimeSpan.FromMilliseconds(520) };
-        anim.KeyFrames.Add(new EasingDoubleKeyFrame(0.75, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(110))));
-        anim.KeyFrames.Add(new EasingDoubleKeyFrame(1.18, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(260))));
-        anim.KeyFrames.Add(new EasingDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(520)),
-            new ElasticEase { Oscillations = 1, Springiness = 4, EasingMode = EasingMode.EaseOut }));
-        scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
-        scale.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
+        var click = new Animation
+        {
+            Duration = TimeSpan.FromMilliseconds(520),
+            Children =
+            {
+                Scale(0, 1),
+                Scale(0.21, 0.75),
+                Scale(0.5, 1.18),
+                Scale(1, 1),
+            },
+        };
+        _ = click.RunAsync(element);
+
+        static KeyFrame Scale(double cue, double value) => new()
+        {
+            Cue = new Cue(cue),
+            Setters = { new Setter(ScaleTransform.ScaleXProperty, value), new Setter(ScaleTransform.ScaleYProperty, value) },
+        };
     }
 
     // ---------------- text and panels ----------------
 
     /// <summary>Fades an element in while it slides up a few pixels (results, messages).</summary>
-    public static void SlideIn(FrameworkElement element, double distance = 10)
+    public static void SlideIn(Control element, double distance = 10)
     {
         if (!On) return;
-        var move = new TranslateTransform(0, distance);
-        if (element.RenderTransform == Transform.Identity || element.RenderTransform is TranslateTransform)
-            element.RenderTransform = move;
-        var duration = TimeSpan.FromMilliseconds(260);
-        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
-        move.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(distance, 0, duration) { EasingFunction = ease });
-        element.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0, 1, duration) { EasingFunction = ease });
+        var slide = new Animation
+        {
+            Duration = TimeSpan.FromMilliseconds(260),
+            Easing = new CubicEaseOut(),
+            Children =
+            {
+                new KeyFrame { Cue = new Cue(0), Setters = { new Setter(Visual.OpacityProperty, 0d), new Setter(TranslateTransform.YProperty, distance) } },
+                new KeyFrame { Cue = new Cue(1), Setters = { new Setter(Visual.OpacityProperty, 1d), new Setter(TranslateTransform.YProperty, 0d) } },
+            },
+        };
+        _ = slide.RunAsync(element);
     }
 }

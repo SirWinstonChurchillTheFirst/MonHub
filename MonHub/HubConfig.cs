@@ -96,7 +96,7 @@ public class HubConfig
         SafeFile.WriteAllText(HubPaths.HubConfig, JsonSerializer.Serialize(this, Options));
     }
 
-    public MotionLevel EffectiveMotion => Motion ?? (System.Windows.SystemParameters.ClientAreaAnimation ? MotionLevel.All : MotionLevel.Off);
+    public MotionLevel EffectiveMotion => Motion ?? (Compat.SystemAnimations ? MotionLevel.All : MotionLevel.Off);
 
     public bool IsFavorite(string rom) => Favorites.Contains(System.IO.Path.GetFileName(rom), StringComparer.OrdinalIgnoreCase);
 

@@ -2,31 +2,41 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
+    <!-- one code base for Windows and Linux: the UI is Avalonia -->
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>MonHub</AssemblyName>
     <!-- names Windows shows (Task Manager, "Open with" …) -->
     <AssemblyTitle>MonHub</AssemblyTitle>
     <Product>MonHub</Product>
-    <Version>2.8.1</Version>
+    <Version>2.9.0</Version>
     <RootNamespace>MonHub</RootNamespace>
-    <NoWarn>$(NoWarn);WPF0001</NoWarn>
     <SelfContained>false</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <DebugType>none</DebugType>
     <ApplicationIcon>monhub.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+    <!-- Windows-only calls are guarded by OperatingSystem.IsWindows() at their call sites -->
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- animated trainer-card / rail sprites (PMD Sprite Collab, built by tools/build_sprites.py) -->
-    <Resource Include="Assets\Sprites\*.png" />
-    <!-- tools: generators and labs, not part of the app -->
-    <Compile Remove="tools\**" />
+    <PackageReference Include="Avalonia" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.22" />
+    <!-- program icons of fangames (Windows only) -->
+    <PackageReference Include="System.Drawing.Common" Version="10.0.0" />
   </ItemGroup>
 
-
+  <ItemGroup>
+    <!-- tools: generators and labs, not part of the app -->
+    <Compile Remove="tools\**" />
+    <None Remove="tools\**" />
+    <!-- TEMPORARY: pages not ported yet -->
+    <Compile Remove="**\*.xaml.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <!-- SafeFile, sprites and the randomizer classes (Rando\, Shared\) keep their RandoApp namespace -->
@@ -35,14 +45,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- every Pokémon up to Gen 7 and the menu icons (PMD Sprite Collab, CC BY-NC 4.0), pixel fonts (SIL OFL); all built by tools/*.py -->
-    <Resource Include="Assets\Species\*.png" />
-    <Resource Include="Assets\Icons\*.png" />
-    <Resource Include="Assets\Fonts\*.ttf" />
-    <Resource Include="Assets\Nuzlocke\routes.json" />
-    <!-- the tour guide's faces (PMD Sprite Collab, tools/build_assets.py) -->
-    <Resource Include="Assets\Portraits\*.png" />
-    <None Remove="tools\**" />
+    <!-- every Pokémon up to Gen 7, the menu icons and the animated sprites (PMD Sprite Collab, CC BY-NC 4.0), pixel fonts
+         (SIL OFL), the tour guide's faces, the Nuzlocke route lists; all built by tools/*.py -->
+    <AvaloniaResource Include="Assets\Species\*.png" />
+    <AvaloniaResource Include="Assets\Icons\*.png" />
+    <AvaloniaResource Include="Assets\Sprites\*.png" />
+    <AvaloniaResource Include="Assets\Portraits\*.png" />
+    <AvaloniaResource Include="Assets\Fonts\*.ttf" />
+    <AvaloniaResource Include="Assets\Nuzlocke\routes.json" />
   </ItemGroup>
 
   <!-- "Neuer Run" (Rando\*): the randomizer helper (java\RandoHelper.java, built by installer\build.ps1) -->

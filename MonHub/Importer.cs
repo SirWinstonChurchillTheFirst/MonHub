@@ -2,6 +2,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using Microsoft.Win32;
 
 namespace MonHub;
@@ -72,6 +73,9 @@ public static class Importer
     /// </summary>
     public static List<ImportSource> FindEmulators(CancellationToken cancel = default)
     {
+        // Linux: emulators come from the package manager and keep nothing next to their program – the player
+        // picks the folder with the ROMs and saves ("Ordner hinzufügen")
+        if (!Os.Windows) return [];
         var exes = new List<string>(ExesWindowsRemembers());
 
         var profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);

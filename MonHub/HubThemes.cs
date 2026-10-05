@@ -1,4 +1,3 @@
-using System.Windows;
 using RandoApp;
 
 namespace MonHub;
@@ -47,18 +46,39 @@ public static class HubThemes
     public static void Apply(string? id)
     {
         var theme = All.FirstOrDefault(t => t.Id == id) ?? All[0];
-        var app = Application.Current;
-#pragma warning disable WPF0001 // Fluent ThemeMode: light or dark standard controls to match the theme
-        app.ThemeMode = theme.Light ? ThemeMode.Light : ThemeMode.Dark;
-#pragma warning restore WPF0001
-        var dict = new ResourceDictionary { Source = new Uri($"pack://application:,,,/Themes/{theme.Id}.xaml", UriKind.Absolute) };
+        var app = Application.Current!;
+        // light or dark standard controls (scroll bars, drop-downs, tooltips) to match the theme
+        app.RequestedThemeVariant = theme.Light ? Avalonia.Styling.ThemeVariant.Light : Avalonia.Styling.ThemeVariant.Dark;
+        var dict = (ResourceDictionary)Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(new Uri($"avares://MonHub/Themes/{theme.Id}.axaml"));
         var merged = app.Resources.MergedDictionaries;
         if (_slot != null && merged.IndexOf(_slot) is >= 0 and var at) merged[at] = dict;
         else merged.Add(dict);
         _slot = dict;
+        StandardControls(app);
         Sprites.SetTint(theme.Tint);
         Current = theme;
         Changed?.Invoke();
+    }
+
+    /// <summary>
+    /// The stock controls MonHub does not draw itself (drop-downs, scroll bars, tooltips, progress bars) take their
+    /// colours from these names – filled from the theme's tokens, so they never look like a foreign program.
+    /// </summary>
+    static void StandardControls(Application app)
+    {
+        (string Stock, string Token)[] map =
+        [
+            ("ThemeBackgroundBrush", "Hub.Surface"), ("ThemeForegroundBrush", "Hub.Ink"), ("ThemeForegroundLowBrush", "Hub.InkMuted"),
+            ("ThemeBorderLowBrush", "Hub.Line"), ("ThemeBorderMidBrush", "Hub.LineStrong"), ("ThemeBorderHighBrush", "Hub.Selection"),
+            ("ThemeControlLowBrush", "Hub.SurfaceAlt"), ("ThemeControlMidBrush", "Hub.Surface"), ("ThemeControlMidHighBrush", "Hub.LineStrong"),
+            ("ThemeControlHighBrush", "Hub.LineStrong"), ("ThemeControlVeryHighBrush", "Hub.InkMuted"),
+            ("ThemeControlHighlightLowBrush", "Hub.SurfaceHover"), ("ThemeControlHighlightMidBrush", "Hub.SurfaceHover"), ("ThemeControlHighlightHighBrush", "Hub.InkMuted"),
+            ("ThemeAccentBrush", "Hub.Accent"), ("ThemeAccentBrush2", "Hub.Accent"), ("ThemeAccentBrush3", "Hub.ChipOn"), ("ThemeAccentBrush4", "Hub.ChipOn"),
+            ("HighlightBrush", "Hub.ChipOn"), ("HighlightBrush2", "Hub.ChipOn"), ("HighlightForegroundBrush", "Hub.ChipOnInk"),
+            ("ErrorBrush", "Hub.Danger"),
+        ];
+        foreach (var (stock, token) in map)
+            if (app.TryFindResource(token, out var value) && value != null) app.Resources[stock] = value;
     }
 }
 

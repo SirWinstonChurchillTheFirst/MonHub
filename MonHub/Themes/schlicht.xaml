@@ -1,8 +1,0 @@
-<!--
-    Schlicht: the calm defaults from Base.xaml – light, modern, no decoration, nothing that moves on its own.
-    For friends who just want a clean list of their games.
--->
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <SolidColorBrush x:Key="Hub.Bg" Color="#F4F4F2"/>
-</ResourceDictionary>

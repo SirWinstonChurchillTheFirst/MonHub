@@ -1,7 +1,6 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Input;
 
 namespace MonHub;
 
@@ -134,9 +133,22 @@ public class ControlSettings
     [DllImport("xinput1_4.dll")]
     static extern uint XInputGetState(uint index, out XInputState state);
 
+    /// <summary>
+    /// The emulators that read the controller through SDL's joystick layer (melonDS, mGBA) see an Xbox pad differently on
+    /// Linux: there the left trigger is axis 2 and the right stick 3/4 (Windows: stick 2/3, triggers 4/5), and the Guide
+    /// button sits between Menu and the stick buttons (L3 = 9, R3 = 10 instead of 8, 9). Azahar asks by name and is the same.
+    /// </summary>
+    static int JoyAxis(int axis) => Os.Windows ? axis : axis switch { 2 => 3, 3 => 4, 4 => 2, _ => axis };
+
+    static int JoyButton(int button) => Os.Windows || button < 8 ? button : button + 1;
+
+    /// <summary>A hub button ("b8") as the number the SDL joystick emulators use, "-1" if it is none.</summary>
+    static string JoyButton(string pad) => pad.StartsWith('b') && int.TryParse(pad.AsSpan(1), out int b) ? JoyButton(b).ToString() : "-1";
+
     /// <summary>Number of the first connected Xbox-style controller, or null.</summary>
     public static int? ConnectedPad()
     {
+        if (!Os.Windows) return LinuxPad.Any() ? 0 : null;
         try
         {
             for (uint i = 0; i < 4; i++)
@@ -151,6 +163,7 @@ public class ControlSettings
     /// <summary>The input held right now on any controller ("b0", "lt", "du", "lsl" …), or null.</summary>
     public static string? PressedPad()
     {
+        if (!Os.Windows) return LinuxPad.Pressed();
         try
         {
             for (uint i = 0; i < 4; i++)
@@ -216,7 +229,7 @@ public class ControlSettings
         int? button = null, axis = null;
         foreach (var pad in pads)
         {
-            if (StickOf(pad) is { } stick) axis ??= 0x10000 | (stick.Axis << 24) | ((stick.Positive ? 0 : 1) << 20);
+            if (StickOf(pad) is { } stick) axis ??= 0x10000 | (JoyAxis(stick.Axis) << 24) | ((stick.Positive ? 0 : 1) << 20);
             else if (HatOf(pad) is { } hat) button ??= 0x100 | hat;
             else if (MelonPad(pad) is >= 0 and < 0xFFFF and var b) button ??= b;
         }
@@ -227,9 +240,9 @@ public class ControlSettings
     /// <summary>melonDS joystick value: a button's number, triggers as axis 4/5 (the codes melonDS writes itself).</summary>
     static int MelonPad(string pad) => pad switch
     {
-        "lt" => 0x0421FFFF,
-        "rt" => 0x0521FFFF,
-        _ when pad.StartsWith('b') && int.TryParse(pad.AsSpan(1), out int button) => button,
+        "lt" => (JoyAxis(4) << 24) | 0x0021FFFF,
+        "rt" => (JoyAxis(5) << 24) | 0x0021FFFF,
+        _ when pad.StartsWith('b') && int.TryParse(pad.AsSpan(1), out int button) => JoyButton(button),
         _ => -1,
     };
 
@@ -244,12 +257,12 @@ public class ControlSettings
             if (pad is "lt" or "rt")
             {
                 HubSetup.SetIni(lines, "gba.input.SDLB", key, "-1");
-                HubSetup.SetIni(lines, "gba.input.SDLB", axisKey + "Axis", pad == "lt" ? "+4" : "+5");
+                HubSetup.SetIni(lines, "gba.input.SDLB", axisKey + "Axis", "+" + JoyAxis(pad == "lt" ? 4 : 5));
                 HubSetup.SetIni(lines, "gba.input.SDLB", axisKey + "Value", "-20480");
             }
             else
             {
-                HubSetup.SetIni(lines, "gba.input.SDLB", key, (pad.StartsWith('b') ? pad[1..] : "-1"));
+                HubSetup.SetIni(lines, "gba.input.SDLB", key, JoyButton(pad));
                 HubSetup.RemoveIni(lines, "gba.input.SDLB", axisKey + "Axis");
                 HubSetup.RemoveIni(lines, "gba.input.SDLB", axisKey + "Value");
             }
@@ -276,11 +289,11 @@ public class ControlSettings
                     // one stick per direction, as in melonDS: "Move" comes first and wins
                     if (hasStick) continue;
                     hasStick = true;
-                    HubSetup.SetIni(lines, "gba.input.SDLB", $"axis{dir}Axis", (stick.Positive ? "+" : "-") + stick.Axis);
+                    HubSetup.SetIni(lines, "gba.input.SDLB", $"axis{dir}Axis", (stick.Positive ? "+" : "-") + JoyAxis(stick.Axis));
                     HubSetup.SetIni(lines, "gba.input.SDLB", $"axis{dir}Value", stick.Positive ? "12288" : "-12288");
                 }
                 else if (HatOf(pad) is { } hat) HubSetup.SetIni(lines, "gba.input.SDLB", "hat0" + hatName[hat], gbaKey[dir]);
-                else if (pad.StartsWith('b')) HubSetup.SetIni(lines, "gba.input.SDLB", "key" + dir, pad[1..]);
+                else if (pad.StartsWith('b')) HubSetup.SetIni(lines, "gba.input.SDLB", "key" + dir, JoyButton(pad));
             }
         }
         var invariant = System.Globalization.CultureInfo.InvariantCulture;
@@ -379,6 +392,7 @@ public class ControlSettings
     public static bool AnyPadConnected()
     {
         if (ConnectedPad() != null) return true;
+        if (!Os.Windows) return false;
         try
         {
             for (int id = 0; id < 16; id++)
@@ -400,8 +414,8 @@ public class ControlSettings
         {
             HubSetup.SetIni(lines, "shortcutKey", name, KeyName(Keys.GetValueOrDefault(action, -1)));
             var pad = Pad.GetValueOrDefault(action, "");
-            HubSetup.SetIni(lines, "shortcutButton", name, pad.StartsWith('b') ? pad[1..] : "-1");
-            if (pad is "lt" or "rt") HubSetup.SetIni(lines, "shortcutAxis", name, pad == "lt" ? "+4" : "+5");
+            HubSetup.SetIni(lines, "shortcutButton", name, JoyButton(pad));
+            if (pad is "lt" or "rt") HubSetup.SetIni(lines, "shortcutAxis", name, "+" + JoyAxis(pad == "lt" ? 4 : 5));
             else HubSetup.RemoveIni(lines, "shortcutAxis", name);
         }
     }

@@ -2,7 +2,7 @@
 ; Everything goes below ONE folder; ROMs, saves, randomized ROMs and fangames survive an uninstall.
 
 #define AppName "MonHub"
-#define AppVersion "2.8.1"
+#define AppVersion "2.9.0"
 #define Root "..\.."
 #define BuildDir Root + "\Hub-Build"
 
@@ -122,6 +122,22 @@ Type: files; Name: "{autoprograms}\PokéHub.lnk"
 Type: files; Name: "{autodesktop}\PokéHub.lnk"
 ; up to 2.6 the randomizer was shipped under its own file name (now randomizer.jar)
 Type: files; Name: "{app}\System\App\PokeRandoZX.jar"
+; up to 2.8 MonHub was built on another UI technology: its program libraries (about 100 MB) are not used any more.
+; All libraries go – the ones of this version are copied right after – and the old ones' language folders.
+Type: files; Name: "{app}\System\App\*.dll"
+Type: filesandordirs; Name: "{app}\System\App\cs"
+Type: filesandordirs; Name: "{app}\System\App\de"
+Type: filesandordirs; Name: "{app}\System\App\es"
+Type: filesandordirs; Name: "{app}\System\App\fr"
+Type: filesandordirs; Name: "{app}\System\App\it"
+Type: filesandordirs; Name: "{app}\System\App\ja"
+Type: filesandordirs; Name: "{app}\System\App\ko"
+Type: filesandordirs; Name: "{app}\System\App\pl"
+Type: filesandordirs; Name: "{app}\System\App\pt-BR"
+Type: filesandordirs; Name: "{app}\System\App\ru"
+Type: filesandordirs; Name: "{app}\System\App\tr"
+Type: filesandordirs; Name: "{app}\System\App\zh-Hans"
+Type: filesandordirs; Name: "{app}\System\App\zh-Hant"
 ; up to 2.4 the stand-alone randomizer app came along
 Type: files; Name: "{app}\System\App\RandoApp.*"
 ; 1.0 had a second Start menu entry that showed up as an extra "app" in the search
