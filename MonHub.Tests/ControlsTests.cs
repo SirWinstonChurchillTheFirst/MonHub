@@ -138,6 +138,26 @@ public class ControlsTests
     }
 
     [Fact]
+    public void FindProgram_TakesTheEmulator_NotASideTool()
+    {
+        if (!OperatingSystem.IsWindows()) return;
+        var dir = Directory.CreateTempSubdirectory("monhub-test").FullName;
+        try
+        {
+            File.WriteAllText(Path.Combine(dir, "azahar-room.exe"), "");
+            Assert.Null(Os.FindProgram(dir, "azahar"));
+            File.WriteAllText(Path.Combine(dir, "azahar.exe"), "");
+            Assert.Equal(Path.Combine(dir, "azahar.exe"), Os.FindProgram(dir, "azahar"));
+            File.WriteAllText(Path.Combine(dir, "DeSmuME_0.9.13_x64.exe"), "");
+            Assert.Equal(Path.Combine(dir, "DeSmuME_0.9.13_x64.exe"), Os.FindProgram(dir, "DeSmuME"));
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
     public void MGBA_TwoSticks_MoveStickWins()
     {
         var c = new ControlSettings();

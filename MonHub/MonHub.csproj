@@ -10,7 +10,7 @@
     <!-- names Windows shows (Task Manager, "Open with" …) -->
     <AssemblyTitle>MonHub</AssemblyTitle>
     <Product>MonHub</Product>
-    <Version>2.9.0</Version>
+    <Version>2.9.1</Version>
     <RootNamespace>MonHub</RootNamespace>
     <SelfContained>false</SelfContained>
     <DebugType>none</DebugType>
@@ -34,8 +34,6 @@
     <!-- tools: generators and labs, not part of the app -->
     <Compile Remove="tools\**" />
     <None Remove="tools\**" />
-    <!-- TEMPORARY: pages not ported yet -->
-    <Compile Remove="**\*.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>

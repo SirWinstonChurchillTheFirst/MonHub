@@ -2,7 +2,7 @@
 ; Everything goes below ONE folder; ROMs, saves, randomized ROMs and fangames survive an uninstall.
 
 #define AppName "MonHub"
-#define AppVersion "2.9.0"
+#define AppVersion "2.9.1"
 #define Root "..\.."
 #define BuildDir Root + "\Hub-Build"
 

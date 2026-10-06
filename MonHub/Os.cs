@@ -27,7 +27,15 @@ public static class Os
         try
         {
             if (Windows)
-                return Directory.GetFiles(folder, name + "*.exe").OrderByDescending(f => f.Contains("x64")).FirstOrDefault();
+            {
+                // the program called exactly like the emulator; only if there is none, one whose name starts like it
+                // ("DeSmuME_0.9.13_x64.exe") – never a side tool like "azahar-room.exe" (a console program)
+                var exact = Path.Combine(folder, name + ".exe");
+                if (File.Exists(exact)) return exact;
+                return Directory.GetFiles(folder, name + "*.exe")
+                    .Where(f => Path.GetFileName(f).Length > name.Length && Path.GetFileName(f)[name.Length] is '_' or ' ' or '.')
+                    .OrderByDescending(f => f.Contains("x64")).FirstOrDefault();
+            }
             var unpacked = Path.Combine(folder, "app", "AppRun");
             if (File.Exists(unpacked)) return unpacked;
             return Directory.EnumerateFiles(folder).FirstOrDefault(f => f.EndsWith(".AppImage", StringComparison.OrdinalIgnoreCase))
