@@ -126,6 +126,10 @@ everything.
 Some DS dumps (many US versions) are still encrypted. On Windows MonHub starts those in DeSmuME; on Linux there is no
 DeSmuME, so melonDS needs your own DS BIOS files: *Emulators* → *Add BIOS …*. MonHub doesn't include a BIOS.
 
+**Linux: a Game Boy or GBA game opens, but the mGBA window stays empty.**
+mGBA waits for the sound output. That happens on systems without a sound service (very minimal installs): install and
+start PipeWire with its PulseAudio part (`pipewire`, `pipewire-pulse`, `wireplumber`) – normal desktop installs have it.
+
 **Linux: my controller isn't found.**
 MonHub reads controllers through `/dev/input/js*`. Plug the controller in (or connect it by Bluetooth) before you click
 a controller field; if your distribution doesn't load the `joydev` module, run `sudo modprobe joydev`.
