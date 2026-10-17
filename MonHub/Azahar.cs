@@ -166,6 +166,8 @@ public static class Azahar3ds
         // a controller plugged in: MonHub's controller profile, else the keyboard one (Azahar takes one input per button)
         bool padProfile = lines.Any(l => l == $@"profiles\2\name={ControlSettings.ControllerProfile}");
         Set(lines, "Controls", "profile", padProfile && ControlSettings.AnyPadConnected() ? "1" : "0");
+        // inside MonHub, MonHub's "Beenden" asks already – Azahar's own question would come second
+        Set(lines, "UI", "confirmClose", HubConfig.Current.GamesInOwnWindow || !GameScreen.Possible ? "true" : "false");
         WriteConfig(lines);
 
         var cheats = Path.Combine(UserDir, "cheats");
@@ -185,6 +187,16 @@ public static class Azahar3ds
             File.Delete(target); // another run's cheats – not for this game
         }
         return null;
+    }
+
+    /// <summary>The screen arrangement ([Layout] layout_option) for the next start – Azahar is closed then.</summary>
+    public static void SetLayout(string option)
+    {
+        var lines = ReadConfig();
+        Set(lines, "Layout", "layout_option", option);
+        Set(lines, "Layout", "swap_screen", "false");
+        Set(lines, "Layout", "upright_screen", "false");
+        WriteConfig(lines);
     }
 
     /// <summary>Settings that belong to the MonHub layout (called by <see cref="HubSetup"/>, while Azahar is closed).</summary>

@@ -51,25 +51,31 @@ public static class Os
     /// Starts a program or opens a file. An emulator from MonHub's own folder keeps its settings inside that folder on
     /// Linux too (there they would otherwise go to the home folder and mix with an emulator the player installed).
     /// </summary>
-    public static void Start(string file, string? args, string workingDir)
+    /// <returns>The started program, or null when the desktop opens the file (not to be disposed while it runs: on Linux it
+    /// still reports a start that failed).</returns>
+    /// <param name="quiet">A game that is about to be taken into MonHub. Windows: its window starts minimized and without
+    /// the focus, so it doesn't flash up on the desktop first. Linux: it runs on X11, where MonHub can take its window.</param>
+    public static Process? Start(string file, string? args, string workingDir, bool quiet = false)
     {
+        if (Windows && quiet && Win32GameWindow.StartMinimized(file, args, workingDir) is { } minimized) return minimized;
         if (Windows)
         {
             var psi = new ProcessStartInfo(file) { UseShellExecute = true, WorkingDirectory = workingDir };
             if (args != null) psi.Arguments = args;
-            Process.Start(psi)?.Dispose();
-            return;
+            return Process.Start(psi);
         }
         if (!IsProgram(file))
         {
             // a ROM or document without an emulator of ours: whatever the desktop opens it with
             Process.Start(new ProcessStartInfo("xdg-open") { ArgumentList = { file }, UseShellExecute = false })?.Dispose();
-            return;
+            return null;
         }
         var start = new ProcessStartInfo(file) { UseShellExecute = false, WorkingDirectory = workingDir };
         if (args != null) start.Arguments = args;
         // an AppImage that install.sh could not unpack: let it unpack itself for this run (works without FUSE)
         if (file.EndsWith(".AppImage", StringComparison.OrdinalIgnoreCase)) start.Environment["APPIMAGE_EXTRACT_AND_RUN"] = "1";
+        // a game for inside MonHub: on X11 (through XWayland on a Wayland desktop) – a Wayland window can't be taken in
+        if (quiet) start.Environment["QT_QPA_PLATFORM"] = "xcb";
         // libraries a fresh system may lack (libOpenGL on Ubuntu) come with MonHub – asked last, so the system's own win
         var reserve = Path.Combine(HubPaths.Emulators, "lib");
         if (Directory.Exists(reserve))
@@ -89,7 +95,7 @@ public static class Os
             start.Arguments = $"-c \"exec \\\"$0\\\" \\\"$@\\\" 2>\\\"$MONHUB_START_LOG\\\"\" \"{file}\" {args}";
             var started = DateTime.UtcNow;
             var process = Process.Start(start);
-            if (process == null) return;
+            if (process == null) return null;
             process.EnableRaisingEvents = true;
             process.Exited += (_, _) =>
             {
@@ -105,9 +111,9 @@ public static class Os
                     + (why.Length > 0 ? "\n\n" + (why.Length > 600 ? why[..600] + " …" : why) : ""),
                     "MonHub", MessageBoxButton.OK, MessageBoxImage.Warning));
             };
-            return;
+            return process;
         }
-        Process.Start(start)?.Dispose();
+        return Process.Start(start);
     }
 
     /// <summary>The emulator folder (System/Emulatoren/&lt;name&gt;) a program belongs to, or null for other programs.</summary>

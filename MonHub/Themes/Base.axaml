@@ -369,6 +369,30 @@
         </Style>
     </ControlTheme>
 
+    <!-- The folded menu (while playing): an icon in the menu's colours, hover and "current" like a menu entry -->
+    <ControlTheme x:Key="Hub.RailMini" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource Hub.RailInk}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Width" Value="46"/>
+        <Setter Property="Height" Value="42"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusAdorner" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="Bd" Background="{TemplateBinding Background}" CornerRadius="{DynamicResource Hub.RadiusNav}">
+                    <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Hub.RailHover}"/>
+        </Style>
+        <Style Selector="^.current">
+            <Setter Property="Background" Value="{DynamicResource Hub.RailSelected}"/>
+            <Setter Property="Foreground" Value="{DynamicResource Hub.RailSelectedInk}"/>
+        </Style>
+    </ControlTheme>
+
     <!-- A menu action that opens something else – same look as a menu entry, never "selected" -->
     <ControlTheme x:Key="Hub.NavAction" TargetType="Button">
         <Setter Property="Foreground" Value="{DynamicResource Hub.RailInk}"/>

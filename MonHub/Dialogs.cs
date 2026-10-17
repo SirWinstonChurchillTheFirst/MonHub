@@ -179,39 +179,11 @@ public static class MessageBox
         MessageBoxImage image = MessageBoxImage.None, MessageBoxResult defaultResult = MessageBoxResult.None)
     {
         if (App.ShuttingDown) return MessageBoxResult.None;
-        var result = buttons == MessageBoxButton.OK ? MessageBoxResult.OK : buttons == MessageBoxButton.YesNo ? MessageBoxResult.No : MessageBoxResult.Cancel;
-        var window = new HubWindow
-        {
-            Title = caption,
-            Owner = owner,
-            CanResize = false,
-            SizeToContent = SizeToContent.WidthAndHeight,
-            MinWidth = 340,
-            MaxWidth = 560,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            ShowInTaskbar = false,
-        };
-        if (window.TryFindResource("Hub.DialogWindow") is ControlTheme theme) window.Theme = theme;
-        window.Bind(TemplatedControl.BackgroundProperty, window.GetResourceObservable("Hub.Dialog"));
-
-        var message = new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center, MaxWidth = 440 };
-        message.Classes.Add("body");
-        var row = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Spacing = 8, Margin = new Thickness(0, 18, 0, 0) };
-
-        void Add(string label, MessageBoxResult value, bool primary)
-        {
-            var button = new Button { Content = label, MinWidth = 86 };
-            if (window.TryFindResource(primary ? "Hub.PrimaryKeySmall" : "Hub.Key") is ControlTheme look) button.Theme = look;
-            button.IsDefault = value == defaultResult || (defaultResult == MessageBoxResult.None && primary);
-            button.IsCancel = value is MessageBoxResult.Cancel or MessageBoxResult.No && buttons != MessageBoxButton.YesNoCancel || value == MessageBoxResult.OK && buttons == MessageBoxButton.OK;
-            button.Click += (_, _) =>
-            {
-                result = value;
-                window.Close();
-            };
-            row.Children.Add(button);
-        }
-
+        var closed = buttons == MessageBoxButton.OK ? MessageBoxResult.OK : buttons == MessageBoxButton.YesNo ? MessageBoxResult.No : MessageBoxResult.Cancel;
+        var keys = new List<(string, MessageBoxResult, bool, bool, bool)>();
+        void Add(string label, MessageBoxResult value, bool primary) =>
+            keys.Add((label, value, primary, value == defaultResult || (defaultResult == MessageBoxResult.None && primary),
+                value is MessageBoxResult.Cancel or MessageBoxResult.No && buttons != MessageBoxButton.YesNoCancel || value == MessageBoxResult.OK && buttons == MessageBoxButton.OK));
         switch (buttons)
         {
             case MessageBoxButton.OK:
@@ -230,6 +202,54 @@ public static class MessageBox
                 Add(Txt.L("Nein", "No"), MessageBoxResult.No, false);
                 Add(Txt.L("Abbrechen", "Cancel"), MessageBoxResult.Cancel, false);
                 break;
+        }
+        return Ask(owner, text, caption, image, keys, closed);
+    }
+
+    /// <summary>
+    /// A question with buttons of its own ("Spiel beenden", "Weiterspielen" …): returns the number of the button pressed.
+    /// The first one looks like the main one; Enter presses <paramref name="enter"/> (the safe answer); the last one is
+    /// "cancel" (also Esc and closing the window). -1 while shutting down.
+    /// </summary>
+    public static int Choose(Window? owner, string text, string caption, MessageBoxImage image, string[] buttons, int enter = 0)
+    {
+        if (App.ShuttingDown) return -1;
+        var keys = buttons.Select((label, i) => (label, i, i == 0, i == enter, i == buttons.Length - 1)).ToList();
+        return Ask(owner, text, caption, image, keys, buttons.Length - 1);
+    }
+
+    static T Ask<T>(Window? owner, string text, string caption, MessageBoxImage image, List<(string Label, T Value, bool Primary, bool Default, bool Cancel)> keys, T closed)
+    {
+        var result = closed;
+        var window = new HubWindow
+        {
+            Title = caption,
+            Owner = owner,
+            CanResize = false,
+            SizeToContent = SizeToContent.WidthAndHeight,
+            MinWidth = 340,
+            MaxWidth = 600,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            ShowInTaskbar = false,
+        };
+        if (window.TryFindResource("Hub.DialogWindow") is ControlTheme theme) window.Theme = theme;
+        window.Bind(TemplatedControl.BackgroundProperty, window.GetResourceObservable("Hub.Dialog"));
+
+        var message = new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center, MaxWidth = 460 };
+        message.Classes.Add("body");
+        var row = new WrapPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 18, 0, 0) };
+        foreach (var (label, value, primary, isDefault, cancel) in keys)
+        {
+            var button = new Button { Content = label, MinWidth = 86, Margin = new Thickness(8, 0, 0, 6) };
+            if (window.TryFindResource(primary ? "Hub.PrimaryKeySmall" : "Hub.Key") is ControlTheme look) button.Theme = look;
+            button.IsDefault = isDefault;
+            button.IsCancel = cancel;
+            button.Click += (_, _) =>
+            {
+                result = value;
+                window.Close();
+            };
+            row.Children.Add(button);
         }
 
         var body = new DockPanel();

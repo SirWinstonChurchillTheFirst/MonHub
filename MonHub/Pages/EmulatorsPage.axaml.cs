@@ -58,6 +58,9 @@ public partial class EmulatorsPage : UserControl, IHubPage
         BtnAzaharOpen.IsEnabled = HubPaths.AzaharExe != null;
         _loadingSpeeds = true;
         Chk60Fps.IsChecked = HubConfig.Current.AzaharSixtyFps;
+        ChkOwnWindow.IsChecked = HubConfig.Current.GamesInOwnWindow || !GameScreen.Possible;
+        ChkOwnWindow.IsEnabled = GameScreen.Possible;
+        ShowScreens();
         _loadingSpeeds = false;
         TxtAzaharStatus.Text = HubPaths.AzaharExe != null ? Status(HubPaths.AzaharSaves, "main", recursive: true) : Missing;
         MelonBadge.Visibility = melon && main == GameLibrary.MelonDS ? Visibility.Visible : Visibility.Collapsed;
@@ -282,7 +285,7 @@ public partial class EmulatorsPage : UserControl, IHubPage
 
     static string Missing => Txt.L("Nicht gefunden – bitte MonHub neu installieren.", "Not found – please reinstall MonHub.");
 
-    void MgbaOpen_Click(object? sender, RoutedEventArgs e) => Launcher.Start(Compat.WindowOf(this), HubPaths.MGBAExe);
+    void MgbaOpen_Click(object? sender, RoutedEventArgs e) => Launcher.OpenEmulator(Compat.WindowOf(this), HubPaths.MGBAExe, GameLibrary.MGBA);
     void MgbaSaves_Click(object? sender, RoutedEventArgs e) => Shell.OpenFolder(HubPaths.MGBASaves);
     void Fps_Changed(object? sender, RoutedEventArgs e)
     {
@@ -291,10 +294,48 @@ public partial class EmulatorsPage : UserControl, IHubPage
         HubConfig.Current.Save();
     }
 
-    void AzaharOpen_Click(object? sender, RoutedEventArgs e) => Launcher.Start(Compat.WindowOf(this), HubPaths.AzaharExe);
+    void OwnWindow_Changed(object? sender, RoutedEventArgs e)
+    {
+        if (_loadingSpeeds) return;
+        HubConfig.Current.GamesInOwnWindow = ChkOwnWindow.IsChecked == true;
+        HubConfig.Current.Save();
+        ShowScreens();
+    }
+
+    /// <summary>The screen arrangement: only for games inside MonHub (in its own window the emulator's own setting counts).</summary>
+    void ShowScreens()
+    {
+        bool inside = ChkOwnWindow.IsChecked != true;
+        ScreensPanel.IsEnabled = inside;
+        ScreensPanel.Opacity = inside ? 1 : 0.55;
+        TxtScreens.Text = inside
+            ? Txt.L("Wie die beiden Bildschirme angeordnet sind, wenn das Spiel in MonHub läuft. „Automatisch“ nimmt beim Spielstart, was am wenigsten leeren Rand lässt – bei breitem Fenster nebeneinander, sonst untereinander. „Groß + klein“: der obere Bildschirm groß, der Touchscreen klein daneben (DeSmuME kennt das nicht und zeigt nebeneinander).",
+                    "How the two screens are arranged when the game runs inside MonHub. “Automatic” picks at game start whatever leaves the least empty border – side by side in a wide window, otherwise stacked. “Big + small”: the top screen big, the touch screen small next to it (DeSmuME doesn’t have that and shows side by side).")
+            : Txt.L("Gilt nur, wenn Spiele in MonHub laufen – im eigenen Fenster stellst du die Anordnung im Emulator selbst ein.",
+                    "Only applies when games run inside MonHub – in their own window you set the arrangement in the emulator itself.");
+        _loadingSpeeds = true;
+        foreach (var (panel, value) in new[] { (DsScreens, HubConfig.Current.DsScreens), (ThreeDsScreens, HubConfig.Current.ThreeDsScreens) })
+            foreach (var chip in panel.Children.OfType<RadioButton>())
+                chip.IsChecked = (string?)chip.Tag == value.ToString();
+        _loadingSpeeds = false;
+    }
+
+    void Screens_Changed(object? sender, RoutedEventArgs e)
+    {
+        if (_loadingSpeeds || sender is not RadioButton { IsChecked: true, Tag: string tag } chip) return;
+        var value = Enum.Parse<ScreenArrangement>(tag);
+        bool threeDs = chip.Parent != DsScreens;
+        if (threeDs) HubConfig.Current.ThreeDsScreens = value;
+        else HubConfig.Current.DsScreens = value;
+        HubConfig.Current.Save();
+        // a DS/3DS game running inside MonHub: it can show it right away (after a restart)
+        (Compat.MainWindow as MainWindow)?.ArrangementChanged(threeDs);
+    }
+
+    void AzaharOpen_Click(object? sender, RoutedEventArgs e) => Launcher.OpenEmulator(Compat.WindowOf(this), HubPaths.AzaharExe, GameLibrary.Azahar);
     void AzaharSaves_Click(object? sender, RoutedEventArgs e) => Shell.OpenFolder(HubPaths.AzaharSaves);
-    void MelonOpen_Click(object? sender, RoutedEventArgs e) => Launcher.Start(Compat.WindowOf(this), HubPaths.MelonDSExe);
-    void DesmumeOpen_Click(object? sender, RoutedEventArgs e) => Launcher.Start(Compat.WindowOf(this), HubPaths.DeSmuMEExe);
+    void MelonOpen_Click(object? sender, RoutedEventArgs e) => Launcher.OpenEmulator(Compat.WindowOf(this), HubPaths.MelonDSExe, GameLibrary.MelonDS);
+    void DesmumeOpen_Click(object? sender, RoutedEventArgs e) => Launcher.OpenEmulator(Compat.WindowOf(this), HubPaths.DeSmuMEExe, GameLibrary.DeSmuME);
     void MelonSaves_Click(object? sender, RoutedEventArgs e) => Shell.OpenFolder(HubPaths.MelonDSSaves);
     void DesmumeSaves_Click(object? sender, RoutedEventArgs e) => Shell.OpenFolder(HubPaths.DeSmuMESaves);
     void MelonDefault_Click(object? sender, RoutedEventArgs e) => SetDefault(GameLibrary.MelonDS);

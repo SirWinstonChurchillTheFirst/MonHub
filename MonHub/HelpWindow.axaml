@@ -59,7 +59,7 @@
                         <StackPanel>
                             <TextBlock Text="{local:L '„Mischen &amp; spielen“ drücken', 'Press “Mix &amp; play”'}" Classes="heading"/>
                             <TextBlock Classes="muted" Margin="0,3,0,0"
-                                       Text="{local:L 'Das Spiel wird neu gemischt und startet sofort. Später geht es hier unter „Weiter“ weiter – mit dem Spiel, das du zuletzt gespeichert hast, im richtigen Emulator.', 'The game is randomized and starts right away. Later you carry on under “Continue” – with the game you saved last, in the right emulator.'}"/>
+                                       Text="{local:L 'Das Spiel wird neu gemischt und startet sofort – direkt hier in MonHub unter „Weiter“. Später geht es dort weiter – mit dem Spiel, das du zuletzt gespeichert hast, im richtigen Emulator.', 'The game is randomized and starts right away – right here in MonHub under “Continue”. Later you carry on there – with the game you saved last, in the right emulator.'}"/>
                         </StackPanel>
                     </DockPanel>
                     <DockPanel>
@@ -76,6 +76,8 @@
             <ContentControl Theme="{DynamicResource Hub.Inset}" Margin="0,16,0,0">
                 <TextBlock Classes="body">
                     <Run Text="{local:L 'Speichern', 'Saving'}" FontWeight="Bold"/><Run Text="{local:L ' macht das Spiel selbst – also im Spiel speichern! Die Spielstände liegen im Ordner „Spielstände“.', ' is done by the game itself – so save in the game! The saves are in the “Spielstände” folder.'}"/>
+                    <LineBreak/>
+                    <Run Text="{local:L 'Spielen', 'Playing'}" FontWeight="Bold"/><Run Text="{local:L ' passiert in MonHub: über dem Spiel „Beenden“, „Vollbild“ und „Im eigenen Fenster“; „Menü ausblenden“ macht Platz. Lieber immer das Emulator-Fenster? Haken unter „Emulatoren“.', ' happens inside MonHub: above the game are “Quit”, “Full screen” and “In its own window”; “Hide menu” makes room. Rather always the emulator’s window? Tick it under “Emulators”.'}"/>
                     <LineBreak/>
                     <Run Text="{local:L 'Tasten', 'Keys'}" FontWeight="Bold"/><Run Text="{local:L ' für melonDS stehen unter „Emulatoren“.', ' for melonDS are under “Emulators”.'}"/>
                     <LineBreak/>

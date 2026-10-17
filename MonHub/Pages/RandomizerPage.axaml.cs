@@ -517,8 +517,8 @@ public partial class RandomizerPage : UserControl, IHubPage
     {
         if (_lastOutput == null || !File.Exists(_lastOutput)) return;
         var owner = Compat.WindowOf(this);
-        if (_lastRom?.Platform == RomPlatform.Nds && EmulatorFor(_lastRom) is { Exe: { } exe })
-            Launcher.Start(owner, exe, $"\"{_lastOutput}\"");
+        if (_lastRom?.Platform == RomPlatform.Nds && EmulatorFor(_lastRom) is { Exe: { } exe } emulator)
+            Launcher.Play(owner, exe, _lastOutput, emulator.Name);
         else
             Launcher.StartGame(owner, _lastOutput, null); // Game Boy / GBA: mGBA
     }

@@ -61,6 +61,15 @@ public class HubConfig
     /// </summary>
     public bool AzaharSixtyFps { get; set; }
 
+    /// <summary>Games open in the emulator's own window (as up to 2.9) instead of inside MonHub on "Weiter". Switch under "Emulatoren".</summary>
+    public bool GamesInOwnWindow { get; set; }
+
+    /// <summary>How DS games show their two screens inside MonHub (melonDS, DeSmuME). Under "Emulatoren".</summary>
+    public ScreenArrangement DsScreens { get; set; }
+
+    /// <summary>How 3DS games show their two screens inside MonHub (Azahar). Under "Emulatoren".</summary>
+    public ScreenArrangement ThreeDsScreens { get; set; }
+
     /// <summary>ROM file names (without folder) marked as favourite in the game list.</summary>
     public List<string> Favorites { get; set; } = new();
 

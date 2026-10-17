@@ -156,6 +156,23 @@ public static class HubSetup
         SafeFile.WriteAllLines(ini, lines);
     }
 
+    /// <summary>DeSmuME's "Window Force Ratio": on for its own window (its default), off inside MonHub.</summary>
+    public static void SetDeSmuMERatio(bool fixedByDeSmuME)
+    {
+        if (HubPaths.DeSmuMEExe == null) return;
+        try
+        {
+            var ini = Path.Combine(HubPaths.DeSmuME, "desmume.ini");
+            var lines = File.Exists(ini) ? File.ReadAllLines(ini).ToList() : new List<string>();
+            SetIni(lines, "Video", "Window Force Ratio", fixedByDeSmuME ? "1" : "0");
+            SafeFile.WriteAllLines(ini, lines);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // then it looks a little off – the game still starts
+        }
+    }
+
     /// <summary>
     /// mGBA (portable: its config.ini sits next to the exe): saves into Spielstände\mGBA, the ROM dialog starts in ROMs.
     /// GBA/GB saves imported before mGBA came along (Spielstände\GBA und GB) are copied over once, so it finds them.

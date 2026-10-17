@@ -8,6 +8,32 @@
             <TextBlock Text="{local:L 'Womit gespielt wird', 'What you play with'}" Classes="title" Margin="0,4,0,2"/>
             <TextBlock Classes="muted" MaxWidth="660" HorizontalAlignment="Left"
                        Text="{local:L 'DS-Spiele laufen in melonDS oder DeSmuME, Game Boy und GBA in mGBA, 3DS in Azahar. Alle sind fertig eingerichtet und speichern in deinen Ordner „Spielstände“.', 'DS games run in melonDS or DeSmuME, Game Boy and GBA in mGBA, 3DS in Azahar. All of them are set up and save into your “Spielstände” folder.'}"/>
+            <CheckBox x:Name="ChkOwnWindow" Margin="0,12,0,0" HorizontalAlignment="Left" IsCheckedChanged="OwnWindow_Changed" Foreground="{DynamicResource Hub.Ink}">
+                <TextBlock TextWrapping="Wrap" MaxWidth="640"
+                           Text="{local:L 'Spiele im eigenen Fenster öffnen – sonst läuft das Spiel direkt in MonHub unter „Weiter“. Gilt ab dem nächsten Spielstart.', 'Open games in their own window – otherwise the game runs right inside MonHub under “Continue”. Applies from the next game start.'}"/>
+            </CheckBox>
+
+            <!-- how the two screens sit inside MonHub -->
+            <ContentControl x:Name="ScreensPanel" Theme="{DynamicResource Hub.Panel}" Margin="0,16,0,0">
+                <StackPanel>
+                    <TextBlock Text="{local:L 'BILDSCHIRM-ANORDNUNG IN MONHUB', 'SCREEN ARRANGEMENT IN MONHUB'}" Classes="label"/>
+                    <TextBlock x:Name="TxtScreens" Classes="muted" FontSize="12" Margin="0,4,0,12" TextWrapping="Wrap"/>
+                    <TextBlock Text="{local:L 'DS (melonDS, DeSmuME)', 'DS (melonDS, DeSmuME)'}" Classes="body" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <WrapPanel x:Name="DsScreens">
+                    <RadioButton Theme="{DynamicResource Hub.Chip}" GroupName="DsScreens" Tag="Auto" Margin="0,0,6,6" IsCheckedChanged="Screens_Changed" Content="{local:L 'Automatisch', 'Automatic'}"/>
+                    <RadioButton Theme="{DynamicResource Hub.Chip}" GroupName="DsScreens" Tag="Stacked" Margin="0,0,6,6" IsCheckedChanged="Screens_Changed" Content="{local:L 'Untereinander', 'Stacked'}"/>
+                    <RadioButton Theme="{DynamicResource Hub.Chip}" GroupName="DsScreens" Tag="SideBySide" Margin="0,0,6,6" IsCheckedChanged="Screens_Changed" Content="{local:L 'Nebeneinander', 'Side by side'}"/>
+                    <RadioButton Theme="{DynamicResource Hub.Chip}" GroupName="DsScreens" Tag="BigAndSmall" Margin="0,0,6,6" IsCheckedChanged="Screens_Changed" Content="{local:L 'Groß + klein', 'Big + small'}"/>
+                    </WrapPanel>
+                    <TextBlock Text="{local:L '3DS (Azahar)', '3DS (Azahar)'}" Classes="body" FontWeight="SemiBold" Margin="0,8,0,6"/>
+                    <WrapPanel x:Name="ThreeDsScreens">
+                    <RadioButton Theme="{DynamicResource Hub.Chip}" GroupName="ThreeDsScreens" Tag="Auto" Margin="0,0,6,6" IsCheckedChanged="Screens_Changed" Content="{local:L 'Automatisch', 'Automatic'}"/>
+                    <RadioButton Theme="{DynamicResource Hub.Chip}" GroupName="ThreeDsScreens" Tag="Stacked" Margin="0,0,6,6" IsCheckedChanged="Screens_Changed" Content="{local:L 'Untereinander', 'Stacked'}"/>
+                    <RadioButton Theme="{DynamicResource Hub.Chip}" GroupName="ThreeDsScreens" Tag="SideBySide" Margin="0,0,6,6" IsCheckedChanged="Screens_Changed" Content="{local:L 'Nebeneinander', 'Side by side'}"/>
+                    <RadioButton Theme="{DynamicResource Hub.Chip}" GroupName="ThreeDsScreens" Tag="BigAndSmall" Margin="0,0,6,6" IsCheckedChanged="Screens_Changed" Content="{local:L 'Groß + klein', 'Big + small'}"/>
+                    </WrapPanel>
+                </StackPanel>
+            </ContentControl>
 
             <Grid x:Name="EmuGrid" Margin="0,20,0,0">
                 <Grid.ColumnDefinitions>

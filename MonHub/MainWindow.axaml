@@ -34,6 +34,9 @@
                                 <StackPanel Orientation="Horizontal">
                                     <local:SpriteView Key="icon/play" Width="32" Height="32" Margin="-5,-6,7,-6" IsVisible="{DynamicResource Hub.NavIcons}"/>
                                     <TextBlock Tag="{local:L 'Weiter', 'Continue'}" VerticalAlignment="Center"/>
+                                    <!-- a game is running inside MonHub -->
+                                    <Ellipse x:Name="NavPlaying" Width="9" Height="9" Margin="9,1,0,0" VerticalAlignment="Center" IsVisible="False"
+                                             Fill="{DynamicResource Hub.Good}" ToolTip.Tip="{local:L 'Ein Spiel läuft', 'A game is running'}"/>
                                 </StackPanel>
                             </RadioButton>
                             <RadioButton Theme="{DynamicResource Hub.Nav}" GroupName="HubNav" Tag="games" IsCheckedChanged="Nav_Checked">
@@ -93,11 +96,34 @@
                 </Border>
             </Border>
 
+            <!-- the menu folded away while playing: a slim version of it in the theme's look – its icons lead to the pages,
+                 the arrow opens it again -->
+            <Border x:Name="RailMini" Grid.Column="{DynamicResource Hub.RailColumn}" Width="64" IsVisible="False"
+                    Background="{DynamicResource Hub.Rail}" BorderBrush="{DynamicResource Hub.RailLine}" BorderThickness="{DynamicResource Hub.RailBorder}"
+                    Margin="{DynamicResource Hub.RailMargin}" Padding="{DynamicResource Hub.RailTitleInset}" CornerRadius="{DynamicResource Hub.RailRadius}">
+                <Border BorderBrush="{DynamicResource Hub.RailInnerLine}" BorderThickness="{DynamicResource Hub.RailInnerBorder}"
+                        Margin="{DynamicResource Hub.RailInnerGap}" CornerRadius="{DynamicResource Hub.RadiusInner}">
+                    <StackPanel x:Name="MiniNav" HorizontalAlignment="Center" Margin="0,40,0,8" Spacing="3">
+                        <Button Theme="{DynamicResource Hub.RailMini}" Click="RailMini_Open" ToolTip.Tip="{local:L 'Menü zeigen', 'Show the menu'}">
+                            <Path Data="M4,2 L10,8 L4,14 M9,2 L15,8 L9,14" Width="18" Height="16" Stretch="None" StrokeThickness="2"
+                                  StrokeLineCap="Round" StrokeJoin="Round" Stroke="{Binding $parent[Button].Foreground}"/>
+                        </Button>
+                        <Border Height="1" Background="{DynamicResource Hub.RailLine}" Margin="8,4" Opacity="0.6"/>
+                    </StackPanel>
+                </Border>
+            </Border>
+
             <!-- the pages -->
             <ContentControl Grid.Column="1" Theme="{DynamicResource Hub.ScreenFrame}" Margin="0,34,0,0">
                 <Grid x:Name="PageHost"/>
             </ContentControl>
         </Grid>
+
+        <!-- a game inside MonHub: laid exactly over the pages (or over everything in full screen); on a canvas, so its
+             size never feeds back into the window's layout -->
+        <Canvas Grid.RowSpan="2">
+            <local:GameScreen x:Name="Game" IsVisible="False"/>
+        </Canvas>
 
         <!-- the title bar over the top edge: drag to move, double-click to maximize -->
         <Border x:Name="TitleBar" Background="Transparent"/>

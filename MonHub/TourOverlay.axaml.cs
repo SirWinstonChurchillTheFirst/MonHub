@@ -194,6 +194,12 @@ public partial class TourOverlay : UserControl
 
     void Skip_Click(object? sender, RoutedEventArgs e) => End(seen: true);
 
+    /// <summary>A game starts inside MonHub: the tour steps aside (it would sit behind the game's window) – asked again later.</summary>
+    public void Later()
+    {
+        if (IsVisible) End(seen: false);
+    }
+
     void End(bool seen)
     {
         _version++;

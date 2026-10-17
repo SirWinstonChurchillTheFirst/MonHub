@@ -119,6 +119,22 @@ public partial class OptionsPage : UserControl, IHubPage
         if (_updating) return;
         var code = sender == LangGerman ? "de" : "en";
         if (code == Txt.Code) return;
+        // a game inside MonHub: the restart would take it along – it goes to its own window, after a question
+        if ((Compat.MainWindow as MainWindow)?.GameRom is { } running
+            && MessageBox.Choose(Compat.WindowOf(this), Txt.L($"Für die neue Sprache startet MonHub neu. „{Path.GetFileNameWithoutExtension(running)}“ läuft dabei im eigenen Fenster des Emulators weiter.",
+                    $"MonHub restarts for the new language. “{Path.GetFileNameWithoutExtension(running)}” keeps running in the emulator’s own window."),
+                Txt.L("Sprache", "Language"), MessageBoxImage.Question,
+                [Txt.L("Neu starten", "Restart"), Txt.L("Abbrechen", "Cancel")], enter: 1) != 0)
+        {
+            // the language stays: its chip again (after this click has finished – inside it the new one would win)
+            Dispatcher.UIThread.Post(() =>
+            {
+                _updating = true;
+                (code == "de" ? LangEnglish : LangGerman).IsChecked = true;
+                _updating = false;
+            });
+            return;
+        }
         HubConfig.Current.Language = code;
         HubConfig.Current.Save();
         App.Restart();

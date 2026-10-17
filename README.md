@@ -3,7 +3,8 @@
 **Your game hub for randomizers, emulators and fangames – all in one window.**
 
 MonHub is an app for **Windows and Linux** for anyone who wants to replay their own monster-catching games freshly randomized, without
-fiddling with emulators, folders or settings: install once, import your ROMs, press “Mix & play”.
+fiddling with emulators, folders or settings: install once, import your ROMs, press “Mix & play” – and the game
+starts right inside MonHub.
 MonHub speaks **English** and **German** (switch under *Options*).
 
 > **Unofficial fan project.** MonHub is not affiliated with Nintendo, Creatures, GAME FREAK or The Pokémon Company.
@@ -12,6 +13,25 @@ MonHub speaks **English** and **German** (switch under *Options*).
 
 ![Continue where you left off](docs/screenshots/continue.png)
 
+## New in 2.10: play inside MonHub
+
+Games no longer open in a separate emulator window – they run **right in MonHub's window**, under *Continue*. Above the
+game sits a small bar:
+
+- **Menu** folds MonHub's menu into a slim strip, so the game gets more room – one click brings it back.
+- **Screens** picks how DS and 3DS games show their two screens: *Automatic* (fits your window best), *Stacked*,
+  *Side by side* or *Big + small*. The same choice is under *Emulators*.
+- **Full screen** shows only the game; move the mouse to the top edge and the bar comes back.
+- **Own window** moves the running game into the emulator's own window, like before – it keeps running.
+- **Quit** ends the game (MonHub asks first).
+
+While the emulator loads, MonHub shows a loading screen instead of a frozen window. Closing MonHub during a game asks
+whether to keep playing in the emulator's own window or to quit the game, and starting a second game asks before the
+first one is ended – so no game is closed by accident. Prefer the emulator's own window every time? Tick *Open games in
+their own window* under *Emulators*.
+
+![A game starting inside MonHub, menu folded](docs/screenshots/play.png)
+
 ## What MonHub does
 
 - **New run:** pick an original, randomize, play – powered by the Universal Pokemon Randomizer ZX, with presets and a
@@ -19,6 +39,8 @@ MonHub speaks **English** and **German** (switch under *Options*).
   (default), *Easy Wild and Starters*, *Hard Trainers* and *Chaos Everything*.
 - **Emulators, ready to go:** melonDS / DeSmuME (DS; DeSmuME on Windows only), mGBA (Game Boy, Game Boy Color, GBA), Azahar (3DS) – shared key
   and controller mapping, a 60 FPS switch for 3DS games.
+- **Play inside MonHub:** the game runs right in MonHub's window – fold the menu away, pick the screen arrangement for
+  DS and 3DS, go full screen, or move it into the emulator's own window (see above).
 - **Continue:** your latest save with trainer, play time, badges and team – read straight from the save files of every
   generation (Gen 1–7).
 - **Dex:** the Dex of every single save.
@@ -133,6 +155,22 @@ start PipeWire with its PulseAudio part (`pipewire`, `pipewire-pulse`, `wireplum
 **Linux: my controller isn't found.**
 MonHub reads controllers through `/dev/input/js*`. Plug the controller in (or connect it by Bluetooth) before you click
 a controller field; if your distribution doesn't load the `joydev` module, run `sudo modprobe joydev`.
+
+**The game opens inside MonHub – can I have the emulator's own window back?**
+Yes: tick *Open games in their own window* under *Emulators* (from the next game start), or click *Own window* above a
+running game – it keeps running there. Settings that only the emulator's menu has (e.g. DeSmuME's) are easiest to reach
+in its own window.
+
+**The loading screen stays for a while when I start a 3DS game.**
+That's Azahar loading the game – the first start of a game can take longer while it prepares its graphics. MonHub stays
+usable meanwhile and shows the game as soon as it runs (after 30 seconds at the latest).
+
+**How do I change the arrangement of the two DS/3DS screens?**
+Click *Screens* above the running game, or choose it under *Emulators* → *Screen arrangement in MonHub*. The emulator
+restarts the game with the new arrangement, so save in the game first – MonHub asks before it does that.
+
+**The keys don't reach the game.**
+Click once into the game picture – the keys then go to the game until you click somewhere in MonHub's menu.
 
 **How do I switch the language?**
 *Options* → *Language* (English or German). MonHub restarts briefly.
